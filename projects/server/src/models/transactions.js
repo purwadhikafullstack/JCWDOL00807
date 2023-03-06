@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.users, {
         foreignKey: "users_id",
       }),
-        this.belongsTo(models.shipping, {
-          foreignKey: "shipping_id",
+        this.hasOne(models.shipping, {
+          foreignKey: "transactions_id",
         }),
         this.hasMany(models.transaction_details, {
           foreignKey: "transactions_id",
