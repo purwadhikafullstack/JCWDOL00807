@@ -1,14 +1,18 @@
-import Login from "./pages/Login";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
+import { useEffect } from "react";
+import Navbar from "./components/Navbar.js";
+import Footer from "./components/Footer.js";
+import Register from "./pages/Register";
+import Verification from "./pages/Verification.js";
+import Home from "./pages/Home.js";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SidebarAdmin from "./components/SidebarAdmin";
 
 import { Route, Routes } from "react-router-dom";
-import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
+import Login from "./pages/Login";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -20,10 +24,12 @@ function App() {
   return (
     <div>
       <Navbar />
-
+      <Footer />
       <Routes>
-        <Route path="/home-admin" element={<SidebarAdmin />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/home-admin" element={<SidebarAdmin />} />
         <Route path="/" element={<Home />} />
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
         <Route
@@ -31,6 +37,7 @@ function App() {
           element={<ResetPassword />}
         />
       </Routes>
+      <Footer />
     </div>
   );
 }

@@ -1,53 +1,62 @@
-import { Icon } from "@iconify/react";
-
 const Footer = () => {
   return (
-    <section className="h-96 shadow shadow-slate-200 ">
-      <div className=" container mx-auto flex flex-row justify-between gap-10 ">
-        <div className=" w-[25%] flex flex-col gap-3  ">
-          <h1 className=" font-extrabold  text-2xl ">GoKu</h1>
-          <p className=" font-medium text-justify">
-            GoKu adalah social enterprise untuk mewujudkan produksi, distribusi
-            dan konsumsi pertanian secara lebih berkeadilan dan ramah
-            lingkungan. Impian kami sederhana: Menjadikan sayuran organik itu
-            menjadi "sayuran biasa" Dari sisi harga ia bisa bersaing, dari sisi
-            pasokan ia bisa diandalkan, dari sisi konsumsi ia lebih sehat.
-          </p>
-        </div>
-        <div className=" w-[25%]  flex flex-col gap-3  ">
-          <h1 className="font-extrabold  text-2xl ">Ikuti Kami</h1>
-          <div className=" flex flex-row justify-start gap-6 ">
-            <Icon icon="logos:facebook" />
-            <Icon icon="skill-icons:twitter" />
-            <Icon icon="skill-icons:instagram" />
+    <footer>
+      <div class="p-10 bg-gray-200">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div class="mb-5">
+              <h4 class="text-2xl pb-4"><strong>GoKu</strong></h4>
+              <p class="text-gray-500 text-sm">
+                <p>
+                    GoKu adalah Online Groceries yang menjual berbagai kebutuhan maupun keperluan untuk sehari hari
+                </p><br></br>
+                  Jl. Jenderal Sudirman No.x, Jakarta <br></br>
+                  <strong>Whatsapp:</strong> 0812-3456-7899 <br></br>
+                  <strong>Email:</strong> info@goku.com <br></br>
+              </p>
+            </div>
+            <div class="mb-5">
+              <h4 class="pb-4">GoKu</h4>
+              <ul class="text-gray-500 text-sm">
+                <li class="pb-4"><a href="#" class="hover:text-yellow-500">Cara Kerja GoKu</a></li>
+                <li class="pb-4"><a href="#" class="hover:text-yellow-500">Referral</a></li>
+              </ul >
+            </div>
+            <div class="mb-5">
+            <h4 class="pb-4">Kontak Kami</h4>
+            <ul class="text-gray-500 text-sm">
+              <li class="pb-4"><a href="#" class="hover:text-yellow-500">F.A.Q</a></li>
+              <li class="pb-4"><a href="#" class="hover:text-yellow-500">Blog</a></li>
+              <li class="pb-4"><a href="#" class="hover:text-yellow-500">Kontak Kami</a></li>
+              <li class="pb-4"><a href="#" class="hover:text-yellow-500">Syarat & Ketentuan</a></li>
+              <li class="pb-4"><a href="#" class="hover:text-yellow-500">Kebijakan Privasi</a></li>
+            </ul>
+            </div>
+            <div class="mb-5">
+                <h4 class="pb-4" >Download GoKu App</h4>
+                <p class="text-gray-500 text-sm mb-4">Download GoKu App untuk pengalaman yang lebih baik</p>
+                <p><i class="m pb-3 fa-brands fa-google-play"></i></p>
+                <p><i class="fa-brands fa-app-store"></i></p>
+            </div>
           </div>
         </div>
-        <div className="w-[25%] flex flex-col gap-3 ">
-          <h1 className="font-extrabold  text-2xl ">Kontak kami</h1>
-          <h2>F.A.Q</h2>
-          <h2>Blog</h2>
-          <h2>Kontak Kami</h2>
-          <h2>Syarat & Ketentuan</h2>
-          <h2>Kebijakan Privasi</h2>
-        </div>
-
-        <div className="w-[25%] flex flex-col gap-3">
-          <h1 className="font-extrabold  text-2xl ">Hubungi Kami</h1>
-          <h2>
-            Kantor GoKu Jl. H. Muri Salim III No.11 Pisangan, Kec. Ciputat Timur
-            Kota Tangerang Selatan, Banten 15419 WhatsApp CS +62 812-1236-9254
-          </h2>
-          <h1 className="font-extrabold  text-2xl ">
-            Layanan Pengaduan Konsumen
-          </h1>
-          <h2>
-            Direktorat Jenderal Perlindungan Konsumen dan Tata Tertib Niaga
-            Kementrian Perdagangan RI Nomor WhatsApp Ditjen PTKN : +62 853 1111
-            1010
-          </h2>
+      </div>
+      <div class="w-full bg-gray-900 text-gray-500 px-10">
+        <div class="max-w-7xl flex flex-col sm:flex-row py-4 mx-auto justify-center items-center">
+            <div class="text-center">
+                <div>
+                    ©Copyright 2023 <strong><span>Goku</span></strong>. All Rights Reserved
+                </div><br></br>
+                <div class="text-center text-xl text-white mb-2">
+                    <a href="#" class="w-10 h-10 rounded-full bg-yellow-500 hover:bg-yellow-600 mx-1 inline-block pt-1"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-yellow-500 hover:bg-yellow-600 mx-1 inline-block pt-1"><i class="fa fa-twitter"></i> </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-yellow-500 hover:bg-yellow-600 mx-1 inline-block pt-1"><i class="fa fa-instagram"></i> </a>
+                </div>
+            </div>
         </div>
       </div>
-    </section>
+    </footer>
   );
 };
+
 export default Footer;
