@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { authSlice } from "../reducer/auth";
 
 export const keep_login_request = "keep_login_request";
-export const kepp_login_payload = "keep_login_payload";
+export const keep_login_payload = "keep_login_payload";
 export const registerUser = ({
   name,
   email,
@@ -42,6 +42,7 @@ export const loginUser = ({ email, password }) => {
     }
   };
 };
+
 
 export const keepLogin = () => {
   try {
