@@ -1,2 +1,5 @@
 const usersRouter = require("./usersRouter");
-module.exports = { usersRouter };
+
+module.exports = {
+  usersRouter,
+};
