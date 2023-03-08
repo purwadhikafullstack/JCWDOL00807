@@ -2,7 +2,9 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-
+const { usersRouter } = require("./routes");
+// library express untuk membaca headers
+const bearerToken = require("express-bearer-token");
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
@@ -15,6 +17,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(bearerToken());
 // Synchronize models Sequelize
 // const Sequelize = require("sequelize");
 // const Models = require("./models");
@@ -38,6 +41,8 @@ app.use(express.json());
 const { usersRouter } = require("./routes");
 app.use("/api/user", usersRouter);
 
+//# add Router
+
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
 });
@@ -47,7 +52,7 @@ app.get("/api/greetings", (req, res, next) => {
     message: "Hello, Student !",
   });
 });
-
+app.use("/api/users", usersRouter);
 // ===========================
 
 // not found

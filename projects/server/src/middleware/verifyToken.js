@@ -1,5 +1,3 @@
-const { validateToken } = require("./../lib/jwt");
-
 const jwt = require("jsonwebtoken");
 
 module.exports = {
@@ -18,7 +16,6 @@ module.exports = {
       try {
         if (err) throw err;
         req.dataToken = dataToken;
-        req.dataToken;
         next();
       } catch (error) {
         res.status(500).send({
