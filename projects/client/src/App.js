@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect } from "react";
 import Navbar from "./components/Navbar.js";
 import Footer from "./components/Footer.js";
@@ -8,6 +7,7 @@ import Home from "./pages/Home.jsx";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
+import Login from "./pages/Login";
 function App() {
   const dispatch = useDispatch();
 
