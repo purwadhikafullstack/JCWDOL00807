@@ -12,7 +12,7 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/action/user";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   let email = useRef();
@@ -69,7 +69,7 @@ const Login = () => {
   });
 
   return (
-    <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
+    <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center">
       <div className=" relative h-96 w-[500px] flex-col justify-center items-center ">
         {message ? (
           <div>
@@ -112,9 +112,12 @@ const Login = () => {
           <Checkbox colorScheme="green" size="sm">
             Remember me
           </Checkbox>
-          <a className=" text-sm text-[#69cb44] font-semibold " href="true">
-            Forgot Password
-          </a>
+          <Link to="/accounts/reset-password">
+            {" "}
+            <div className=" text-sm text-[#69cb44] font-semibold">
+              Forgot Password
+            </div>
+          </Link>
         </div>
 
         <Button
@@ -127,7 +130,7 @@ const Login = () => {
           Log in
         </Button>
         <p className=" text-sm text-center mt-4 text-slate-500 ">
-          Don't have a account{" "}
+          Don't have an account?{" "}
           <a href="true" className="text-sm text-[#69cb44] font-semibold ">
             Register
           </a>

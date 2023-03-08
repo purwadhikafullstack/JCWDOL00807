@@ -15,7 +15,7 @@ export const loginUser = ({ email, password }) => {
 };
 
 export const keep_login_request = "keep_login_request";
-export const kepp_login_payload = "keep_login_payload";
+export const keep_login_payload = "keep_login_payload";
 
 export const keepLogin = () => {
   try {
