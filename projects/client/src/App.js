@@ -1,14 +1,14 @@
-// import axios from "axios";
-// import { useEffect, useState } from "react";
-import Login from "./Pages/Login";
-import Navbar from "./components/Navbar";
-import Home from "./Pages/Home";
-
-import { Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
+import Navbar from "./components/Navbar.js";
+import Footer from "./components/Footer.js";
+import Register from "./pages/Register";
+import Verification from "./pages/Verification.js";
+import Home from "./pages/Home.js";
+import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
-import Footer from "./components/Footer";
+
+import Login from "./pages/Login";
 
 function App() {
   const dispatch = useDispatch();
@@ -20,7 +20,10 @@ function App() {
   return (
     <div>
       <Navbar />
+      <Footer />
       <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
       </Routes>
