@@ -2,39 +2,44 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-
+const { usersRouter } = require("./routes");
+// library express untuk membaca headers
+const bearerToken = require("express-bearer-token");
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
   cors({
-    origin: [
-      process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
-    ],
+    // origin: [
+    //   process.env.WHITELISTED_DOMAIN &&
+    //     process.env.WHITELISTED_DOMAIN.split(","),
+    // ],
   })
 );
 
 app.use(express.json());
+app.use(bearerToken());
 // Synchronize models Sequelize
-const Sequelize = require("sequelize");
-const Models = require("./models");
-Models.sequelize
-  .sync({
-    force: false,
-    alter: true,
-    logging: console.log,
-  })
-  .then(function () {
-    console.log("Database is Synchronized!");
-  })
-  .catch(function (err) {
-    console.log(err, "Something Went Wrong with Database Update!");
-  });
+// const Sequelize = require("sequelize");
+// const Models = require("./models");
+// Models.sequelize
+//   .sync({
+//     force: false,
+//     alter: true,
+//     logging: console.log,
+//   })
+//   .then(function () {
+//     console.log("Database is Synchronized!");
+//   })
+//   .catch(function (err) {
+//     console.log(err, "Something Went Wrong with Database Update!");
+//   });
 
 //#region API ROUTES
 
 // ===========================
 // NOTE : Add your routes here
+
+//# add Router
 
 app.get("/api", (req, res) => {
   res.send(`Hello, this is my API`);
@@ -45,7 +50,7 @@ app.get("/api/greetings", (req, res, next) => {
     message: "Hello, Student !",
   });
 });
-
+app.use("/api/users", usersRouter);
 // ===========================
 
 // not found

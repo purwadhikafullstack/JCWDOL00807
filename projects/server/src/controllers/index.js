@@ -1,1 +1,4 @@
-module.exports = {};
+const usersControllers = require("./usersControllers");
+module.exports = {
+  usersControllers,
+};

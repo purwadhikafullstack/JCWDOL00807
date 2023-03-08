@@ -2,6 +2,15 @@ import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
 import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar.js";
+import Footer from "./components/Footer.js";
+import Register from "./pages/Register";
+import Verification from "./pages/Verification.js";
+import Home from "./pages/Home.jsx";
+
+import { Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 function App() {
   const [message, setMessage] = useState("");
@@ -15,11 +24,14 @@ function App() {
     })();
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {message}
-      </header>
+    <div>
+      <Navbar />
+      <Footer />
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/authentication/:token" element={<Verification />} />
+        <Route path="/" element={<Home />} />
+      </Routes>
     </div>
   );
 }
