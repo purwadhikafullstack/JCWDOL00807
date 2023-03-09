@@ -2,7 +2,6 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
-const { usersRouter } = require("./routes");
 // library express untuk membaca headers
 const bearerToken = require("express-bearer-token");
 const PORT = process.env.PORT || 8000;
