@@ -43,10 +43,9 @@ export const loginUser = ({ email, password }) => {
   };
 };
 
-
 export const keepLogin = () => {
-  try {
-    return async (dispatch) => {
+  return async (dispatch) => {
+    try {
       dispatch({ type: keep_login_request });
       let getStorage = localStorage.my_Token;
       let response = await axios.get(
@@ -58,8 +57,8 @@ export const keepLogin = () => {
         }
       );
       dispatch(authSlice.actions.keep_login_payload(response.data.data));
-    };
-  } catch (error) {
-    console.log(error);
-  }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 };

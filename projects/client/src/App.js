@@ -13,7 +13,6 @@ import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
 import Login from "./pages/Login";
 
-
 function App() {
   const dispatch = useDispatch();
 
@@ -24,7 +23,6 @@ function App() {
   return (
     <div>
       <Navbar />
-      <Footer />
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/authentication/:token" element={<Verification />} />

@@ -1,13 +1,12 @@
 import {
   Button,
-  Input,
   InputGroup,
   InputRightElement,
   Alert,
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/react";
-import { toast, Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -128,7 +127,7 @@ const Register = () => {
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a
-            href="#"
+            href="true"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
             <img className="w-8 h-8 mr-2" src="" alt="logo" />
@@ -289,7 +288,7 @@ const Register = () => {
                       I accept the{" "}
                       <a
                         className="font-medium hover:underline text-[#69cb44] text-500"
-                        href="#"
+                        href="true"
                       >
                         Terms and Conditions
                       </a>
@@ -310,7 +309,7 @@ const Register = () => {
                       Already have an account?{" "}
                       <Link to="/login">
                         <a
-                          href="#"
+                          href="true"
                           className="font-medium  hover:underline text-[#69cb44] text-500"
                         >
                           Login here

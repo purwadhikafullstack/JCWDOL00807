@@ -15,9 +15,6 @@ const { hashPassword, hashMatch } = require("./../lib/hash");
 // // import JWT
 const { createToken } = require("./../lib/jwt");
 
-//import Middleware
-const transporter = require("./../helper/transporter");
-
 //Import generateOTP and generate Referral code
 const { generateOTP } = require("./../lib/generateOTP");
 const { generateRef } = require("./../lib/generateRef");
@@ -111,7 +108,7 @@ module.exports = {
 
       //mengirimkan link password new password
       let template = await fs.readFile(
-        "/Users/aisyahalghifari/Documents/GitHub/JCWDOL00807/projects/server/src/template/email.html",
+        "/Users/aisyahalghifari/Documents/GitHub/JCWDOL00807/projects/server/src/template/resetPassword.html",
         "utf-8"
       );
       let compiledTemplate = await handlebars.compile(template);
@@ -178,7 +175,7 @@ module.exports = {
         message: error.message,
       });
     }
-     },
+  },
 
   register: async (req, res) => {
     const t = await sequelize.transaction();

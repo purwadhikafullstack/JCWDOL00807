@@ -33,7 +33,7 @@ const SidebarAdmin = () => {
           <ul class="space-y-2">
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -51,7 +51,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -71,7 +71,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -92,7 +92,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -113,7 +113,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -134,7 +134,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg
@@ -155,7 +155,7 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="true"
                 class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <svg

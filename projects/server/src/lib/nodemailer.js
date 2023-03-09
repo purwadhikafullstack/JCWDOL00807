@@ -4,9 +4,9 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
   auth: {
-    user: "alghifariaisyahputri@gmail.com",
+    user: "berakinside1996@gmail.com",
     // password transporter bukan password email kita
-    pass: "amspnklxwezrkwng",
+    pass: "bozymiklaaibfrka",
   },
   tls: {
     rejectUnauthorized: false,

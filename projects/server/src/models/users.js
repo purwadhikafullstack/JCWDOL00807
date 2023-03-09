@@ -10,9 +10,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasOne(models.user_profile, {
-        foreignKey: "users_id",
-      });
       this.hasMany(models.user_address, {
         foreignKey: "users_id",
       }),
@@ -51,6 +48,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       otp: DataTypes.STRING,
       referral_code: DataTypes.STRING,
+      image: DataTypes.STRING,
+      gender: DataTypes.STRING,
+      birthdate: DataTypes.DATE,
     },
     {
       sequelize,

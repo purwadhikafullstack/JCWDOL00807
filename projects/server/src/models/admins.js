@@ -26,9 +26,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         unique: true,
       },
-      access: {
-        type: DataTypes.STRING,
-        defaultValue: "Enabled",
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
       },
     },
     {
