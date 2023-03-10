@@ -1,10 +1,19 @@
-import { Button, Input, InputGroup, InputRightAddon } from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Tooltip,
+} from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
   let user = useSelector((state) => state.auth);
+  let link =
+    process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user?.user?.image;
 
   return (
     <nav>
@@ -21,8 +30,9 @@ const Navbar = () => {
             <div className="flex flex-row justify-between gap-10 items-center">
               <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
               <div className=" flex flex-col justify-center items-center ">
-                <Icon className=" text-[40px]" icon="iconoir:profile-circle" />
-                <p>{user?.user?.name}</p>
+                <Tooltip label={user?.user?.name} fontSize="xs">
+                  <Avatar src={link} size="sm" />
+                </Tooltip>
               </div>
             </div>
           ) : (

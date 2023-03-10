@@ -7,6 +7,7 @@ import Home from "./pages/Home.js";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SidebarAdmin from "./components/SidebarAdmin";
+import UserProfile from "./pages/UserProfile.js";
 
 import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -29,11 +30,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/home-admin" element={<SidebarAdmin />} />
         <Route path="/" element={<Home />} />
-        <Route path="/accounts/reset-password" element={<ForgotPassword />} />
+        <Route path="/accounts/forgot-password" element={<ForgotPassword />} />
         <Route
           path="/accounts/reset-password/:token"
           element={<ResetPassword />}
         />
+        <Route path="/profile" element={<UserProfile />} />
       </Routes>
       <Footer />
     </div>

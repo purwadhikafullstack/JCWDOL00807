@@ -32,8 +32,13 @@ export const authSlice = createSlice({
       state.user = action.payload;
       state.loading = null;
     },
+    updateProfileSuccess: (state, action) => {
+      state.user = action.payload;
+      state.loading = null;
+    },
   },
 });
 
-export const { registerSuccess, loginSuccess } = authSlice.actions;
+export const { registerSuccess, loginSuccess, updateProfileSuccess } =
+  authSlice.actions;
 export default authSlice.reducer;
