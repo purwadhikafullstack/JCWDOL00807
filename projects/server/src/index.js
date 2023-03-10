@@ -6,6 +6,7 @@ const { join } = require("path");
 const bearerToken = require("express-bearer-token");
 const PORT = process.env.PORT || 8000;
 const app = express();
+
 app.use(
   cors({
     // origin: [
@@ -77,12 +78,15 @@ app.use((err, req, res, next) => {
 
 //#region CLIENT
 const clientPath = "../../client/build";
+app.use("/static", express.static(join(__dirname, "public")));
+app.use(express.static("./public"));
+
 app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-app.get("*", (req, res) => {
-  res.sendFile(join(__dirname, clientPath, "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(join(__dirname, clientPath, "index.html"));
+// });
 
 //#endregion
 

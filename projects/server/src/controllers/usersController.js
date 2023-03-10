@@ -4,6 +4,8 @@ const { Op } = require("sequelize");
 const transporter = require("../lib/nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs").promises;
+const deleteFiles = require("../helper/deleteFile");
+const generateUrl = require("../helper/generateUrl");
 
 // import model
 const db = require("./../models/index");
@@ -69,6 +71,14 @@ module.exports = {
         },
       });
 
+      let image = "";
+      if (findUser.dataValues.image) {
+        image = generateUrl(findUser.dataValues.image);
+      }
+
+      delete findUser.dataValues.image;
+      findUser.dataValues.image = image;
+
       res.status(200).send({
         isSuccess: true,
         message: "getData User Login Success",
@@ -106,9 +116,9 @@ module.exports = {
         names = findUser.dataValues.name;
       }
 
-      //mengirimkan link password new password
+      // //mengirimkan link password new password
       let template = await fs.readFile(
-        "/Users/aisyahalghifari/Documents/GitHub/JCWDOL00807/projects/server/src/template/resetPassword.html",
+        "./src/template/resetPassword.html",
         "utf-8"
       );
       let compiledTemplate = await handlebars.compile(template);
@@ -118,7 +128,7 @@ module.exports = {
       });
 
       let mail = {
-        from: `Admin <alghifariaisyahputri@gmail.com>`,
+        from: `Admin-GoKu<berakinside1996@gmail.com>`,
         to: `${email}`,
         subject: "Reset Password",
         html: newTemplate,
@@ -389,6 +399,110 @@ module.exports = {
         isError: true,
         message: error.message,
         data: null,
+      });
+    }
+  },
+  usersProfile: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const id = req.dataToken.id;
+      let profile_picture = req.files.images;
+      let { name, email, gender, birthdate } = req.body;
+      let regxEmail = /\S+@\S+\.\S+/;
+
+      let dataProfile = await users.findOne(
+        { where: { id: id } },
+        { transaction: t }
+      );
+
+      name = name.replace(/"%"/g, " ");
+      let existEmail = await users.findOne(
+        {
+          where: {
+            email: email,
+            id: {
+              [Op.not]: id,
+            },
+          },
+        },
+        { transaction: t }
+      );
+
+      if (regxEmail.test(email) === false) {
+        throw { message: "Not Valid Email" };
+      }
+
+      if (existEmail) throw { message: "email already taken " };
+      await users.update(
+        { name, email, gender, birthdate },
+        { where: { id } },
+        { transaction: t }
+      );
+
+      if (profile_picture) {
+        const photoToEdit = profile_picture[0].path;
+        await users.update(
+          {
+            image: photoToEdit,
+          },
+          { where: { id: id } },
+          { transaction: t }
+        );
+        if (dataProfile.dataValues.image) {
+          console.log("hahah");
+          await fs.unlink(dataProfile.dataValues.image);
+        }
+      }
+
+      const dataProfileUpdate = await users.findOne(
+        { attributes: { exclude: "password" }, where: { id } },
+        { transaction: t }
+      );
+      await t.commit();
+      res.status(200).send({
+        isSuccess: true,
+        message: "update profile success",
+        data: dataProfileUpdate,
+      });
+    } catch (error) {
+      await t.rollback();
+      if (req.files.images) deleteFiles(req.files.images);
+      console.log(error);
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  deleteProfile: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const id = req.dataToken.id;
+      let findUser = await users.findOne({ where: { id } });
+
+      if (!findUser.dataValues.image)
+        throw { message: "You dont have profile picture" };
+
+      if (findUser.dataValues.image) {
+        await users.update(
+          {
+            image: null,
+          },
+          { where: { id: id } },
+          { transaction: t }
+        );
+        await fs.unlink(findUser.dataValues.image);
+      }
+      await t.commit();
+      res.status(200).send({
+        isSuccess: true,
+        message: "Your Profile has been delete",
+      });
+    } catch (error) {
+      await t.rollback();
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
       });
     }
   },

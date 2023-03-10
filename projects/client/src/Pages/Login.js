@@ -37,8 +37,6 @@ const Login = () => {
       let inputEmail = email.current.value;
       let inputPassword = password.current.value;
 
-      console.log();
-
       if (!inputEmail || !inputPassword) {
         setMessage("Data not complete");
       } else if (regxEmail.test(inputEmail) === false) {
@@ -112,7 +110,7 @@ const Login = () => {
           <Checkbox colorScheme="green" size="sm">
             Remember me
           </Checkbox>
-          <Link to="/accounts/reset-password">
+          <Link to="/accounts/forgot-password">
             {" "}
             <div className=" text-sm text-[#69cb44] font-semibold">
               Forgot Password

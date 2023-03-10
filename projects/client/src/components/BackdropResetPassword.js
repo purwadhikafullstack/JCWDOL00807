@@ -13,7 +13,7 @@ import {
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function BackdropResetPassword({ message }) {
+export default function BackdropResetPassword({ message, handleConfirm }) {
   const OverlayOne = () => (
     <ModalOverlay
       bg="blackAlpha.300"
@@ -40,9 +40,15 @@ export default function BackdropResetPassword({ message }) {
             <Text>{message}</Text>
           </ModalBody>
           <ModalFooter>
-            <Link to="/">
-              <Button onClick={onClose}>Close</Button>
-            </Link>
+            {handleConfirm ? (
+              <Link to="/">
+                <Button onClick={() => handleConfirm()}>sure</Button>
+              </Link>
+            ) : (
+              <Link to="/">
+                <Button onClick={onClose}>close</Button>
+              </Link>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
