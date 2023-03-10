@@ -37,7 +37,9 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex flex-row justify-between gap-4 items-center">
-              <Button>Register</Button>
+              <Link to={"/register"}>
+                <Button>Register</Button>
+              </Link>
               <Link to={"/login"}>
                 <Button>Login</Button>
               </Link>

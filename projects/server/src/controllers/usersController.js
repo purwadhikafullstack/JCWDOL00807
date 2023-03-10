@@ -314,25 +314,35 @@ module.exports = {
       let users_id = createUser.dataValues.id;
       let token = createToken({ users_id, name, email, otp });
       let mail;
-      console.log(users_id);
+      // console.log(users_id);
+      // template 1 = template claim voucher dan verification link
+      let template1 = await fs.readFile("./template/verifyClaim.html", "utf-8");
+      let compiledTemplate1 = await handlebars.compile(template1);
+      let newTemplate1 = compiledTemplate1({
+        token: token,
+      });
+      //template 2 = template verification link
+      let template2 = await fs.readFile("./template/verifyEmail.html", "utf-8");
+      let compiledTemplate2 = await handlebars.compile(template2);
+      let newTemplate2 = compiledTemplate2({
+        token: token,
+      });
       if (checkRef.length !== 0) {
         mail = {
           from: `Admin-GoKu<berakinside1996@gmail.com>`,
           to: email,
           subject: "Account Verification & Claim Voucher from Referral code",
-          html: `<a href='http:localhost:8000/api/voucher/${token}'>Claim your voucher from referral code</a>
-          <br>
-          <a href='http:localhost:3000/authentication/${token}'>Click here for verification your account </a> `,
+          html: newTemplate1,
         };
       } else {
         mail = {
           from: `Admin-GoKu<berakinside1996@gmail.com>`,
           to: email,
           subject: "Account Verification",
-          html: `<a href='http:localhost:3000/authentication/${token}'>Click here for verification your account </a>`,
+          html: newTemplate2,
         };
       }
-      console.log(mail);
+      console.log(token);
       await t.commit();
       transporter.sendMail(mail, (errMail, resMail) => {
         if (errMail) {
