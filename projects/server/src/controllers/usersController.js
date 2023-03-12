@@ -7,6 +7,9 @@ const fs = require("fs").promises;
 const deleteFiles = require("../helper/deleteFile");
 const generateUrl = require("../helper/generateUrl");
 
+//import env
+require("dotenv").config();
+
 // import model
 const db = require("./../models/index");
 const users = db.users;
@@ -314,18 +317,22 @@ module.exports = {
       let users_id = createUser.dataValues.id;
       let token = createToken({ users_id, name, email, otp });
       let mail;
+      let reactUrl = process.env.REACT_APP_BASE_URL;
+      console.log(reactUrl);
       // console.log(users_id);
       // template 1 = template claim voucher dan verification link
       let template1 = await fs.readFile("./template/verifyClaim.html", "utf-8");
       let compiledTemplate1 = await handlebars.compile(template1);
       let newTemplate1 = compiledTemplate1({
         token: token,
+        reactUrl: reactUrl,
       });
       //template 2 = template verification link
       let template2 = await fs.readFile("./template/verifyEmail.html", "utf-8");
       let compiledTemplate2 = await handlebars.compile(template2);
       let newTemplate2 = compiledTemplate2({
         token: token,
+        reactUrl: reactUrl,
       });
       if (checkRef.length !== 0) {
         mail = {
