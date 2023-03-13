@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/authentication/:token" element={<Verification />} />
@@ -39,7 +39,7 @@ function App() {
         />
         <Route path="/profile" element={<UserProfile />} />
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

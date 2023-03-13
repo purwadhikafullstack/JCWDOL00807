@@ -38,7 +38,7 @@ const ForgotPassword = () => {
 
   return (
     <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
-      <div className=" relative h-96 w-[500px] flex-col justify-center items-center ">
+      <div className=" relative h-96  w-[320px] md:w-[500px] flex-col justify-center items-center ">
         {message ? (
           <div>
             <Alert status="error" mb="6" mt="2">
@@ -54,7 +54,7 @@ const ForgotPassword = () => {
         )}
         <Input
           variant="flushed"
-          w="500px"
+          className="w-[320px] md:w-[500px]"
           placeholder="Email"
           type="text"
           p="5"
@@ -64,7 +64,7 @@ const ForgotPassword = () => {
           <Button
             colorScheme="whatsapp"
             mt="6"
-            w="full"
+            className="w-[320px] md:w-[500px]"
             rounded="12px"
             onClick={handleSubmit}
           >

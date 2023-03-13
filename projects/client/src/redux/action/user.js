@@ -66,7 +66,6 @@ export const keepLogin = () => {
 export const updateProfile = ({ formData }) => {
   return async (dispatch) => {
     try {
-      console.log(formData);
       let token = localStorage.my_Token;
       const response = await axios.put(
         `${process.env.REACT_APP_API_BASE_URL}/user/profile`,
@@ -77,12 +76,23 @@ export const updateProfile = ({ formData }) => {
           },
         }
       );
-      console.log(response);
       dispatch(keepLogin());
       dispatch(authSlice.actions.updateProfileSuccess(response.data));
     } catch (error) {
       console.log(error.response.data.message);
       dispatch(authSlice.actions.failed(error.response.data.message));
+    }
+  };
+};
+
+export const handleStateError = (name) => {
+  return async (dispatch) => {
+    try {
+      console.log(name);
+      dispatch(authSlice.actions.stateError(name));
+      dispatch(keepLogin());
+    } catch (error) {
+      console.log(error);
     }
   };
 };

@@ -25,6 +25,11 @@ import { updateProfile } from "../redux/action/user";
 
 const UpdateUserProfile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [size, setSize] = React.useState("");
+  const handleClick = (newSize) => {
+    setSize(newSize);
+    onOpen();
+  };
 
   let name = useRef();
   let birthdate = useRef();
@@ -94,7 +99,12 @@ const UpdateUserProfile = () => {
         Update Profile
       </Button>
 
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+      <Drawer
+        size={["full", "md"]}
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+      >
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
@@ -110,7 +120,7 @@ const UpdateUserProfile = () => {
               </div>
             ) : null}
             <Stack spacing="24px">
-              <Image m="0 auto" id="imgprev" w="100px" />
+              <Image m="0 auto" id="imgprev" w="full" />
               <Box>
                 <FormLabel htmlFor="name">Name</FormLabel>
                 <Input
@@ -171,7 +181,7 @@ const UpdateUserProfile = () => {
             <Button variant="outline" mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button colorScheme="blue" onClick={handleUpdateProfile}>
+            <Button colorScheme="whatsapp" onClick={handleUpdateProfile}>
               Submit
             </Button>
           </DrawerFooter>

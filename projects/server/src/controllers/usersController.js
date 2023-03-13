@@ -43,6 +43,8 @@ module.exports = {
         findUser.dataValues.password
       );
 
+      const image = generateUrl(findUser.dataValues.image);
+
       if (matchPassword === false) throw { message: "your password incorect" };
       if (findUser.dataValues.status === "unverified")
         throw { message: "please verified your account" };
@@ -52,6 +54,7 @@ module.exports = {
         isSuccess: true,
         message: "login success",
         name: findUser.dataValues.name,
+        image: image,
         token: token,
       });
     } catch (error) {
@@ -94,6 +97,7 @@ module.exports = {
   forgotPassword: async (req, res) => {
     try {
       const { email } = req.body;
+      let reactUrl = process.env.REACT_APP_BASE_URL;
 
       const regxEmail = /\S+@\S+\.\S+/;
       if (!regxEmail.test(email)) {
@@ -125,6 +129,7 @@ module.exports = {
       let newTemplate = compiledTemplate({
         name: names,
         token: token,
+        reactUrl: reactUrl,
       });
 
       let mail = {

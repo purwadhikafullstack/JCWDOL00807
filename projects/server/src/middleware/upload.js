@@ -19,11 +19,9 @@ const uploadImages = (req, res, next) => {
 
         if (req.files.images[0].size > 1000000) {
           deleteFiles(req.files.images);
-          console.log("haha");
           throw { message: "your image is to large, max 1 mb " };
         }
       }
-      console.log("ini harusnya ga masuk");
 
       next();
     } catch (error) {
