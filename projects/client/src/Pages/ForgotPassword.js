@@ -1,6 +1,7 @@
 import { Alert, AlertIcon, AlertTitle, Input, Button } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 
@@ -74,9 +75,11 @@ const ForgotPassword = () => {
 
         <p className=" text-sm text-center mt-4 text-slate-500 ">
           Or you can create new account?{" "}
-          <a href="true" className="text-sm text-[#69cb44] font-semibold ">
-            create new one
-          </a>
+          <Link to="/register">
+            <span className="text-sm text-[#69cb44] font-semibold ">
+              create new one
+            </span>
+          </Link>
         </p>
       </div>
       {messageSuccess ? (

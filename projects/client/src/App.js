@@ -19,11 +19,12 @@ function App() {
 
   useEffect(() => {
     dispatch(keepLogin());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   return (
     <div>
-      {/* <Navbar /> */}
+      <Navbar />
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/authentication/:token" element={<Verification />} />
@@ -39,7 +40,7 @@ function App() {
         />
         <Route path="/profile" element={<UserProfile />} />
       </Routes>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
