@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const passtoken = process.env.token;
 
 module.exports = {
   tokenVerify: (req, res, next) => {
@@ -12,7 +13,7 @@ module.exports = {
       });
     }
 
-    jwt.verify(token, "123abc", (err, dataToken) => {
+    jwt.verify(token, passtoken, (err, dataToken) => {
       try {
         if (err) throw err;
         req.dataToken = dataToken;

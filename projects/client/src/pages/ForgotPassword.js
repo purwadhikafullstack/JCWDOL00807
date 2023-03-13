@@ -1,6 +1,7 @@
 import { Alert, AlertIcon, AlertTitle, Input, Button } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 
@@ -38,7 +39,7 @@ const ForgotPassword = () => {
 
   return (
     <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
-      <div className=" relative h-96 w-[500px] flex-col justify-center items-center ">
+      <div className=" relative h-96  w-[320px] md:w-[500px] flex-col justify-center items-center ">
         {message ? (
           <div>
             <Alert status="error" mb="6" mt="2">
@@ -54,7 +55,7 @@ const ForgotPassword = () => {
         )}
         <Input
           variant="flushed"
-          w="500px"
+          className="w-[320px] md:w-[500px]"
           placeholder="Email"
           type="text"
           p="5"
@@ -64,7 +65,7 @@ const ForgotPassword = () => {
           <Button
             colorScheme="whatsapp"
             mt="6"
-            w="full"
+            className="w-[320px] md:w-[500px]"
             rounded="12px"
             onClick={handleSubmit}
           >
@@ -74,9 +75,11 @@ const ForgotPassword = () => {
 
         <p className=" text-sm text-center mt-4 text-slate-500 ">
           Or you can create new account?{" "}
-          <a href="true" className="text-sm text-[#69cb44] font-semibold ">
-            create new one
-          </a>
+          <Link to="/register">
+            <span className="text-sm text-[#69cb44] font-semibold ">
+              create new one
+            </span>
+          </Link>
         </p>
       </div>
       {messageSuccess ? (

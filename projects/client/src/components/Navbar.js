@@ -12,8 +12,9 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   let user = useSelector((state) => state.auth);
-  let link =
-    process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user?.user?.image;
+
+  // let link =
+  //   process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user?.user?.image;
 
   return (
     <nav>
@@ -31,7 +32,7 @@ const Navbar = () => {
               <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
               <div className=" flex flex-col justify-center items-center ">
                 <Tooltip label={user?.user?.name} fontSize="xs">
-                  <Avatar src={link} size="sm" />
+                  <Avatar src={user?.user?.image} size="sm" />
                 </Tooltip>
               </div>
             </div>

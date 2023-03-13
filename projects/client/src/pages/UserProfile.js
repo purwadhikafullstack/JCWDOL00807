@@ -9,7 +9,6 @@ import {
   StackDivider,
   Avatar,
   Tooltip,
-  useDisclosure,
 } from "@chakra-ui/react";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -24,7 +23,7 @@ import { keepLogin } from "../redux/action/user";
 const UserProfile = () => {
   const dispatch = useDispatch();
   let user = useSelector((state) => state.auth.user);
-  let link = process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user.image;
+  // let link = process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user.image;
   const [message, setMessage] = useState("");
   const [messageDelete, setMessageDelete] = useState("");
 
@@ -39,7 +38,6 @@ const UserProfile = () => {
   };
 
   const handleDeleteImages = () => {
-    console.log(user);
     if (user?.image) {
       setMessageDelete("are you sure want to delete your profile");
     }
@@ -63,21 +61,23 @@ const UserProfile = () => {
     }
   };
 
-  console.log(message);
-
   return (
     <section
-      className="flex justify-star container mx-auto gap-5  min-h-screen
-      items-center md:flex "
+      className=" flex-row md:flex justify-star container mx-auto gap-5  min-h-screen
+      items-center  px-5 md:px-0 "
     >
-      <Card className=" relative  flex flex-col justify-center w-[20%] ">
+      <Card className=" relative  flex flex-col justify-center   w-[full] md:w-[300px] ">
         <CardHeader className="flex flex-col items-center gap-5">
           {user?.image ? (
             <Tooltip label="Delete Profile" size="xs">
-              <Avatar onClick={handleDeleteImages} size="xl" src={link} />
+              <Avatar
+                onClick={handleDeleteImages}
+                size="xl"
+                src={user?.image}
+              />
             </Tooltip>
           ) : (
-            <Avatar onClick={handleDeleteImages} size="xl" src={link} />
+            <Avatar onClick={handleDeleteImages} size="xl" src={user?.image} />
           )}
 
           <Text fontSize="xl" fontWeight="bold">
@@ -124,7 +124,7 @@ const UserProfile = () => {
         </CardBody>
       </Card>
 
-      <Card w="50%" textColor="#234E52">
+      <Card textColor="#234E52" className="w-[full] md:w-[700px] px-5 md:px-0 ">
         {message ? (
           <CardHeader textAlign="center">
             <AlertSuccess title={message} handleClick={handleClick} />
@@ -139,52 +139,53 @@ const UserProfile = () => {
             bgColor="#e9ffe7"
             rounded="4px"
             textColor="#234E52"
-            pl="20"
           >
-            <Heading size="md" mt="45px">
+            <Heading size="md" mt="45px" textAlign="center">
               My Profile
             </Heading>
           </CardHeader>
         )}
 
-        <CardBody className="">
+        <CardBody>
           <Stack
             divider={<StackDivider />}
             spacing="4"
-            p="10"
-            pl="16"
-            pr="16"
             mt="-3"
+            className=" p-0 md:p-20 "
           >
             <Box className="flex  items-center justify-start gap-20 ">
               <Text w="28" size="xs">
                 Name{" "}
               </Text>
-              <Text fontSize="sm">{user?.name}</Text>
+              <Text className=" text-[10px] md:text-sm  ">{user?.name}</Text>
             </Box>
             <Box className="flex justify-start items-center gap-20 ">
               <Text w="28" size="xs">
                 Phone Number
               </Text>
-              <Text fontSize="sm">{user?.phone_number}</Text>
+              <Text className=" text-[10px] md:text-sm  ">
+                {user?.phone_number}
+              </Text>
             </Box>
             <Box className="flex justify-start  items-center gap-20 ">
               <Text w="28" size="xs">
                 Birthdate
               </Text>
-              <Text fontSize="sm">{user?.birthdate?.slice(0, 10)}</Text>
+              <Text className=" text-[10px] md:text-sm  ">
+                {user?.birthdate?.slice(0, 10)}
+              </Text>
             </Box>
             <Box className="flex  items-center justify-start gap-20 ">
               <Text w="28" size="xs">
                 Gender
               </Text>
-              <Text fontSize="sm">{user?.gender}</Text>
+              <Text className=" text-[10px] md:text-sm  ">{user?.gender}</Text>
             </Box>
             <Box className="flex justify-start  items-center gap-20 ">
               <Text w="28" size="xs">
                 Email
               </Text>
-              <Text fontSize="sm">{user?.email}</Text>
+              <Text className=" text-[10px] md:text-sm  ">{user?.email}</Text>
             </Box>
             <UpdateUserProfile />
           </Stack>

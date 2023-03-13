@@ -19,13 +19,17 @@ const ResetPassword = () => {
   const { token } = useParams();
   let [message, setMessage] = useState("");
   let [messageSuccess, setMessageSuccess] = useState("");
+  const [icon, setIcon] = useState("ic:outline-remove-red-eye");
+  const [icon2, setIcon2] = useState("ic:outline-remove-red-eye");
 
   const handleVisible = () => {
     let password = document.getElementById("myInput");
     if (password.type === "password") {
       password.type = "text";
+      setIcon("mdi:eye-off-outline");
     } else {
       password.type = "password";
+      setIcon("ic:outline-remove-red-eye");
     }
   };
 
@@ -33,8 +37,10 @@ const ResetPassword = () => {
     let password = document.getElementById("myInput2");
     if (password.type === "password") {
       password.type = "text";
+      setIcon2("mdi:eye-off-outline");
     } else {
       password.type = "password";
+      setIcon2("ic:outline-remove-red-eye");
     }
   };
 
@@ -73,7 +79,7 @@ const ResetPassword = () => {
 
   return (
     <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
-      <div className=" relative h-96 w-[500px] flex-col justify-center items-center ">
+      <div className=" relative h-96 w-[full] md:w-[500px] flex-col justify-center items-center ">
         {message ? (
           <div>
             <Alert status="error" mb="6" mt="2">
@@ -88,31 +94,43 @@ const ResetPassword = () => {
           </div>
         )}
 
-        <InputGroup size="md" w="500px" mb="1.5" mt="1.5">
+        <InputGroup
+          size="md"
+          mb="1.5"
+          mt="1.5"
+          className="w-[full] md:w-[500px]"
+        >
           <Input
             variant="flushed"
             placeholder="Password"
+            className="w-[full] md:w-[500px]"
             type="password"
             id="myInput"
             p="5"
             ref={password}
           />
           <InputRightElement>
-            <Icon onClick={handleVisible} icon="ic:outline-remove-red-eye" />
+            <Icon onClick={handleVisible} icon={icon} />
           </InputRightElement>
         </InputGroup>
 
-        <InputGroup size="md" w="500px" mb="1.5" mt="1.5">
+        <InputGroup
+          size="md"
+          mb="1.5"
+          mt="1.5"
+          className="w-[full] md:w-[500px]"
+        >
           <Input
             variant="flushed"
             placeholder="Repeat Password"
             type="password"
             id="myInput2"
             p="5"
+            className="w-[full] md:w-[500px]"
             ref={repeatPassword}
           />
           <InputRightElement>
-            <Icon onClick={handleVisible2} icon="ic:outline-remove-red-eye" />
+            <Icon onClick={handleVisible2} icon={icon2} />
           </InputRightElement>
         </InputGroup>
         <Button

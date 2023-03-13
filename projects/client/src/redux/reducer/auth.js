@@ -35,6 +35,11 @@ export const authSlice = createSlice({
     updateProfileSuccess: (state, action) => {
       state.user = action.payload;
       state.loading = null;
+      state.errorMessage = null;
+    },
+    stateError: (state, action) => {
+      state.user = action.payload;
+      state.errorMessage = null;
     },
   },
 });

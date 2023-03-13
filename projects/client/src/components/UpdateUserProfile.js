@@ -3,7 +3,6 @@ import {
   Button,
   Drawer,
   DrawerBody,
-  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
@@ -22,6 +21,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRef } from "react";
 import { updateProfile } from "../redux/action/user";
+import { handleStateError } from "../redux/action/user";
 
 const UpdateUserProfile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -78,7 +78,13 @@ const UpdateUserProfile = () => {
       setMessage("");
       onClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const onBtnClose = () => {
+    dispatch(handleStateError("cancel"));
+    onClose();
+  };
 
   const onBtnAddFile = (e) => {
     if (e.target.files[0]) {
@@ -94,12 +100,15 @@ const UpdateUserProfile = () => {
         Update Profile
       </Button>
 
-      <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+      <Drawer
+        size={["full", "md"]}
+        isOpen={isOpen}
+        placement="right"
+        onClose={onBtnClose}
+      >
         <DrawerOverlay />
         <DrawerContent>
-          <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">Update My Profile</DrawerHeader>
-
           <DrawerBody>
             {message ? (
               <div>
@@ -110,7 +119,7 @@ const UpdateUserProfile = () => {
               </div>
             ) : null}
             <Stack spacing="24px">
-              <Image m="0 auto" id="imgprev" w="100px" />
+              <Image m="0 auto" id="imgprev" w="full" />
               <Box>
                 <FormLabel htmlFor="name">Name</FormLabel>
                 <Input
@@ -168,10 +177,10 @@ const UpdateUserProfile = () => {
           </DrawerBody>
 
           <DrawerFooter borderTopWidth="1px">
-            <Button variant="outline" mr={3} onClick={onClose}>
+            <Button variant="outline" mr={3} onClick={onBtnClose}>
               Cancel
             </Button>
-            <Button colorScheme="blue" onClick={handleUpdateProfile}>
+            <Button colorScheme="whatsapp" onClick={handleUpdateProfile}>
               Submit
             </Button>
           </DrawerFooter>
