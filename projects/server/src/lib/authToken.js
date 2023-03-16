@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
+const passtoken = process.env.token;
 module.exports = {
   auth: (req, res, next) => {
-    jwt.verify(req.token, "123abc", (err, decode) => {
+    jwt.verify(req.token, passtoken, (err, decode) => {
       if (err) {
         return res.status(401).send("User not auth!");
       }

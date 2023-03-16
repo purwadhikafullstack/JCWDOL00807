@@ -14,6 +14,8 @@ import UsersAddress from "./pages/UsersAddress";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
+import Login from "./pages/Login";
+import AdminHome from "./pages/Admin-Home.js";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect } from "react";
 
@@ -34,10 +36,10 @@ function App() {
         <Route path="/accounts/address" element={<UsersAddress />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home-admin" element={<SidebarAdmin />} />
         <Route path="/" element={<Home />} />
         <Route path="/accounts/forgot-password" element={<ForgotPassword />} />
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
+        <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
         <Route path="*" element={<PageNotFound />} />
         <Route
