@@ -33,6 +33,12 @@ module.exports = {
       longitude: {
         type: Sequelize.STRING,
       },
+      recipient: {
+        type: Sequelize.STRING,
+      },
+      recipients_phone: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
