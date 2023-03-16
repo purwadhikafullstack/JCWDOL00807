@@ -21,12 +21,15 @@ module.exports = (sequelize, DataTypes) => {
       province: DataTypes.STRING,
       postal_code: DataTypes.INTEGER,
       country: DataTypes.STRING,
+
       isDefault: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
       latitude: DataTypes.STRING,
       longitude: DataTypes.STRING,
+      recipient: DataTypes.STRING,
+      recipients_phone: DataTypes.STRING,
     },
     {
       sequelize,

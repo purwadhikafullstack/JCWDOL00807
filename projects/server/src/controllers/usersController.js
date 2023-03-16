@@ -125,7 +125,7 @@ module.exports = {
 
       // //mengirimkan link password new password
       let template = await fs.readFile(
-        "./src/template/resetPassword.html",
+        "./template/resetPassword.html",
         "utf-8"
       );
       let compiledTemplate = await handlebars.compile(template);
@@ -461,7 +461,6 @@ module.exports = {
           { transaction: t }
         );
         if (dataProfile.dataValues.image) {
-          console.log("hahah");
           await fs.unlink(dataProfile.dataValues.image);
         }
       }

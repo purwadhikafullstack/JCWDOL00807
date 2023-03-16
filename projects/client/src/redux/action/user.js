@@ -88,7 +88,6 @@ export const updateProfile = ({ formData }) => {
 export const handleStateError = (name) => {
   return async (dispatch) => {
     try {
-      console.log(name);
       dispatch(authSlice.actions.stateError(name));
       dispatch(keepLogin());
     } catch (error) {

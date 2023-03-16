@@ -7,25 +7,17 @@ import {
   Stack,
   Text,
   StackDivider,
-  Avatar,
-  Tooltip,
 } from "@chakra-ui/react";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
-import { Icon } from "@iconify/react";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
-import BackdropResetPassword from "../components/BackdropResetPassword";
-import axios from "axios";
-import { keepLogin } from "../redux/action/user";
+import SidebarUser from "../components/SidebarUser";
 
 const UserProfile = () => {
-  const dispatch = useDispatch();
   let user = useSelector((state) => state.auth.user);
-  // let link = process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user.image;
   const [message, setMessage] = useState("");
-  const [messageDelete, setMessageDelete] = useState("");
 
   useEffect(() => {
     if (user.message) {
@@ -37,93 +29,12 @@ const UserProfile = () => {
     setMessage("");
   };
 
-  const handleDeleteImages = () => {
-    if (user?.image) {
-      setMessageDelete("are you sure want to delete your profile");
-    }
-  };
-  const handleConfirm = async () => {
-    let token = localStorage.my_Token;
-    try {
-      await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/user/delete-photo-profile`,
-        {},
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      dispatch(keepLogin());
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <section
       className=" flex-row md:flex justify-star container mx-auto gap-5  min-h-screen
       items-center  px-5 md:px-0 "
     >
-      <Card className=" relative  flex flex-col justify-center   w-[full] md:w-[300px] ">
-        <CardHeader className="flex flex-col items-center gap-5">
-          {user?.image ? (
-            <Tooltip label="Delete Profile" size="xs">
-              <Avatar
-                onClick={handleDeleteImages}
-                size="xl"
-                src={user?.image}
-              />
-            </Tooltip>
-          ) : (
-            <Avatar onClick={handleDeleteImages} size="xl" src={user?.image} />
-          )}
-
-          <Text fontSize="xl" fontWeight="bold">
-            {user?.name}
-          </Text>
-        </CardHeader>
-
-        <CardBody className=" flex flex-col gap-10 h-screen">
-          <Box className="flex flex-row gap-3 ">
-            <Icon className=" text-2xl " icon="line-md:account-small" />
-            <Box>
-              <Text fontWeight="bold" size="sm">
-                My Account
-              </Text>
-              <Text pt="2" fontSize="sm">
-                My Profile
-              </Text>
-              <Text pt="2" fontSize="sm">
-                Change My Password
-              </Text>
-              <Text pt="2" fontSize="sm">
-                Change My Address
-              </Text>
-            </Box>
-          </Box>
-
-          <Box className="flex flex-row gap-3 ">
-            <Icon className=" text-2xl" icon="ant-design:form-outlined" />
-            <Box>
-              <Text fontWeight="bold" size="sm">
-                My Order
-              </Text>
-              <Text pt="2" fontSize="sm">
-                History Order
-              </Text>
-            </Box>
-          </Box>
-          <Box className="flex flex-row gap-3 ">
-            <Icon className=" text-2xl " icon="ri:hand-heart-line" />
-            <Text fontWeight="bold" size="sm">
-              Referal Code
-            </Text>
-          </Box>
-        </CardBody>
-      </Card>
-
+      <SidebarUser />
       <Card textColor="#234E52" className="w-[full] md:w-[700px] px-5 md:px-0 ">
         {message ? (
           <CardHeader textAlign="center">
@@ -191,12 +102,6 @@ const UserProfile = () => {
           </Stack>
         </CardBody>
       </Card>
-      {messageDelete ? (
-        <BackdropResetPassword
-          message={messageDelete}
-          handleConfirm={handleConfirm}
-        />
-      ) : null}
     </section>
   );
 };
