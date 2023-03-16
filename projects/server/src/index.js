@@ -38,8 +38,16 @@ app.use(bearerToken());
 
 // ===========================
 // NOTE : Add your routes here
-const { usersRouter } = require("./routes");
+const {
+  usersRouter,
+  usersAddressRouter,
+  rajaOngkirRouter,
+  geoLocationRouter,
+} = require("./routes");
 app.use("/api/user", usersRouter);
+app.use("/api/user-address", usersAddressRouter);
+app.use("/api/raja-ongkir", rajaOngkirRouter);
+app.use("/api/geo-location", geoLocationRouter);
 
 //# add Router
 

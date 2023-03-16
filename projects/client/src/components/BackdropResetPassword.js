@@ -13,7 +13,11 @@ import {
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export default function BackdropResetPassword({ message, handleConfirm }) {
+export default function BackdropResetPassword({
+  message,
+  handleConfirm,
+  handleClose,
+}) {
   const OverlayOne = () => (
     <ModalOverlay
       bg="blackAlpha.300"
@@ -24,6 +28,7 @@ export default function BackdropResetPassword({ message, handleConfirm }) {
   useEffect(() => {
     setOverlay(<OverlayOne />);
     onOpen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -35,15 +40,13 @@ export default function BackdropResetPassword({ message, handleConfirm }) {
         {overlay}
         <ModalContent>
           <ModalHeader></ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={handleClose} />
           <ModalBody>
             <Text>{message}</Text>
           </ModalBody>
           <ModalFooter>
             {handleConfirm ? (
-              <Link to="/">
-                <Button onClick={() => handleConfirm()}>sure</Button>
-              </Link>
+              <Button onClick={(e) => handleConfirm("")}>sure</Button>
             ) : (
               <Link to="/">
                 <Button onClick={onClose}>close</Button>
