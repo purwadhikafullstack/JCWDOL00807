@@ -38,8 +38,9 @@ app.use(bearerToken());
 
 // ===========================
 // NOTE : Add your routes here
-const { usersRouter } = require("./routes");
+const { usersRouter, adminRouter } = require("./routes");
 app.use("/api/user", usersRouter);
+app.use("/api/admin", adminRouter);
 
 //# add Router
 

@@ -13,6 +13,8 @@ import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
 import Login from "./pages/Login";
+import AdminHome from "./pages/Admin-Home.js";
+import { Switch } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
@@ -29,10 +31,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/home-admin" element={<SidebarAdmin />} />
         <Route path="/" element={<Home />} />
         <Route path="/accounts/forgot-password" element={<ForgotPassword />} />
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
+        <Route path="/admin/home" element={<AdminHome />} />
         <Route path="*" element={<PageNotFound />} />
         <Route
           path="/accounts/reset-password/:token"
