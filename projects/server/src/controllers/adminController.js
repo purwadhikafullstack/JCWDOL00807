@@ -97,6 +97,7 @@ limit 3
         dataToSend.dataChart = dataChart;
         dataToSend.topProduct = topProduct;
         dataToSend.topBranch = topBranch;
+        dataToSend.branchName = "Super Admin";
         dataToSend.role = role;
         res.status(200).send({
           isError: false,

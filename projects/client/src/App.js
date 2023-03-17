@@ -1,11 +1,8 @@
-import Navbar from "./components/Navbar.js";
-import Footer from "./components/Footer.js";
 import Register from "./pages/Register";
 import Verification from "./pages/Verification.js";
 import Home from "./pages/Home.js";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import SidebarAdmin from "./components/SidebarAdmin";
 import UserProfile from "./pages/UserProfile.js";
 import PageNotFound from "./pages/PageNotFound";
 import Login from "./pages/Login";
@@ -29,14 +26,12 @@ function App() {
 
   return (
     <div>
-      <Navbar />
       <Routes>
         <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/accounts/address" element={<UsersAddress />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/accounts/forgot-password" element={<ForgotPassword />} />
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
@@ -46,7 +41,6 @@ function App() {
           element={<ResetPassword />}
         />
       </Routes>
-      <Footer />
     </div>
   );
 }

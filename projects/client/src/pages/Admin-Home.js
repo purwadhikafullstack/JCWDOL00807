@@ -14,41 +14,16 @@ import { Doughnut } from "react-chartjs-2";
 const AdminHome = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState();
-  const [dataChart, setDataChart] = useState([]);
-  const [topBranch, setTopBranch] = useState();
-  const [topProduct, setTopProduct] = useState();
-  const [totalStats, setTotalStats] = useState();
-  const [branchName, setBranchName] = useState();
-  const [isActive, setIsActive] = useState();
-  const [adminRole, setAdminRole] = useState();
-  const [dataBranchTransaction, setDataBranchTransaction] = useState();
+  const [dataChart, setDataChart] = useState({});
+  const [topBranch, setTopBranch] = useState(null);
+  const [topProduct, setTopProduct] = useState(null);
+  const [totalStats, setTotalStats] = useState(null);
+  const [branchName, setBranchName] = useState(null);
+  const [isActive, setIsActive] = useState(null);
+  const [adminRole, setAdminRole] = useState(null);
+  const [dataBranchTransaction, setDataBranchTransaction] = useState(null);
+  const [dataDone, setDataDone] = useState(false);
 
-  let getDataDashboard = async () => {
-    try {
-      let response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/admin/getDataDashboard`,
-        {
-          headers: {
-            // Authorization: `${token}`,
-            Authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzg5Mzg5NDcsImV4cCI6MTY3OTExMTc0N30.Vsp3evC-jLH9PE-xN7sC5cV1cZpsuOglpg3s8NjVTLk",
-          },
-        }
-      );
-
-      setDataChart(response?.data?.data?.dataChart);
-      setTopBranch(response?.data?.data?.topBranch);
-      setTopProduct(response?.data?.data?.topProduct);
-      setTotalStats(response?.data?.data?.totalStats[0]);
-      setBranchName(response?.data?.data?.branchName[0]);
-      setIsActive(response?.data?.data?.isActive);
-      setAdminRole(response?.data?.data?.role);
-      setDataBranchTransaction(response?.data?.data?.dataBranchTransaction);
-      console.log("asdasd");
-
-      console.log(response.data.data);
-    } catch (error) {}
-  };
   const dailySaleChart = () => {
     if (dataChart?.length == 0) {
       return <div>Loading...</div>;
@@ -181,14 +156,48 @@ const AdminHome = () => {
     // const role = localStorage.getItem("role");
     // console.log(token, role);
     // setRole(role);
+    let getDataDashboard = async () => {
+      try {
+        let response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/admin/getDataDashboard`,
+          {
+            headers: {
+              // Authorization: `${token}`,
+              Authorization:
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkwMjMyNzYsImV4cCI6MTY3OTE5NjA3Nn0.eO5HTFHqhzu5qAkcIkQhBkK6QzNYeU0lrob9PQcuzag",
+            },
+          }
+        );
+        console.log(response.data.data);
+        await setDataChart(response?.data?.data?.dataChart);
+        setTopBranch(response?.data?.data?.topBranch);
+        setTopProduct(response?.data?.data?.topProduct);
+        console.log(response?.data?.data?.totalStats[0]);
+        setTotalStats(response?.data?.data?.totalStats[0]);
+        console.log(response?.data?.data?.branchName);
+        setBranchName(response?.data?.data?.branchName[0]);
+        setIsActive(response?.data?.data?.isActive);
+        setAdminRole(response?.data?.data?.role);
+        setDataBranchTransaction(response?.data?.data?.dataBranchTransaction);
+        setDataDone(true);
+
+        console.log("asdasdasdas");
+        console.log(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     getDataDashboard();
-    dailySaleChart();
-    dailyOrderChart();
-    dailyProductSoldChart();
+
     // if (!token) {
     //   navigate("/admin/login");
     // }
   }, []);
+  useEffect(() => {
+    dailySaleChart();
+    dailyOrderChart();
+    dailyProductSoldChart();
+  }, [dataDone]);
   return (
     <div>
       <SidebarAdmin />
@@ -366,7 +375,7 @@ const AdminHome = () => {
             <div className="bg-neutral-50 py-3 px-5 dark:bg-neutral-700 dark:text-black-200 text-2xl font-bold">
               <center>Transaction</center>
             </div>
-            <section className="container px-4 mx-auto">
+            <section className="container px-4 mx-auto mb-5">
               <div className="flex flex-col">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                   <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -517,7 +526,7 @@ const AdminHome = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-6 mb-10">
+              {/* <div className="flex items-center justify-between mt-6 mb-10">
                 <a
                   href="true"
                   className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
@@ -606,7 +615,7 @@ const AdminHome = () => {
                     />
                   </svg>
                 </a>
-              </div>
+              </div> */}
             </section>
           </>
         ) : null}
