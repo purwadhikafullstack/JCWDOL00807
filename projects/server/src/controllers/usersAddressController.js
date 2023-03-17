@@ -66,9 +66,9 @@ module.exports = {
       );
 
       await t.commit();
-      res.status(200).send({
+      res.status(201).send({
         isSuccess: true,
-        message: "add address success",
+        message: "Create new address success",
       });
     } catch (error) {
       console.log(error);
@@ -100,7 +100,7 @@ module.exports = {
 
       res.status(200).send({
         isSuccess: true,
-        message: "delete user address successful",
+        message: "delete user address success",
       });
     } catch (error) {
       res.status(500).send({
@@ -112,7 +112,6 @@ module.exports = {
   findAllAddress: async (req, res) => {
     try {
       const id = req.dataToken.id;
-      console.log("hallo");
       const getAllUserAddress = await user_address.findAll(
         { order: [["isDefault", "DESC"]] },
         {
