@@ -12,16 +12,16 @@ module.exports = {
   },
 };
 
-// const createToken = (payload) => {
-//   return jwt.sign(payload, "123abc", {
-//     expiresIn: "48h",
-//   });
-// };
+const createToken = (payload) => {
+  return jwt.sign(payload, "123abc", {
+    expiresIn: "48h",
+  });
+};
 
-// let admins_id = 1;
-// let name = "abdul";
-// let email = "abdul@gmail.com";
-// let role = "admin branch";
-// let isActive = true;
-// let token = createToken({ admins_id, name, email, role, isActive });
-// console.log(token);
+let admins_id = 1;
+let name = "mamat";
+let email = "mamat@gmail.com";
+let role = "super admin";
+let isActive = true;
+let token = createToken({ admins_id, name, email, role, isActive });
+console.log(token);
