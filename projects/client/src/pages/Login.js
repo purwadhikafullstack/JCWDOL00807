@@ -40,9 +40,9 @@ const Login = () => {
       let inputPassword = password.current.value;
 
       if (!inputEmail || !inputPassword) {
-        setMessage("Data not complete");
+        setMessage("Incomplete data. Please fill in missing information.");
       } else if (regxEmail.test(inputEmail) === false) {
-        setMessage("Not Valid Email");
+        setMessage("The email address you entered is not valid");
       } else {
         setMessage("");
         dispatch(
@@ -118,7 +118,7 @@ const Login = () => {
         </InputGroup>
 
         <div className=" flex justify-start mt-6">
-          <Link to="/accounts/forgot-password">
+          <Link to="/accounts/reset-password">
             <div className=" text-sm text-[#69cb44] font-semibold">
               Forgot Password
             </div>

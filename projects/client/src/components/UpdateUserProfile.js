@@ -72,7 +72,7 @@ const UpdateUserProfile = () => {
 
   useEffect(() => {
     if (user?.user.birthdate) {
-      setdate(user.user.birthdate.slice(0, 10));
+      setdate(user.user.birthdate);
     }
     if (user.errorMessage) {
       setMessage(user.errorMessage);
@@ -99,9 +99,14 @@ const UpdateUserProfile = () => {
 
   const onBtnAddFile = (e) => {
     if (e.target.files[0]) {
-      setAddFile(e.target.files[0]);
-      let preview = document.getElementById("imgprev");
-      preview.src = URL.createObjectURL(e.target.files[0]);
+      if (e.target.files[0].size > 1000000) {
+        setMessage("Sorry, the image size cannot exceed 1MB.");
+      } else {
+        setMessage("");
+        setAddFile(e.target.files[0]);
+        let preview = document.getElementById("imgprev");
+        preview.src = URL.createObjectURL(e.target.files[0]);
+      }
     }
   };
 
@@ -180,7 +185,7 @@ const UpdateUserProfile = () => {
                   ref={image}
                   name="image"
                   id="image"
-                  accept="image/png,image/jpg"
+                  accept="image/png,image/jpg,image/gif"
                   onChange={onBtnAddFile}
                 />
               </Box>

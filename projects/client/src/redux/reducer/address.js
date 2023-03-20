@@ -37,7 +37,7 @@ export const addressSlice = createSlice({
       state.errorMessage = null;
     },
     findAll_address_request: (state, action) => {
-      state.user = action;
+      state.userAddress = action;
       state.loading = null;
     },
   },

@@ -53,7 +53,7 @@ app.use("/api/user-address", usersAddressRouter);
 app.use("/api/raja-ongkir", rajaOngkirRouter);
 app.use("/api/geo-location", geoLocationRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/products", categoriesProductRouter);
+app.use("/api/categories", categoriesProductRouter);
 
 //# add Router
 

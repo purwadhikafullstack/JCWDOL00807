@@ -18,7 +18,7 @@ const ForgotPassword = () => {
       let inputEmail = email.current.value;
 
       if (!regxEmail.test(inputEmail)) {
-        setMessage("not valid email");
+        setMessage("The email address you entered is not valid");
         return setLoading(false);
       } else {
         setMessage("");

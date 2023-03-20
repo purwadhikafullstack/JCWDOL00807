@@ -14,26 +14,6 @@ export const handleStateError = (name) => {
   };
 };
 
-// export const keepLogin = () => {
-//   return async (dispatch) => {
-//     try {
-//       dispatch({ type: keep_login_request });
-//       let getStorage = localStorage.my_Token;
-//       let response = await axios.get(
-//         `${process.env.REACT_APP_API_BASE_URL}/user/keep-login`,
-//         {
-//           headers: {
-//             Authorization: `${getStorage}`,
-//           },
-//         }
-//       );
-//       dispatch(authSlice.actions.keep_login_payload(response.data.data));
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-// };
-
 export const findAllAddress = () => {
   return async (dispatch) => {
     dispatch({ type: findAll_address_request });

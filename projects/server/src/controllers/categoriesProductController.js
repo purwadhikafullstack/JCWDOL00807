@@ -12,24 +12,19 @@ const { createToken } = require("./../lib/jwt");
 module.exports = {
   createCategories: async (req, res) => {
     try {
-      const id = req.dataToken.id;
+      const { id, role, isActive } = req.dataToken;
       const { name } = req.body;
 
-      const findAdmin = await admins.findOne({
-        where: { id },
-      });
-      if (
-        findAdmin.dataValues.role !== "admin branch" ||
-        findAdmin.dataValues.isActive === false
-      )
+      if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
+
       if (!name) throw { message: "Data not complete" };
 
       const isExist = await products_categories.findOne({
         where: { name },
       });
       if (isExist) {
-        throw { message: "Product category already exists" };
+        throw { message: "Input field already exists" };
       }
 
       await products_categories.create({
@@ -49,17 +44,12 @@ module.exports = {
   },
   updateCategory: async (req, res) => {
     try {
-      const admin_id = req.dataToken.id;
+      const { id: admin_id, role, isActive } = req.dataToken;
+
       const { name } = req.body;
       const { id } = req.params;
 
-      const findAdmin = await admins.findOne({
-        where: { id: admin_id },
-      });
-      if (
-        findAdmin.dataValues.role !== "admin branch" ||
-        findAdmin.dataValues.isActive === false
-      )
+      if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
       if (!name) throw { message: "Data not complete" };
 
@@ -97,16 +87,11 @@ module.exports = {
   },
   deleteCategory: async (req, res) => {
     try {
-      const admin_id = req.dataToken.id;
+      const { id: admin_id, role, isActive } = req.dataToken;
+
       const { id } = req.params;
 
-      const findAdmin = await admins.findOne({
-        where: { id: admin_id },
-      });
-      if (
-        findAdmin.dataValues.role !== "admin branch" ||
-        findAdmin.dataValues.isActive === false
-      )
+      if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
 
       const isExistCategory = await products_categories.findOne({
@@ -129,6 +114,39 @@ module.exports = {
       });
     }
   },
+  findAllCategory: async (req, res) => {
+    try {
+      const { id: admin_id, role, isActive } = req.dataToken;
+
+      if (role !== "admin branch" || isActive === false)
+        throw { message: "Unauthorization" };
+
+      const getAllData = await products_categories.findAll({
+        attributes: [
+          "id",
+          "name",
+          [
+            sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%y-%m-%d"),
+            "createdAt",
+          ],
+          [
+            sequelize.fn("DATE_FORMAT", sequelize.col("updatedAt"), "%y-%m-%d"),
+            "updatedAt",
+          ],
+        ],
+        order: [["id", "DESC"]],
+      });
+      res.status(200).send({
+        isSuccess: true,
+        data: getAllData,
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
 
   temporary: async (req, res) => {
     try {
@@ -141,7 +159,12 @@ module.exports = {
 
       console.log(findAdmin);
 
-      token = createToken({ id: findAdmin.dataValues.id });
+      token = createToken({
+        id: findAdmin.dataValues.id,
+        email: findAdmin.dataValues.email,
+        role: findAdmin.dataValues.role,
+        isActive: findAdmin.dataValues.isActive,
+      });
       res.status(200).send({
         isSuccess: true,
         message: "login success",

@@ -181,10 +181,10 @@ const AdminHome = () => {
     // const role = localStorage.getItem("role");
     // console.log(token, role);
     // setRole(role);
-    getDataDashboard();
-    dailySaleChart();
-    dailyOrderChart();
-    dailyProductSoldChart();
+    // getDataDashboard();
+    // dailySaleChart();
+    // dailyOrderChart();
+    // dailyProductSoldChart();
     // if (!token) {
     //   navigate("/admin/login");
     // }

@@ -38,6 +38,7 @@ export const loginUser = ({ email, password }) => {
       );
       dispatch(authSlice.actions.loginSuccess(getUserLogin.data));
     } catch (error) {
+      console.log(error);
       dispatch(authSlice.actions.failed(error.response.data.message));
     }
   };
