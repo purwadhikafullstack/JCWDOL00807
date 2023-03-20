@@ -19,6 +19,7 @@ import SidebarUser from "../components/SidebarUser";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
+  console.log(user);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -35,11 +36,10 @@ const UserProfile = () => {
     <>
     <Navbar />
     <section
-      className=" flex-row md:flex justify-star container mx-auto gap-5  min-h-screen
-      items-center  px-5 md:px-0 "
+      className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
+      items-center  px-5 md:px-0  "
     >
-      <SidebarUser />
-      <Card textColor="#234E52" className="w-[full] md:w-[700px] px-5 md:px-0 ">
+      <Card textColor="#234E52" className="w-[full] md:w-[full] px-5 md:px-0 ">
         {message ? (
           <CardHeader textAlign="center">
             <AlertSuccess title={message} handleClick={handleClick} />
@@ -60,51 +60,66 @@ const UserProfile = () => {
             </Heading>
           </CardHeader>
         )}
-
-        <CardBody>
-          <Stack
-            divider={<StackDivider />}
-            spacing="4"
-            mt="-3"
-            className=" p-0 md:p-20 "
-          >
-            <Box className="flex  items-center justify-start gap-20 ">
-              <Text w="28" size="xs">
-                Name{" "}
-              </Text>
-              <Text className=" text-[10px] md:text-sm  ">{user?.name}</Text>
-            </Box>
-            <Box className="flex justify-start items-center gap-20 ">
-              <Text w="28" size="xs">
-                Phone Number
-              </Text>
-              <Text className=" text-[10px] md:text-sm  ">
-                {user?.phone_number}
-              </Text>
-            </Box>
-            <Box className="flex justify-start  items-center gap-20 ">
-              <Text w="28" size="xs">
-                Birthdate
-              </Text>
-              <Text className=" text-[10px] md:text-sm  ">
-                {user?.birthdate?.slice(0, 10)}
-              </Text>
-            </Box>
-            <Box className="flex  items-center justify-start gap-20 ">
-              <Text w="28" size="xs">
-                Gender
-              </Text>
-              <Text className=" text-[10px] md:text-sm  ">{user?.gender}</Text>
-            </Box>
-            <Box className="flex justify-start  items-center gap-20 ">
-              <Text w="28" size="xs">
-                Email
-              </Text>
-              <Text className=" text-[10px] md:text-sm  ">{user?.email}</Text>
-            </Box>
-            <UpdateUserProfile />
-          </Stack>
-        </CardBody>
+        <div className=" md:flex justify-start  md:px-5 items-center flex flex-row ">
+          <SidebarUser />
+          <CardBody>
+            <Stack
+              divider={<StackDivider />}
+              spacing="4"
+              className=" p-0 md:p-20 shadow shadow-slate-200 rounded-lg  "
+            >
+              <Box className="flex  items-center justify-start gap-20 ">
+                <Text w="28" size="xs">
+                  Name{" "}
+                </Text>
+                <Text className=" text-[10px] md:text-sm  ">{user?.name}</Text>
+              </Box>
+              <Box className="flex justify-start items-center gap-20 ">
+                <Text w="28" size="xs">
+                  Phone Number
+                </Text>
+                <Text className=" text-[10px] md:text-sm  ">
+                  {user?.phone_number}
+                </Text>
+              </Box>
+              <Box className="flex justify-start  items-center gap-20 ">
+                <Text w="28" size="xs">
+                  Birthdate
+                </Text>
+                {user?.birthdate ? (
+                  <Text className=" text-[10px] md:text-sm  ">
+                    {user?.birthdate}
+                  </Text>
+                ) : (
+                  <Text className=" text-[10px] md:text-sm  text-red-600 font-semibold ">
+                    Update Birthdate
+                  </Text>
+                )}
+              </Box>
+              <Box className="flex  items-center justify-start gap-20 ">
+                <Text w="28" size="xs">
+                  Gender
+                </Text>
+                {user?.gender ? (
+                  <Text className=" text-[10px] md:text-sm  ">
+                    {user?.gender}
+                  </Text>
+                ) : (
+                  <Text className=" text-[10px] md:text-sm  text-red-600 font-semibold ">
+                    Update Gender
+                  </Text>
+                )}
+              </Box>
+              <Box className="flex justify-start  items-center gap-20 ">
+                <Text w="28" size="xs">
+                  Email
+                </Text>
+                <Text className=" text-[10px] md:text-sm  ">{user?.email}</Text>
+              </Box>
+              <UpdateUserProfile />
+            </Stack>
+          </CardBody>
+        </div>
       </Card>
     </section>
     <Footer />

@@ -33,29 +33,44 @@ module.exports = {
       const { email, password } = req.query;
       const regxEmail = /\S+@\S+\.\S+/;
 
-      if (!email || !password) throw { message: "data not complite" };
-      if (!regxEmail.test(email)) throw { message: "not valid email" };
+      if (!email || !password)
+        throw {
+          message: "Incomplete data. Please fill in missing information.",
+        };
+      if (!regxEmail.test(email))
+        throw {
+          message: "The email address you entered is not valid.",
+        };
 
       const findUser = await users.findOne({
         where: { email },
       });
-      if (findUser === null) throw { message: "email not found" };
-
+      if (findUser === null)
+        throw {
+          message: "Couldn't find the email you entered ",
+        };
       const matchPassword = await hashMatch(
         password,
         findUser.dataValues.password
       );
+      console.log(matchPassword);
 
-      const image = generateUrl(findUser.dataValues.image);
+      if (matchPassword === false)
+        throw { message: "Password you entered is incorrect" };
+      if (findUser.dataValues.status === "Unverified")
+        throw {
+          message:
+            "Your account has not yet been verified. Please check your email",
+        };
 
-      if (matchPassword === false) throw { message: "your password incorect" };
-      if (findUser.dataValues.status === "unverified")
-        throw { message: "please verified your account" };
-
+      let image = "";
+      if (findUser.dataValues.image) {
+        image = generateUrl(findUser.dataValues.image);
+      }
       token = createToken({ id: findUser.dataValues.id });
       res.status(200).send({
         isSuccess: true,
-        message: "login success",
+        message: "Login success",
         name: findUser.dataValues.name,
         image: image,
         token: token,
@@ -71,7 +86,20 @@ module.exports = {
     try {
       let id = req.dataToken.id;
       const findUser = await users.findOne({
-        attributes: { exclude: "password" },
+        attributes: [
+          "name",
+          "email",
+          "phone_number",
+          "referral_code",
+          "image",
+          "gender",
+          "otp",
+          "status",
+          [
+            sequelize.fn("DATE_FORMAT", sequelize.col("birthdate"), "%Y-%m-%d"),
+            "birthdate",
+          ],
+        ],
         where: {
           id: id,
         },
@@ -164,13 +192,19 @@ module.exports = {
 
       let regxPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
 
-      if (!password || !repeatPassword) throw { message: "data not complete" };
+      if (!password || !repeatPassword)
+        throw {
+          message: "Incomplete data. Please fill in missing information.",
+        };
       if (password !== repeatPassword)
-        throw { message: "password and repeat password not match" };
+        throw {
+          message:
+            "Password and repeat password do not match. Please make sure they are the same.",
+        };
       if (!regxPassword.test(password))
         throw {
           message:
-            "Password must be contains number and alphabet with minimum 6 character and maximum 12 character",
+            "Please choose a password that contains both letters and numbers, and is between 6 and 12 character.",
         };
 
       await users.update(
@@ -184,7 +218,7 @@ module.exports = {
       await t.commit();
       res.status(201).send({
         isSuccess: true,
-        message: "your password has been update",
+        message: "Your password has been updated",
       });
     } catch (error) {
       await t.rollback();
@@ -422,6 +456,10 @@ module.exports = {
       let { name, email, gender, birthdate } = req.body;
       let regxEmail = /\S+@\S+\.\S+/;
 
+      if (!birthdate)
+        throw {
+          message: "Your date of birth is required. Please fill in the field.",
+        };
       let dataProfile = await users.findOne(
         { where: { id: id } },
         { transaction: t }
@@ -441,10 +479,14 @@ module.exports = {
       );
 
       if (regxEmail.test(email) === false) {
-        throw { message: "Not Valid Email" };
+        throw {
+          message:
+            "The email address you entered is not valid. Please try again.",
+        };
       }
 
-      if (existEmail) throw { message: "email already taken " };
+      if (existEmail)
+        throw { message: "Sorry, that email address is already in use." };
       await users.update(
         { name, email, gender, birthdate },
         { where: { id } },
@@ -472,7 +514,8 @@ module.exports = {
       await t.commit();
       res.status(200).send({
         isSuccess: true,
-        message: "update profile success",
+        message:
+          "Profile update complete. Thank you for keeping your information up to date!",
         data: dataProfileUpdate,
       });
     } catch (error) {
@@ -507,7 +550,7 @@ module.exports = {
       await t.commit();
       res.status(200).send({
         isSuccess: true,
-        message: "Your Profile has been delete",
+        message: "Your profile picture has been delete",
       });
     } catch (error) {
       await t.rollback();

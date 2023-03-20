@@ -53,12 +53,14 @@ const ResetPassword = () => {
       let regxPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
 
       if (!inputPassword || !inputRepeatPassword) {
-        setMessage("Data not Complete");
+        setMessage("Incomplete data. Please fill in missing information.");
       } else if (inputPassword !== inputRepeatPassword) {
-        setMessage("Password and Repeat Password Not Match ");
+        setMessage(
+          "Password and repeat password do not match. Please make sure they are the same."
+        );
       } else if (regxPassword.test(inputPassword) === false) {
         setMessage(
-          "Password must be contains number and alphabet with minimum 6 character and maximum 12 character"
+          "Please choose a password that contains both letters and numbers, and is between 6 and 12 character."
         );
       } else {
         setMessage("");

@@ -25,6 +25,8 @@ module.exports = {
         recipients_phone,
       } = req.body;
 
+      console.log(req.body);
+
       if (
         !street_address ||
         !city ||
@@ -112,12 +114,11 @@ module.exports = {
   findAllAddress: async (req, res) => {
     try {
       const id = req.dataToken.id;
-      const getAllUserAddress = await user_address.findAll(
-        { order: [["isDefault", "DESC"]] },
-        {
-          where: { users_id: id },
-        }
-      );
+      console.log(id);
+      const getAllUserAddress = await user_address.findAll({
+        where: { users_id: id },
+        order: [["isDefault", "DESC"]],
+      });
 
       res.status(200).send({
         isSuccess: true,

@@ -5,20 +5,25 @@ const { tokenVerify } = require("../middleware/verifyToken");
 const { categoriesProductController } = require("../controllers");
 
 Router.post(
-  "/categories",
+  "/products",
   tokenVerify,
   categoriesProductController.createCategories
 );
 Router.post("/temp", categoriesProductController.temporary);
 Router.patch(
-  "/categories/update/:id",
+  "/products/update/:id",
   tokenVerify,
   categoriesProductController.updateCategory
 );
 Router.delete(
-  "/categories/delete/:id",
+  "/products/delete/:id",
   tokenVerify,
   categoriesProductController.deleteCategory
+);
+Router.get(
+  "/find-all",
+  tokenVerify,
+  categoriesProductController.findAllCategory
 );
 
 module.exports = Router;

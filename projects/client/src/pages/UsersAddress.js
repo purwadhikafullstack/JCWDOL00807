@@ -73,56 +73,60 @@ const UserAddress = () => {
             </CardHeader>
           )}
 
-          <CardBody>
-            <Stack
-              divider={<StackDivider />}
-              spacing="4"
-              mt="-3"
-              className=" p-0 md:p-20 "
-            >
-              {dataAddress?.map((val, idx) => (
-                <Box
-                  key={idx.toLocaleString()}
-                  className="flex justify-between items-center"
-                >
-                  <Box className="flex flex-col  items-start justify-start gap-1 ">
-                    <div className=" flex flex-row gap-3 ">
-                      <Text className=" font-semibold ">{val.recipient}</Text>
-                      <Text>| {val.recipients_phone}</Text>
-                    </div>
-                    <Text className=" text-sm">{val.street_address}</Text>
-                    <Text textTransform="uppercase" className=" text-sm ">
-                      {val.city}, {val.province}, {val.postal_code}
-                    </Text>
+          {!dataAddress ? (
+            <div>Loading ...</div>
+          ) : (
+            <CardBody>
+              <Stack
+                divider={<StackDivider />}
+                spacing="4"
+                mt="-3"
+                className=" p-0 md:p-20 "
+              >
+                {dataAddress?.map((val, idx) => (
+                  <Box
+                    key={idx.toLocaleString()}
+                    className="flex justify-between items-center"
+                  >
+                    <Box className="flex flex-col  items-start justify-start gap-1 ">
+                      <div className=" flex flex-row gap-3 ">
+                        <Text className=" font-semibold ">{val.recipient}</Text>
+                        <Text>| {val.recipients_phone}</Text>
+                      </div>
+                      <Text className=" text-sm">{val.street_address}</Text>
+                      <Text textTransform="uppercase" className=" text-sm ">
+                        {val.city}, {val.province}, {val.postal_code}
+                      </Text>
 
-                    {val.isDefault === true ? (
-                      <Box className=" flex gap-3 items-center mt-2">
-                        <Button disabled size="sm">
-                          Utama
-                        </Button>
-                        <Button size="sm">
-                          <UpdateUserAddress id={val.id} data={val} />
-                        </Button>
-                      </Box>
-                    ) : null}
-                  </Box>
-
-                  {val.isDefault === true ? null : (
-                    <Box>
-                      <UpdateUserAddress id={val.id} data={val} />
+                      {val.isDefault === true ? (
+                        <Box className=" flex gap-3 items-center mt-2">
+                          <Button disabled size="sm">
+                            Utama
+                          </Button>
+                          <Button size="sm">
+                            <UpdateUserAddress id={val.id} data={val} />
+                          </Button>
+                        </Box>
+                      ) : null}
                     </Box>
-                  )}
-                </Box>
-              ))}
-              {!dataAddress ? (
-                <Text className=" text-center text-lg  ">
-                  You don't have any address
-                </Text>
-              ) : null}
 
-              <CreateUserAddress />
-            </Stack>
-          </CardBody>
+                    {val.isDefault === true ? null : (
+                      <Box>
+                        <UpdateUserAddress id={val.id} data={val} />
+                      </Box>
+                    )}
+                  </Box>
+                ))}
+                {!dataAddress ? (
+                  <Text className=" text-center text-lg  ">
+                    You don't have any address
+                  </Text>
+                ) : null}
+
+                <CreateUserAddress />
+              </Stack>
+            </CardBody>
+          )}
         </Card>
       </section>
       <Footer />

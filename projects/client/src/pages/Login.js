@@ -41,9 +41,9 @@ const Login = () => {
       let inputPassword = password.current.value;
 
       if (!inputEmail || !inputPassword) {
-        setMessage("Data not complete");
+        setMessage("Incomplete data. Please fill in missing information.");
       } else if (regxEmail.test(inputEmail) === false) {
-        setMessage("Not Valid Email");
+        setMessage("The email address you entered is not valid");
       } else {
         setMessage("");
         dispatch(
@@ -99,6 +99,13 @@ const Login = () => {
             p="5"
             ref={email}
           />
+        <div className=" flex justify-start mt-6">
+          <Link to="/accounts/reset-password">
+            <div className=" text-sm text-[#69cb44] font-semibold">
+              Forgot Password
+            </div>
+          </Link>
+        </div>
 
           <InputGroup
             size="md"
@@ -120,13 +127,8 @@ const Login = () => {
             </InputRightElement>
           </InputGroup>
 
-          <div className=" flex justify-start mt-6">
-            <Link to="/accounts/forgot-password">
-              <div className=" text-sm text-[#69cb44] font-semibold">
-                Forgot Password
-              </div>
-            </Link>
-          </div>
+
+
 
           <Button
             colorScheme="whatsapp"

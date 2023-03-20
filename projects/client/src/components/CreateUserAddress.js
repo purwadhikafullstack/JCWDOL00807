@@ -148,6 +148,9 @@ const CreateUserAddress = () => {
   const onBtnClose = () => {
     dispatch(handleStateError("cancel"));
     setInputPostalCode("");
+    setInputPhoneNumber("");
+    setDataAddress("");
+    setInputStreetAddress("");
     setDataCity([]);
     onClose();
   };
@@ -197,8 +200,7 @@ const CreateUserAddress = () => {
                 <Box>
                   <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
                   <Input
-                    defaultValue={user?.user?.phone_number}
-                    placeholder={user?.user?.phone_number}
+                    placeholder={`exp ${user?.user?.phone_number}`}
                     size="md"
                     onChange={(e) => {
                       handlePhoneNumber(e.target.value);
@@ -265,7 +267,7 @@ const CreateUserAddress = () => {
                       <FormLabel htmlFor="postalCode">Postal Code</FormLabel>
                       <Input
                         w="fit-content"
-                        defaultValue={dataAddress.postalCode}
+                        placeholder={inputPostalCode}
                         onChange={(e) => setInputPostalCode(e.target.value)}
                       />
                     </Box>

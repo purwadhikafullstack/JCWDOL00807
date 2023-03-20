@@ -156,6 +156,7 @@ const AdminHome = () => {
     // const role = localStorage.getItem("role");
     // console.log(token, role);
     // setRole(role);
+
     let getDataDashboard = async () => {
       try {
         let response = await axios.get(
@@ -188,7 +189,6 @@ const AdminHome = () => {
       }
     };
     getDataDashboard();
-
     // if (!token) {
     //   navigate("/admin/login");
     // }
