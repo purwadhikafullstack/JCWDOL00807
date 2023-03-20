@@ -14,6 +14,10 @@ import { keepLogin } from "./redux/action/user";
 import AdminHome from "./pages/Admin-Home.js";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect } from "react";
+import ProductCRUD from "./pages/Product";
+import CreateProduct from "./pages/CreateProduct";
+import EditProduct from "./pages/EditProduct";
+import { getProductList } from "./redux/action/product";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,6 +25,7 @@ function App() {
   useEffect(() => {
     dispatch(keepLogin());
     dispatch(findAllAddress());
+    // dispatch(getProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -35,6 +40,15 @@ function App() {
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
+        <Route path="/admin/manage-product" element={<ProductCRUD />} />
+        <Route
+          path="/admin/manage-product/create"
+          element={<CreateProduct />}
+        />
+        <Route
+          path="/admin/manage-product/edit/:id"
+          element={<EditProduct />}
+        />
         <Route path="*" element={<PageNotFound />} />
         <Route
           path="/accounts/reset-password/:token"
