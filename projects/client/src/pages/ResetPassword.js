@@ -12,6 +12,8 @@ import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
 import axios from "axios";
 import BackdropResetPassword from "../components/BackdropResetPassword";
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 const ResetPassword = () => {
   const password = useRef();
@@ -80,6 +82,8 @@ const ResetPassword = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
       <div className=" relative h-96 w-[full] md:w-[500px] flex-col justify-center items-center ">
         {message ? (
@@ -149,6 +153,8 @@ const ResetPassword = () => {
         <BackdropResetPassword message={messageSuccess} />
       ) : null}
     </section>
+    <Footer />
+    </>
   );
 };
 

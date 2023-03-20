@@ -1,5 +1,3 @@
-import Navbar from "./components/Navbar.js";
-import Footer from "./components/Footer.js";
 import Register from "./pages/Register";
 import Verification from "./pages/Verification.js";
 import Home from "./pages/Home.js";
@@ -17,7 +15,13 @@ import { keepLogin } from "./redux/action/user";
 import AdminHome from "./pages/Admin-Home";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect } from "react";
+
 import { findAllCategory } from "./redux/action/categoriesProduct";
+import ProductCRUD from "./pages/Product";
+import CreateProduct from "./pages/CreateProduct";
+import EditProduct from "./pages/EditProduct";
+import { getProductList } from "./redux/action/product";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -26,12 +30,12 @@ function App() {
     dispatch(keepLogin());
     dispatch(findAllAddress());
     dispatch(findAllCategory());
+    // dispatch(getProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   return (
     <div>
-      <Navbar />
       <Routes>
         <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/accounts/address" element={<UsersAddress />} />
@@ -41,6 +45,15 @@ function App() {
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
+        <Route path="/admin/manage-product" element={<ProductCRUD />} />
+        <Route
+          path="/admin/manage-product/create"
+          element={<CreateProduct />}
+        />
+        <Route
+          path="/admin/manage-product/edit/:id"
+          element={<EditProduct />}
+        />
         <Route path="*" element={<PageNotFound />} />
         <Route
           path="/accounts/reset-password/:token"
@@ -48,7 +61,6 @@ function App() {
         />
         <Route path="/admin/categories" element={<CategoryProduct />} />
       </Routes>
-      <Footer />
     </div>
   );
 }

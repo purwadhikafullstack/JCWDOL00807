@@ -4,6 +4,7 @@ const usersAddressController = require("./usersAddressController");
 const rajaongkirController = require("./rajaOngkirController");
 const geoLocationController = require("./geoLocationController");
 const categoriesProductController = require("./categoriesProductController");
+const productController = require("./productController");
 
 module.exports = {
   usersController,
@@ -12,4 +13,5 @@ module.exports = {
   geoLocationController,
   adminController,
   categoriesProductController,
+  productController,
 };

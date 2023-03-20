@@ -10,6 +10,8 @@ import {
   Button,
 } from "@chakra-ui/react";
 
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import CreateUserAddress from "../components/CreateUserAddress";
 import AlertSuccess from "../components/AlertSuccess";
@@ -39,7 +41,7 @@ const UserAddress = () => {
   };
   return (
     <div>
-      {/* <Navbar /> */}
+      <Navbar />
       <section
         className=" flex-row md:flex justify-star
        container mx-auto gap-5  min-h-screen
@@ -127,6 +129,7 @@ const UserAddress = () => {
           )}
         </Card>
       </section>
+      <Footer />
     </div>
   );
 };

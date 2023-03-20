@@ -94,6 +94,7 @@ app.use((err, req, res, next) => {
 const clientPath = "../../client/build";
 app.use("/static", express.static(join(__dirname, "public")));
 app.use(express.static("./public"));
+app.use(express.static("./admin"));
 
 app.use(express.static(join(__dirname, clientPath)));
 

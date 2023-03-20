@@ -86,9 +86,9 @@ const UpdateUserProfile = () => {
   useEffect(() => {
     const token = localStorage.getItem("my_Token");
     console.log(token);
-    if (!token) {
-      navigate("/login");
-    }
+    // if (!token) {
+    //   navigate("/login");
+    // }
     //eslint-disable-next-line
   }, []);
 

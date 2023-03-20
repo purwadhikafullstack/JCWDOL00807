@@ -18,7 +18,7 @@ module.exports = {
 //   });
 // };
 
-// let admins_id = 1;
+// let admins_id = 2;
 // let name = "abdul";
 // let email = "abdul@gmail.com";
 // let role = "admin branch";

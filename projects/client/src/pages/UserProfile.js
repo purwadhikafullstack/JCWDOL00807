@@ -9,6 +9,8 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 import { useSelector } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
@@ -31,6 +33,8 @@ const UserProfile = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <section
       className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
       items-center  px-5 md:px-0  "
@@ -118,6 +122,8 @@ const UserProfile = () => {
         </div>
       </Card>
     </section>
+    <Footer />
+    </>
   );
 };
 

@@ -2,6 +2,8 @@ import { Button } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const Verification = () => {
   let { token } = useParams();
@@ -29,6 +31,7 @@ const Verification = () => {
   });
   return (
     <div>
+      <Navbar />
       {user === "" ? (
         <p> Loading... </p>
       ) : (
@@ -45,6 +48,7 @@ const Verification = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };
