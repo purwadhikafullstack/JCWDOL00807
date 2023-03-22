@@ -100,7 +100,7 @@ const UpdateUserProfile = () => {
 
   return (
     <>
-      <Button leftIcon="" colorScheme="whatsapp" onClick={onOpen}>
+      <Button leftIcon="" colorScheme="gray" bgColor="#BCEAD5" onClick={onOpen}>
         Update Profile
       </Button>
 

@@ -235,7 +235,7 @@ const UpdateUserAddress = ({ id, data }) => {
       </Button>
 
       <Drawer
-        size={["full", "lg"]}
+        size={["full", "md"]}
         isOpen={isOpen}
         placement="right"
         onClose={onBtnClose}

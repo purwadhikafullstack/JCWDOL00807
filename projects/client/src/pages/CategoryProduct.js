@@ -40,9 +40,8 @@ const CategoryProduct = () => {
     if (!token) {
       navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  //   console.log(category);
 
   useEffect(() => {
     if (category?.data) {
@@ -100,6 +99,7 @@ const CategoryProduct = () => {
                       buttonName={"New"}
                       action={"create"}
                       icon={"gridicons:create"}
+                      inputName={"Type here..."}
                     />
                   </Button>
                 </Th>
@@ -130,6 +130,7 @@ const CategoryProduct = () => {
                             id_category={val.id}
                             tooltip={"Edit"}
                             buttonName={"Edit"}
+                            inputName={val.name}
                           />
                         </Tooltip>
                         <Tooltip label="Delete" fontSize="xs">

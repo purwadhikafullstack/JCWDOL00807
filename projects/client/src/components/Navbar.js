@@ -28,14 +28,16 @@ const Navbar = () => {
             </InputRightAddon>
           </InputGroup>
           {user?.user?.name ? (
-            <div className="flex flex-row justify-between gap-10 items-center">
-              <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
-              <div className=" flex flex-col justify-center items-center ">
-                <Tooltip label={user?.user?.name} fontSize="xs">
-                  <Avatar src={user?.user?.image} size="sm" />
-                </Tooltip>
+            <Link to="/accounts/profile">
+              <div className="flex flex-row justify-between gap-10 items-center">
+                <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
+                <div className=" flex flex-col justify-center items-center ">
+                  <Tooltip label={user?.user?.name} fontSize="xs">
+                    <Avatar src={user?.user?.image} size="sm" />
+                  </Tooltip>
+                </div>
               </div>
-            </div>
+            </Link>
           ) : (
             <div className="flex flex-row justify-between gap-4 items-center">
               <Link to={"/register"}>
