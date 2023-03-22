@@ -18,5 +18,11 @@ Router.patch(
   tokenVerify,
   usersController.deleteProfile
 );
+Router.patch("/change-password", tokenVerify, usersController.changePassword);
+Router.get(
+  "/change-password-step1",
+  tokenVerify,
+  usersController.changePasswordStep1
+);
 
 module.exports = Router;
