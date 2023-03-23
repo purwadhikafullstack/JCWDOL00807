@@ -12,6 +12,7 @@ import CategoryProduct from "./pages/CategoryProduct.js";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { keepLogin } from "./redux/action/user";
+import { keepLoginAdmin } from "./redux/action/admin";
 import AdminHome from "./pages/Admin-Home";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect } from "react";
@@ -22,12 +23,14 @@ import CreateProduct from "./pages/CreateProduct";
 import EditProduct from "./pages/EditProduct";
 import { getProductList } from "./redux/action/product";
 
+import AdminLogin from "./pages/Admin-Login";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(keepLogin());
+    dispatch(keepLoginAdmin())
     dispatch(findAllAddress());
     dispatch(findAllCategory());
     // dispatch(getProductList());
@@ -60,6 +63,9 @@ function App() {
           element={<ResetPassword />}
         />
         <Route path="/admin/categories" element={<CategoryProduct />} />
+
+        <Route path="/admin/login" element={<AdminLogin />} />
+
       </Routes>
     </div>
   );

@@ -19,8 +19,8 @@ export const findAllCategory = () => {
       );
       dispatch(categorySlice.actions.getAllCategorySuccess(response.data));
     } catch (error) {
-      console.log(error);
-      console.log(error.response.data.message);
+      // console.log(error);
+      // console.log(error.response.data.message);
       dispatch(categorySlice.actions.failed(error.response.data.message));
     }
   };
