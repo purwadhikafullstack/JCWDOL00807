@@ -26,4 +26,7 @@ Router.patch(
 );
 Router.delete("/product/:id", tokenVerify, productController.deleteProduct);
 
+Router.get('/login', adminController.Login)
+Router.get('/keep-login-admin', tokenVerify, adminController.keepLoginAdmin)
+
 module.exports = Router;

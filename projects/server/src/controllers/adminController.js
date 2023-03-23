@@ -4,6 +4,10 @@ const { Op } = require("sequelize");
 const transporter = require("../lib/nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs").promises;
+const { createToken } = require("./../lib/jwt");
+
+// Import hashing
+const { hashPassword, hashMatch } = require("./../lib/hash");
 
 //import env
 require("dotenv").config();
@@ -89,10 +93,10 @@ limit 3
             type: sequelize.QueryTypes.SELECT,
           }
         );
-        console.log(totalStats);
-        console.log(dataChart);
-        console.log(topProduct);
-        console.log(topBranch);
+        // console.log(totalStats);
+        // console.log(dataChart);
+        // console.log(topProduct);
+        // console.log(topBranch);
         dataToSend.totalStats = totalStats;
         dataToSend.dataChart = dataChart;
         dataToSend.topProduct = topProduct;
@@ -184,7 +188,7 @@ where admins_id=1
         dataToSend.branchName = branchName;
         dataToSend.role = role;
         dataToSend.isActive = isActive;
-        console.log(totalStats, dataChart, dataBranchTransaction, topProduct);
+        // console.log(totalStats, dataChart, dataBranchTransaction, topProduct);
 
         res.status(200).send({
           isError: false,
@@ -197,6 +201,108 @@ where admins_id=1
         isError: true,
         message: error.message,
         data: null,
+      });
+    }
+  },
+
+  Login: async (req, res) => {
+    try {
+      const { email, password } = req.query;
+      const regxEmail = /\S+@\S+\.\S+/;
+
+      if (!email || !password)
+        throw {
+          message: "Incomplete data. Please fill in missing information.",
+        };
+      if (!regxEmail.test(email))
+        throw {
+          message: "The email address you entered is not valid.",
+        };
+
+      const findAdmin = await admin.findOne({
+        where: { email },
+      });
+      console.log(findAdmin)
+      if (findAdmin === null)
+        throw {
+          message: "Couldn't find the email you entered ",
+        };
+      const matchPassword = await hashMatch(
+        password,
+        findAdmin.dataValues.password
+      );
+      console.log(matchPassword);
+
+      if (matchPassword === false)
+        throw { message: "Password you entered is incorrect" };
+      if (findAdmin.dataValues.isActive === false)
+        throw {
+          message:
+            "Your account has not active. Please contact super Admin for further information",
+        };
+        
+        // console.log(findAdmin.dataValues.role)
+
+      if (
+        findAdmin.dataValues.role !== "admin branch" &&
+        findAdmin.dataValues.role !== "super admin"
+        )
+        throw {
+          message:
+          "Your role is not permited. Please contact super Admin for further information",
+        };
+        console.log(findAdmin.dataValues.role)
+
+        let admins_id = findAdmin.dataValues.id
+        let name = findAdmin.dataValues.name
+        let role = findAdmin.dataValues.role
+        let isActive = findAdmin.dataValues.isActive
+
+//         const password = await bcrypt.hash("admin123", 10);
+// console.log(password)
+
+      let token = createToken({ admins_id, name, email, role, isActive });
+      res.status(200).send({
+        isSuccess: true,
+        message: "Login success",
+        token: token,
+        role: role,
+      });
+    } catch (error) {
+      res.status(404).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  
+  keepLoginAdmin: async (req, res) => {
+    try {
+      let admins_id = req.dataToken.admins_id;
+      const findAdmin = await admin.findOne({
+        attributes: [
+          "name",
+          "email",
+          "role",
+          "isActive"
+        ],
+        where: {
+          id: admins_id,
+        },
+      });
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "getData Admin Login Success",
+        data: findAdmin.dataValues,
+        role: findAdmin.role
+      });
+      // console.log(findAdmin.dataValues)
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
       });
     }
   },
