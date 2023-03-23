@@ -22,12 +22,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRef } from "react";
 import { updateProfile } from "../redux/action/user";
 import { handleStateError } from "../redux/action/user";
-import { useNavigate } from "react-router-dom";
 
 const UpdateUserProfile = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const navigate = useNavigate();
-
   let name = useRef();
   let birthdate = useRef();
   let gender = useRef();
@@ -82,15 +79,6 @@ const UpdateUserProfile = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("my_Token");
-    console.log(token);
-    // if (!token) {
-    //   navigate("/login");
-    // }
-    //eslint-disable-next-line
-  }, []);
 
   const onBtnClose = () => {
     dispatch(handleStateError("cancel"));

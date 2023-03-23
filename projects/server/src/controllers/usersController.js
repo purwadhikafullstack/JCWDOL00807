@@ -560,4 +560,82 @@ module.exports = {
       });
     }
   },
+
+  changePasswordStep1: async (req, res) => {
+    try {
+      const id = req.dataToken.id;
+      let oldPassword = req.query.oldPassword;
+      console.log(oldPassword);
+
+      if (!oldPassword)
+        throw {
+          message: "Please fill your current password.",
+        };
+
+      let findUser = await users.findOne({
+        where: { id },
+      });
+
+      const passwordDataBase = findUser.dataValues.password;
+      let match = await hashMatch(oldPassword, passwordDataBase);
+
+      if (match === false)
+        throw { message: "Password you entered is incorrect" };
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "success",
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  changePassword: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      let regxPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
+      const id = req.dataToken.id;
+      const { newPassword, repeatPassword } = req.body;
+      console.log(newPassword, repeatPassword);
+
+      if (!newPassword || !repeatPassword)
+        throw {
+          message: "Incomplete data. Please fill in missing information.",
+        };
+      if (newPassword !== repeatPassword)
+        throw {
+          message:
+            "Password and repeat password do not match. Please make sure they are the same.",
+        };
+      if (!regxPassword.test(newPassword))
+        throw {
+          message:
+            "Please choose a password that contains both letters and numbers, and is between 6 and 12 character.",
+        };
+
+      await users.update(
+        {
+          password: await hashPassword(newPassword),
+        },
+        { where: { id: id } },
+        { transaction: t }
+      );
+
+      await t.commit();
+      res.status(201).send({
+        isSuccess: true,
+        message: "Your password has been updated",
+      });
+    } catch (error) {
+      await t.rollback();
+      res.status(500).send({
+        isSuccess: true,
+        message: error.message,
+      });
+    }
+  },
 };
