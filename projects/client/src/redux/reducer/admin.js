@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   admin: {},
+  role: null,
   errorMessage: null,
   loading: null,
 };
@@ -18,7 +19,7 @@ export const adminSlice = createSlice({
     // },
     loginSuccess: (state, action) => {
       state.admin = action.payload;
-    //   state.role = action.payload.role;
+      state.role = action.payload.role;
       state.loading = null;
       state.errorMessage = null;
     },

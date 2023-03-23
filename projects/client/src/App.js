@@ -10,7 +10,7 @@ import UsersAddress from "./pages/UsersAddress";
 import CategoryProduct from "./pages/CategoryProduct.js";
 
 import { Route, Routes } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { keepLogin } from "./redux/action/user";
 import { keepLoginAdmin } from "./redux/action/admin";
 import AdminHome from "./pages/Admin-Home";
@@ -27,7 +27,9 @@ import AdminLogin from "./pages/Admin-Login";
 
 function App() {
   const dispatch = useDispatch();
-
+  let admin = useSelector((state) => state.admin);
+  console.log(admin)
+  
   useEffect(() => {
     dispatch(keepLogin());
     dispatch(keepLoginAdmin())

@@ -70,12 +70,19 @@ export const keepLoginAdmin = () => {
         }
       );
       dispatch(adminSlice.actions.keep_login_admin_payload(response.data.data));
-      console.log("adminSlice.actions")
+      console.log(response.data.data)
     } catch (error) {
       console.log(error);
     }
   };
 };
+
+
+export const setUserRole = (role) => ({
+    type: 'SET_USER_ROLE',
+    payload: role,
+  });
+
 
 // export const updateProfile = ({ formData }) => {
 //   return async (dispatch) => {

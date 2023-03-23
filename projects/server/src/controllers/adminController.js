@@ -275,9 +275,11 @@ where admins_id=1
       });
     }
   },
+
+  
   keepLoginAdmin: async (req, res) => {
     try {
-      let id = req.dataToken.id;
+      let admins_id = req.dataToken.admins_id;
       const findAdmin = await admin.findOne({
         attributes: [
           "name",
@@ -286,7 +288,7 @@ where admins_id=1
           "isActive"
         ],
         where: {
-          id: id,
+          id: admins_id,
         },
       });
 
@@ -296,7 +298,7 @@ where admins_id=1
         data: findAdmin.dataValues,
         role: findAdmin.role
       });
-      consolele.log(findAdmin.dataValues)
+      // console.log(findAdmin.dataValues)
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
