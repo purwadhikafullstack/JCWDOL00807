@@ -21,7 +21,7 @@ import ProductCRUD from "./pages/Product";
 import CreateProduct from "./pages/CreateProduct";
 import EditProduct from "./pages/EditProduct";
 import { getProductList } from "./redux/action/product";
-
+import ProductListByQuery from "./pages/ProductList";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +46,7 @@ function App() {
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
         <Route path="/admin/manage-product" element={<ProductCRUD />} />
+        <Route path="/admin/product-list" element={<ProductListByQuery />} />
         <Route
           path="/admin/manage-product/create"
           element={<CreateProduct />}
