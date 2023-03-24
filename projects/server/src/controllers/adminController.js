@@ -113,10 +113,10 @@ limit 3
           `
           SELECT name 
           FROM  branch_stores 
-where admins_id=1
+where admins_id=?
           `,
           {
-            // replacements: [admins_id],
+            replacements: [admins_id],
             type: sequelize.QueryTypes.SELECT,
           }
         );
@@ -186,6 +186,7 @@ where admins_id=1
         dataToSend.dataChart = dataChart;
         dataToSend.dataBranchTransaction = dataBranchTransaction;
         dataToSend.branchName = branchName;
+        console.log(branchName);
         dataToSend.role = role;
         dataToSend.isActive = isActive;
         // console.log(totalStats, dataChart, dataBranchTransaction, topProduct);

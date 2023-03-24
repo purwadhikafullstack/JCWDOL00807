@@ -1,15 +1,15 @@
 import React from "react";
 import SidebarAdmin from "../components/SidebarAdmin";
-import Chart from "chart.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 import CurrencyFormat from "react-currency-format";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart } from "react-chartjs-2";
+ChartJS.register(...registerables);
 
 
 const AdminHome = () => {
@@ -166,7 +166,7 @@ const AdminHome = () => {
             headers: {
               // Authorization: `${token}`,
               Authorization:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkwMjMyNzYsImV4cCI6MTY3OTE5NjA3Nn0.eO5HTFHqhzu5qAkcIkQhBkK6QzNYeU0lrob9PQcuzag",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NzEzMTUsImV4cCI6MTY3OTc0NDExNX0.VRuy9gTk6iAOKNcyYjaC8pvEFknfp4qonztJW_AXt9c",
             },
           }
         );
@@ -183,7 +183,6 @@ const AdminHome = () => {
         setDataBranchTransaction(response?.data?.data?.dataBranchTransaction);
         setDataDone(true);
 
-        console.log("asdasdasdas");
         console.log(response.data.data);
       } catch (error) {
         console.log(error);
@@ -210,7 +209,7 @@ const AdminHome = () => {
           <div className="mr-6 mb-6">
             <h1 className="text-4xl font-semibold mb-2">Dashboard</h1>
             <h2 className="text-black text-xl ml-0.5">
-              {branchName?.name
+              {adminRole == "admin branch"
                 ? `GoKu - Branch ${branchName?.name} `
                 : "Goku - Super Admin"}
             </h2>

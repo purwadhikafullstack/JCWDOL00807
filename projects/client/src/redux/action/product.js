@@ -8,7 +8,7 @@ export const createProduct = ({ formData }) => {
     try {
       //   let token = localStorage.my_Token;
       let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkyMTIxMTksImV4cCI6MTY3OTM4NDkxOX0.Kzx7bFmrsQr_OEXXr1a1RJqbCUI6FAaxdvxWcUEbxr0";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE";
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         formData,
@@ -37,7 +37,7 @@ export const editProduct = ({ formData }, { id_product }) => {
     try {
       //   let token = localStorage.my_Token;
       let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkyMTIxMTksImV4cCI6MTY3OTM4NDkxOX0.Kzx7bFmrsQr_OEXXr1a1RJqbCUI6FAaxdvxWcUEbxr0";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE";
       const response = await axios.patch(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${id_product}`,
         formData,

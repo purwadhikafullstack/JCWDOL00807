@@ -19,19 +19,18 @@ import { findAllCategory } from "./redux/action/categoriesProduct";
 import ProductCRUD from "./pages/Product";
 import CreateProduct from "./pages/CreateProduct";
 import EditProduct from "./pages/EditProduct";
-import { getProductList } from "./redux/action/product";
+import ProductListByQuery from "./pages/ProductList";
 import AdminLogin from "./pages/Admin-Login";
 import ChangeUserPassword from "./pages/ChangeUserPassword";
-
 
 function App() {
   const dispatch = useDispatch();
   let admin = useSelector((state) => state.admin);
-  console.log(admin)
-  
+  console.log(admin);
+
   useEffect(() => {
     dispatch(keepLogin());
-    dispatch(keepLoginAdmin())
+    dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
     dispatch(findAllCategory());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,6 +48,7 @@ function App() {
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
         <Route path="/admin/manage-product" element={<ProductCRUD />} />
+        <Route path="/admin/product-list" element={<ProductListByQuery />} />
         <Route
           path="/admin/manage-product/create"
           element={<CreateProduct />}
@@ -70,7 +70,6 @@ function App() {
           path="/accounts/change-password"
           element={<ChangeUserPassword />}
         />
-
       </Routes>
     </div>
   );

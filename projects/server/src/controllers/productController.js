@@ -995,53 +995,138 @@ Group by i.id;
         attributes: ["id"],
       });
       let branch_stores_id = getBranchStoreId.dataValues.id;
+      console.log(branch_stores_id);
+      const categories = req.query.categories || null;
+      console.log(categories);
+      const sortBy = req.query.sort;
+      console.log(sortBy);
+      const ascOrDesc = req.query.asc;
+      console.log(ascOrDesc);
+
+      let sort = "";
+      let category;
+      if (categories !== null) {
+        category = categories.split(",");
+      }
+      if (sortBy == "id") {
+        sort = "i.id" + " " + ascOrDesc;
+      } else if (sortBy == "category") {
+        sort = "pc.name" + " " + ascOrDesc;
+      } else if (sortBy == "price") {
+        sort = "i.price" + " " + ascOrDesc;
+      } else {
+        sort = "i.name" + " " + ascOrDesc;
+      }
+      console.log(sort);
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 0;
       const search = req.query.search_query || "";
       const offset = limit * page;
-      const totalRows = await sequelize.query(
-        `
+      let totalRows, totalPage, result;
+      if (categories === null) {
+        let totalRows = await sequelize.query(
+          `
       SELECT count(*) as count_row
 FROM online_groceries.item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
-where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search);`,
-        {
-          replacements: {
-            search: "%" + search + "%",
-            branch_stores_id: branch_stores_id,
-          },
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
-      const totalPage = Math.ceil(totalRows[0].count_row / limit);
-      const result = await sequelize.query(
-        `
+where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search) and pc.name is not :categories 
+
+`,
+          {
+            replacements: {
+              search: "%" + search + "%",
+              categories,
+              branch_stores_id: branch_stores_id,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let totalPage = Math.ceil(totalRows[0].count_row / limit);
+        // console.log(totalPage);
+        let result = await sequelize.query(
+          `
       SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
 FROM online_groceries.item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
-where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search)
+where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search) and pc.name is not :categories
+group by i.id
+order by ${sort}
+LIMIT :limit OFFSET :offset
+`,
+          {
+            replacements: {
+              search: "%" + search + "%",
+              branch_stores_id: branch_stores_id,
+              categories,
+              limit,
+              offset,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        // console.log(result);
+        let dataToSend = { result, page, limit, totalRows, totalPage };
+        res.status(200).send({
+          isError: false,
+          message: "Query Product Success",
+          data: dataToSend,
+        });
+      } else {
+        let totalRows = await sequelize.query(
+          `
+      SELECT count(*) as count_row
+FROM online_groceries.item_products i
+LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
+LEFT JOIN vouchers v on i.vouchers_id = v.id
+LEFT JOIN discounts d on i.discount_id = d.id
+where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search) and pc.name in (:category) 
+`,
+          {
+            replacements: {
+              search: "%" + search + "%",
+              category,
+              branch_stores_id: branch_stores_id,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let totalPage = Math.ceil(totalRows[0].count_row / limit);
+        // console.log(totalPage);
+        let result = await sequelize.query(
+          `
+      SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
+FROM online_groceries.item_products i
+LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
+LEFT JOIN vouchers v on i.vouchers_id = v.id
+LEFT JOIN discounts d on i.discount_id = d.id
+where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name like :search or d.discount_type like :search or v.voucher_type like :search) and pc.name in (:category)
 Group by i.id
-Order by i.id Desc`,
-        {
-          replacements: {
-            search: "%" + search + "%",
-            branch_stores_id: branch_stores_id,
-          },
-          type: sequelize.QueryTypes.SELECT,
-          limit: limit,
-          offset: offset,
-        }
-      );
-      let dataToSend = { result, page, limit, totalRows, totalPage };
-      res.status(200).send({
-        isError: false,
-        message: "Query Product Success",
-        data: dataToSend,
-      });
+order by ${sort}
+LIMIT :limit OFFSET :offset
+`,
+          {
+            replacements: {
+              search: "%" + search + "%",
+              branch_stores_id: branch_stores_id,
+              category,
+              limit,
+              offset,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        // console.log(result);
+        let dataToSend = { result, page, limit, totalRows, totalPage };
+        res.status(200).send({
+          isError: false,
+          message: "Query Product Success",
+          data: dataToSend,
+        });
+      }
     } catch (error) {
       res.status(404).send({
         isError: true,
