@@ -32,19 +32,24 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
+import ReactPaginate from "react-paginate";
 
 const ProductListByQuery = () => {
   const [dataCategories, setDataCategories] = useState([]);
-  const [categories, setCategories] = useState({
-    category: [],
-    response: [],
-  });
+  // const [categories, setCategories] = useState({
+  //   category: [],
+  //   response: [],
+  // });
+  const checkboxRefs = useRef([]);
+  const [dataProduct, setDataProduct] = useState([]);
+  const [category, setCategory] = useState("");
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(10);
   const [keyword, setKeyword] = useState("");
   const [rows, setRows] = useState(0);
-
+  const [query, setQuery] = useState("");
+  const [msg, setMsg] = useState("");
   let sort = useRef();
   let asc = useRef();
   const getData = async () => {
@@ -65,44 +70,78 @@ const ProductListByQuery = () => {
       console.log(error);
     }
   };
-  const handleChange = (e) => {
-    //Destructuring
-    const { value, checked } = e.target;
-    const { category } = categories;
-    console.log(`${value} is ${checked}`);
-    // case 1 :  the user checks the box
-    if (checked) {
-      setCategories({
-        category: [...category, value],
-        response: [...category, value],
-      });
-    }
 
-    // case 2 : the user unchecks the box
-    else {
-      setCategories({
-        category: category.filter((e) => e !== value),
-        response: category.filter((e) => e !== value),
-      });
+  const getProductList = async () => {
+    try {
+      let inputSort = sort.current.value;
+      let inputAsc = asc.current.value;
+      console.log(inputSort, inputAsc);
+      console.log(keyword, page);
+      console.log(category);
+      let response = await axios.get(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/admin/product_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&categories=${category}
+      `,
+        {
+          headers: {
+            authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1Njg0NjUsImV4cCI6MTY3OTc0MTI2NX0.v_xkwg0FlvLJ8Cuo_QwCEP-IprKD3W5Bt-16r5jMp1I",
+          },
+        }
+      );
+      console.log(response);
+      setDataProduct(response?.data?.data?.result);
+      setPage(response?.data?.data?.page);
+      setPages(response?.data?.data?.totalPage);
+      console.log(response.data.data.totalRows[0].count_row);
+      setRows(response?.data?.data?.totalRows[0].count_row);
+    } catch (error) {
+      console.log(error);
     }
-    console.log(categories.response);
-    console.log(categories.response.join(","));
+  };
+  const handleCheckboxChange = () => {
+    const checkedValues = checkboxRefs.current
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
+    console.log(checkedValues.join(","));
+    let checkedValuesString = checkedValues.join(",");
+    setCategory(checkedValuesString);
+  };
+
+  const changePage = ({ selected }) => {
+    setPage(selected);
+    if (selected === 9) {
+      setMsg(
+        "Cannot found data that you search, please search with another specific keyword "
+      );
+    } else {
+      setMsg("");
+    }
+  };
+
+  const searchData = (e) => {
+    e.preventDefault();
+    setPage(0);
+    setKeyword(query);
+    getProductList();
   };
 
   useEffect(() => {
-    // const token = localStorage.getItem("my_Token");
     getData();
-
+  }, []);
+  useEffect(() => {
+    // const token = localStorage.getItem("my_Token");
+    getProductList();
     // if(!token){
     //     navigate("/admin/login")
     // }
-  }, []);
+  }, [page, keyword]);
   return (
     <>
       <SidebarAdmin />
       <div className="p-4 sm:ml-64">
         <Navbar />
-        <form className="m-10">
+        <form className="m-10" onSubmit={searchData}>
           <label
             for="default-search"
             class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -132,7 +171,8 @@ const ProductListByQuery = () => {
               id="default-search"
               className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search Product Name, Discount Type, Categories and Voucher Type"
-              required
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
             <button
               type="submit"
@@ -160,7 +200,8 @@ const ProductListByQuery = () => {
                           name="category"
                           value={value}
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                          onChange={handleChange}
+                          ref={(el) => (checkboxRefs.current[index] = el)}
+                          onChange={handleCheckboxChange}
                         />
                         <label
                           for={value + "-checkbox"}
@@ -180,9 +221,7 @@ const ProductListByQuery = () => {
               Sorting Data By:
             </h3>
             <Select ref={sort}>
-              <option selected value="id">
-                Sort By Id
-              </option>
+              <option value="id">Sort By Id</option>
               <option value="price">Sort By Price</option>
               <option value="name">Sort By Name </option>
               <option value="category">Sort By Category</option>
@@ -218,15 +257,12 @@ const ProductListByQuery = () => {
                   <Th>Updated At</Th>
                   <Th>Voucher Type</Th>
                   <Th>Discount Type</Th>
-                  <Th className=" flex flex-row justify-between ">
-                    <Text>Action</Text>
-                  </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {/* {dataProduct?.map((value, index) => {
+                {dataProduct?.map((value, index) => {
                   return (
-                    <Tr className=" text-center ">
+                    <Tr className=" text-center " key={value.id}>
                       <Td>{value.id}</Td>
                       <Td>{value.name}</Td>
                       <Td>
@@ -253,40 +289,40 @@ const ProductListByQuery = () => {
                       <Td>{value.updatedAt}</Td>
                       <Td>{value.voucherType}</Td>
                       <Td>{value.discountType}</Td>
-                      <Td className=" grid-cols-2 gap-2 ">
-                        <Button size="xs" colorScheme="whatsapp">
-                          <Icon
-                            icon="fluent:calendar-edit-16-regular"
-                            className="text-lg"
-                          />
-                          <Link to={`edit/${value.id}`}>Edit</Link>
-                        </Button>
-                        <Button
-                          size="xs"
-                          colorScheme="red"
-                          onClick={() => handleOnOpen(value.id, value.name)}
-                          // setIdProduct(value.id),
-                          // setNameProduct(value.name)
-                        >
-                          <Icon
-                            icon="ph:trash-simple-thin"
-                            className="text-lg"
-                          />
-                          Delete
-                        </Button>
-                      </Td>
                     </Tr>
                   );
-                })} */}
+                })}
               </Tbody>
             </Table>
           </TableContainer>
         </section>
-        <p>
-          Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
-        </p>
-        <nav className="pagination is-centered"></nav>
-
+        <div className="flex justify-center mt-10 mb-10">
+          <div>
+            <p>
+              Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
+            </p>
+            <p className="flex justify-center text-red-500">{msg}</p>
+          </div>
+        </div>
+        <div className="flex justify-center mt-10 mb-10">
+          <nav key={rows} role="navigation" aria-label="pagination">
+            <ReactPaginate
+              breakLabel={
+                <span ClassName="flex justify-center mr-4 ml-4">...</span>
+              }
+              previousLabel={"< Prev"}
+              nextLabel={"Next >"}
+              pageCount={Math.min(10, pages)}
+              pageRangeDisplayed={5}
+              onPageChange={changePage}
+              containerClassName={"flex items-center justify-center mt-8 mb-4"}
+              pageClassName={
+                "block border- border-solid border-lightGray hover:bg-lightGray w-10 h-10 flex items-center justify-center rounded-md mr-4"
+              }
+              activeClassName="bg-purple-300 text-white"
+            />
+          </nav>
+        </div>
         <Footer />
       </div>
     </>
