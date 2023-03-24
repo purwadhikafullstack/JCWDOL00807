@@ -37,4 +37,7 @@ Router.patch(
 );
 Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
 
+Router.get('/login', adminController.Login)
+Router.get('/keep-login-admin', tokenVerify, adminController.keepLoginAdmin)
+
 module.exports = Router;

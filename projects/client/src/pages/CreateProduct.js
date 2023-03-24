@@ -78,6 +78,7 @@ const CreateProduct = () => {
           headers: {
             authorization:
               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
+
           },
         }
       );
