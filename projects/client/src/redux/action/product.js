@@ -59,3 +59,29 @@ export const editProduct = ({ formData }, { id_product }) => {
     }
   };
 };
+
+export const updateStock = (data) => {
+  return async (dispatch) => {
+    try {
+      console.log(data);
+
+      let token = localStorage.my_Token;
+
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/admin/product-stock/update/${data.id_product}?stock=${data.stock}&description=${data.description}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      console.log(response);
+      dispatch(productSlice.actions.updateCategorySuccess(response.data));
+    } catch (error) {
+      console.log(error);
+      console.log(error.response.data.message);
+      dispatch(productSlice.actions.failed(error.response.data.message));
+    }
+  };
+};

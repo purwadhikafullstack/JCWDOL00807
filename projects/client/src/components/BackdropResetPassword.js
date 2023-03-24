@@ -17,6 +17,7 @@ export default function BackdropResetPassword({
   message,
   handleConfirm,
   handleClose,
+  title,
 }) {
   const OverlayOne = () => (
     <ModalOverlay
@@ -39,14 +40,14 @@ export default function BackdropResetPassword({
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
         {overlay}
         <ModalContent>
-          <ModalHeader></ModalHeader>
+          <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalBody>
             <Text>{message}</Text>
           </ModalBody>
           <ModalFooter>
             {handleConfirm ? (
-              <Button onClick={(e) => handleConfirm("")}>sure</Button>
+              <Button onClick={handleConfirm}>sure</Button>
             ) : (
               <Link to="/">
                 <Button onClick={onClose}>close</Button>

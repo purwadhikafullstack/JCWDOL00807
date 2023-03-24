@@ -20,6 +20,7 @@ module.exports = {
   getDataDashboard: async (req, res) => {
     try {
       const { admins_id, name, email, role, isActive } = req.dataToken;
+      console.log(req.dataToken);
       let dataToSend = {};
       console.log(admins_id, name, email, role);
       if (isActive == false) {
@@ -109,10 +110,10 @@ limit 3
           `
           SELECT name 
           FROM  branch_stores 
-where admins_id=1
+where admins_id=?
           `,
           {
-            // replacements: [admins_id],
+            replacements: [admins_id],
             type: sequelize.QueryTypes.SELECT,
           }
         );

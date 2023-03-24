@@ -11,18 +11,22 @@ import {
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
 import SidebarUser from "../components/SidebarUser";
+import { keepLogin } from "../redux/action/user";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
   // console.log(user);
   const [message, setMessage] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(keepLogin());
+
     if (user.message) {
       setMessage(user.message);
     }

@@ -75,19 +75,20 @@ const SidebarUser = () => {
         <CardBody className=" flex flex-col gap-14 h-screen">
           <Box className="flex flex-row gap-3 ">
             <Icon className=" text-2xl " icon="line-md:account-small" />
-            <Box>
+            <Box className=" flex flex-col">
               <Text fontWeight="bold" size="sm">
                 My Account
               </Text>
+
               <Link to="/accounts/profile">
                 <Button variant="link" pt="2" fontSize="sm">
                   My Profile
                 </Button>
               </Link>
               <Link to="/accounts/change-password">
-                <Text pt="2" fontSize="sm">
+                <Button variant="link" pt="2" fontSize="sm">
                   Change My Password
-                </Text>
+                </Button>
               </Link>
 
               <Link to="/accounts/address">

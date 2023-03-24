@@ -201,7 +201,7 @@ const ChangeUserPassword = () => {
           )}
           <div className=" md:flex md:px-5 items-center flex flex-row  ">
             <SidebarUser />
-            <CardBody className=" p-0 md:p-20 mt-[-160px]    ">
+            <CardBody className=" p-0 md:p-20 mt-[-130px]    ">
               {messageError ? (
                 <div>
                   <Alert status="error" mt="16" mb="5" rounded="5">
@@ -251,7 +251,7 @@ const ChangeUserPassword = () => {
                 </>
               ) : (
                 <>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel mt="10">New Password</FormLabel>
                   <InputGroup
                     size="md"
                     mb="1.5"

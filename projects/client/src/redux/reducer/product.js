@@ -26,9 +26,17 @@ export const productSlice = createSlice({
       state.product = action.payload;
       state.loading = false;
     },
+    updateStockSuccess: (state, action) => {
+      state.product = action.payload;
+      state.loading = false;
+    },
   },
 });
 
-export const { createProductSuccess, editProductSuccess, getProductList } =
-  productSlice.actions;
+export const {
+  createProductSuccess,
+  editProductSuccess,
+  getProductList,
+  updateStockSuccess,
+} = productSlice.actions;
 export default productSlice.reducer;
