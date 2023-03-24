@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "kevin369503",
+    "password": "ROBIMETAL42279",
     "database": "online_groceries",
     "host": "127.0.0.1",
     "dialect": "mysql",

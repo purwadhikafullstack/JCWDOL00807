@@ -12,6 +12,8 @@ const hashPassword = async (password) => {
   }
 };
 
+
+
 // hashMatch function : Function untuk melakukan pengecekan dari password yang diinput dengan password yang ada di database
 const hashMatch = async (passwordFromLogin, hashedPasswordFromDatabase) => {
   try {

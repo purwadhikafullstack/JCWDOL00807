@@ -79,15 +79,17 @@ const SidebarUser = () => {
               <Text fontWeight="bold" size="sm">
                 My Account
               </Text>
-
               <Link to="/accounts/profile">
                 <Button variant="link" pt="2" fontSize="sm">
                   My Profile
                 </Button>
               </Link>
-              <Text pt="2" fontSize="sm">
-                Change My Password
-              </Text>
+              <Link to="/accounts/change-password">
+                <Text pt="2" fontSize="sm">
+                  Change My Password
+                </Text>
+              </Link>
+
               <Link to="/accounts/address">
                 <Button variant="link" pt="2" fontSize="sm">
                   Change My Address
