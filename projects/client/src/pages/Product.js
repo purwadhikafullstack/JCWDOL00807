@@ -31,6 +31,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
+import UpdateStock from "../components/UpdateStock";
 
 const ProductCRUD = () => {
   const [dataProduct, setDataProduct] = useState([]);
@@ -52,7 +53,7 @@ const ProductCRUD = () => {
       {
         headers: {
           authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
         },
       }
     );
@@ -69,7 +70,7 @@ const ProductCRUD = () => {
         {
           headers: {
             authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
           },
         }
       );
@@ -86,7 +87,7 @@ const ProductCRUD = () => {
         {
           headers: {
             authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
           },
         }
       );
@@ -169,7 +170,13 @@ const ProductCRUD = () => {
                       <Td>{value.updatedAt}</Td>
                       <Td>{value.voucherType}</Td>
                       <Td>{value.discountType}</Td>
-                      <Td className=" grid-cols-2 gap-2 ">
+                      <Td>
+                        <UpdateStock
+                          id_product={value.id}
+                          name_product={value.name}
+                          stock={value.stock}
+                          getProductList={getProductList}
+                        />
                         <Button size="xs" colorScheme="whatsapp">
                           <Icon
                             icon="fluent:calendar-edit-16-regular"
@@ -178,6 +185,7 @@ const ProductCRUD = () => {
                           <Link to={`edit/${value.id}`}>Edit</Link>
                         </Button>
                         <Button
+                          ml={2}
                           size="xs"
                           colorScheme="red"
                           onClick={() => handleOnOpen(value.id, value.name)}

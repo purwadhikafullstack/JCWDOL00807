@@ -11,18 +11,22 @@ import {
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
 import SidebarUser from "../components/SidebarUser";
+import { keepLogin } from "../redux/action/user";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
   // console.log(user);
   const [message, setMessage] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(keepLogin());
+
     if (user.message) {
       setMessage(user.message);
     }
@@ -37,11 +41,11 @@ const UserProfile = () => {
       <Navbar />
       <section
         className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
-      items-center  px-5 md:px-0  "
+      items-center  px-5 md:px-0  mt-10 mb-10 "
       >
         <Card
           textColor="#234E52"
-          className="w-[full] md:w-[full] px-5 md:px-0 "
+          className="w-[full] md:w-[full] px-5 md:px-0  "
         >
           {message ? (
             <CardHeader textAlign="center">
@@ -54,7 +58,7 @@ const UserProfile = () => {
               justifyContent="center"
               height="160px"
               variant="subtle"
-              bgColor="#e9ffe7"
+              bgColor="#DEF5E5"
               rounded="4px"
               textColor="#234E52"
             >
@@ -69,7 +73,7 @@ const UserProfile = () => {
               <Stack
                 divider={<StackDivider />}
                 spacing="4"
-                className=" p-0 md:p-20 shadow shadow-slate-200 rounded-lg  "
+                className=" p-0 md:p-20 shadow shadow-slate-200 rounded-lg h-[800px] flex flex-col justify-center  "
               >
                 <Box className="flex  items-center justify-start gap-20 ">
                   <Text w="28" size="xs">

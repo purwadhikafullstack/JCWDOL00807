@@ -1,5 +1,5 @@
 // import sequelize
-const { sequelize } = require("./../models");
+const { sequelize, Sequelize } = require("./../models");
 const { Op } = require("sequelize");
 const transporter = require("../lib/nodemailer");
 const handlebars = require("handlebars");
@@ -17,6 +17,7 @@ const item_products = db.item_products;
 const product_categories = db.product_categories;
 const discounts = db.discounts;
 const vouchers = db.vouchers;
+const historyLog = db.stock_history_logs;
 
 const deleteFiles = require("../helper/deleteFile");
 
@@ -1132,6 +1133,290 @@ LIMIT :limit OFFSET :offset
         isError: true,
         message: error.message,
         data: null,
+      });
+    }
+  },
+  UpdateStockProduct: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
+      const { id } = req.params;
+      const { stock, description } = req.query;
+      console.log(req.dataToken);
+
+      console.log(admin_id, id, role, isActive);
+
+      if (role !== "admin branch" || isActive === false)
+        throw { message: "Unauthorization" };
+
+      let branchId = await branch_stores.findOne({
+        attributes: [
+          ["id", "branch_id"],
+          "name",
+          [Sequelize.literal("admin.id"), "admins"],
+          [Sequelize.literal("admin.name"), "names"],
+        ],
+        include: [
+          {
+            model: admin,
+            attributes: [],
+            where: { id: admin_id },
+          },
+        ],
+      });
+
+      console.log(branchId.dataValues.branch_id);
+      console.log(id);
+
+      let dataExist = await item_products.findOne({
+        where: {
+          [Op.and]: [
+            { id: id },
+            { branch_stores_id: branchId.dataValues.branch_id },
+          ],
+        },
+      });
+
+      // console.log(branchId.dataValues.branch_id);
+      console.log(dataExist);
+
+      if (dataExist === null)
+        throw { message: "Only the related admin can change the stock " };
+      if (!stock) throw { message: " Input stock require  " };
+      if (!description)
+        throw { message: "Input description why you change stock require" };
+
+      let beforeUpdated = await item_products.findAll(
+        {
+          attributes: [
+            ["id", "id_product"],
+            "name",
+            "stock",
+            [Sequelize.literal(`stock + ${stock}`), "new_stock"],
+            [Sequelize.literal("branch_store.id"), "id_branch"],
+            [Sequelize.literal("branch_store.name"), "branch"],
+            [Sequelize.literal("product_category.name"), "category"],
+          ],
+          where: {
+            id: id,
+          },
+
+          include: [
+            {
+              model: branch_stores,
+              attributes: ["admins_id"],
+              include: [
+                {
+                  model: admin,
+                  attributes: ["name", "role", "isActive"],
+                },
+              ],
+            },
+            {
+              model: product_categories,
+              attributes: [],
+            },
+          ],
+        },
+        { transaction: t }
+      );
+
+      let [newData] = beforeUpdated;
+
+      if (newData.dataValues.new_stock < 0)
+        throw {
+          message: `Can't change stock because it makes negative, current stock ${newData.dataValues.stock}`,
+        };
+
+      const updateStock = await item_products.update(
+        {
+          stock: newData.dataValues.new_stock,
+        },
+        { where: { id } },
+        { transaction: t }
+      );
+
+      console.log(updateStock);
+
+      await historyLog.create(
+        {
+          admin_name: newData.dataValues.branch_store.dataValues.admin.name,
+          branch_store: newData.dataValues.branch,
+          product_name: newData.dataValues.name,
+          qty: stock,
+          description: `Update : ${description}`,
+        },
+        { transaction: t }
+      );
+
+      await t.commit();
+      res.status(201).send({
+        isSuccess: true,
+        message: "Updated stock success",
+        data: beforeUpdated,
+        // data: branchId,
+      });
+    } catch (error) {
+      console.log(error);
+      await t.rollback();
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  deleteStock: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
+      const { id } = req.params;
+      const { description } = req.query;
+
+      if (role !== "admin branch" || isActive === false)
+        throw { message: "Unauthorization" };
+
+      let branchId = await branch_stores.findOne({
+        attributes: [
+          ["id", "branch_id"],
+          "name",
+          [Sequelize.literal("admin.id"), "admins"],
+          [Sequelize.literal("admin.name"), "names"],
+        ],
+        include: [
+          {
+            model: admin,
+            attributes: [],
+            where: { id: admin_id },
+          },
+        ],
+      });
+
+      let dataExist = await item_products.findOne({
+        attributes: ["stock"],
+        where: {
+          [Op.and]: [
+            { id: id },
+            { branch_stores_id: branchId.dataValues.branch_id },
+          ],
+        },
+      });
+
+      if (dataExist === null)
+        throw { message: "Only the related admin can delete the stock " };
+
+      if (!description)
+        throw { message: " Input description why you delete stoct require  " };
+
+      await item_products.update(
+        {
+          stock: 0,
+        },
+        { where: { id } },
+        { transaction: t }
+      );
+
+      let afterDelete = await item_products.findAll(
+        {
+          attributes: [
+            ["id", "id_product"],
+            "name",
+            ["stock", "stock"],
+            [Sequelize.literal("branch_store.id"), "id_branch"],
+            [Sequelize.literal("branch_store.name"), "branch"],
+            [Sequelize.literal("product_category.name"), "category"],
+          ],
+          where: {
+            id: id,
+          },
+
+          include: [
+            {
+              model: branch_stores,
+              attributes: ["admins_id"],
+              include: [
+                {
+                  model: admin,
+                  attributes: ["name", "role", "isActive"],
+                },
+              ],
+            },
+            {
+              model: product_categories,
+              attributes: [],
+            },
+          ],
+        },
+        { transaction: t }
+      );
+
+      let [dataWasDelete] = afterDelete;
+      await historyLog.create(
+        {
+          admin_name:
+            dataWasDelete.dataValues.branch_store.dataValues.admin.name,
+          branch_store: dataWasDelete.dataValues.branch,
+          product_name: dataWasDelete.dataValues.name,
+          qty: dataExist.dataValues.stock,
+          description: `Delete : ${description}`,
+        },
+        { transaction: t }
+      );
+
+      await t.commit();
+      res.status(201).send({
+        isSuccess: true,
+        message: "Delete stock success",
+      });
+    } catch (error) {
+      await t.rollback();
+
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  getAllStockProduct: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
+      if (role !== "admin branch" || isActive === false)
+        throw { message: "Unauthorization" };
+
+      let branchId = await branch_stores.findOne({
+        attributes: [
+          ["id", "branch_id"],
+          "name",
+          [Sequelize.literal("admin.id"), "admins"],
+          [Sequelize.literal("admin.name"), "names"],
+        ],
+        include: [
+          {
+            model: admin,
+            attributes: [],
+            where: { id: admin_id },
+          },
+        ],
+      });
+
+      const branch_stores_id = branchId.dataValues.branch_id;
+
+      let getAllData = await item_products.findAll({
+        attributes: ["id", "name", "stock"],
+        where: { branch_stores_id },
+      });
+
+      await t.commit();
+      res.status(201).send({
+        isSuccess: true,
+        data: getAllData,
+      });
+    } catch (error) {
+      await t.rollback();
+
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
       });
     }
   },

@@ -67,7 +67,8 @@ const ForgotPassword = () => {
           />
           {loading === true ? null : (
             <Button
-              colorScheme="whatsapp"
+              colorScheme="gray"
+              bgColor="#DEF5E5"
               mt="6"
               className="w-[320px] md:w-[500px]"
               rounded="12px"
@@ -80,7 +81,7 @@ const ForgotPassword = () => {
           <p className=" text-sm text-center mt-4 text-slate-500 ">
             Or you can create new account?{" "}
             <Link to="/register">
-              <span className="text-sm text-[#69cb44] font-semibold ">
+              <span className="text-sm text-[#8EC3B0] font-semibold ">
                 create new one
               </span>
             </Link>

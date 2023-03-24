@@ -12,7 +12,7 @@ const { createToken } = require("./../lib/jwt");
 module.exports = {
   createCategories: async (req, res) => {
     try {
-      const { id, role, isActive } = req.dataToken;
+      const { admins_id: id, role, isActive } = req.dataToken;
       const { name } = req.body;
 
       if (role !== "admin branch" || isActive === false)
@@ -44,7 +44,7 @@ module.exports = {
   },
   updateCategory: async (req, res) => {
     try {
-      const { id: admin_id, role, isActive } = req.dataToken;
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
 
       const { name } = req.body;
       const { id } = req.params;
@@ -87,7 +87,7 @@ module.exports = {
   },
   deleteCategory: async (req, res) => {
     try {
-      const { id: admin_id, role, isActive } = req.dataToken;
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
 
       const { id } = req.params;
 
@@ -116,7 +116,7 @@ module.exports = {
   },
   findAllCategory: async (req, res) => {
     try {
-      const { id: admin_id, role, isActive } = req.dataToken;
+      const { admins_id: admin_id, role, isActive } = req.dataToken;
 
       if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
@@ -160,7 +160,8 @@ module.exports = {
       console.log(findAdmin);
 
       token = createToken({
-        id: findAdmin.dataValues.id,
+        admins_id: findAdmin.dataValues.id,
+        name: findAdmin.dataValues.name,
         email: findAdmin.dataValues.email,
         role: findAdmin.dataValues.role,
         isActive: findAdmin.dataValues.isActive,

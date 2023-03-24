@@ -32,6 +32,7 @@ const CreateCategories = ({
   action,
   id_category,
   tooltip,
+  inputName,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ const CreateCategories = ({
                   <FormLabel htmlFor="name">Category Name</FormLabel>
                   <Input
                     onChange={(e) => handleInput(e.target.value)}
-                    placeholder="Type here ..."
+                    placeholder={inputName}
                     colorScheme="red"
                   />
                   {!isError ? null : <FormErrorMessage>{err}</FormErrorMessage>}

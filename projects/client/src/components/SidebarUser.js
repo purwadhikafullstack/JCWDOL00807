@@ -53,7 +53,7 @@ const SidebarUser = () => {
 
   return (
     <section>
-      <Card className=" relative  flex flex-col justify-center   w-[full] md:w-[300px] ">
+      <Card className="  flex flex-col justify-center w-[full] md:w-[300px] h-[800px] fixed pt-10 items-center ">
         <CardHeader className="flex flex-col items-center gap-5">
           {user?.image ? (
             <Tooltip label="Delete Profile" size="xs">
@@ -72,22 +72,23 @@ const SidebarUser = () => {
           </Text>
         </CardHeader>
 
-        <CardBody className=" flex flex-col gap-10 h-screen">
+        <CardBody className=" flex flex-col gap-14 h-screen">
           <Box className="flex flex-row gap-3 ">
             <Icon className=" text-2xl " icon="line-md:account-small" />
-            <Box>
+            <Box className=" flex flex-col">
               <Text fontWeight="bold" size="sm">
                 My Account
               </Text>
+
               <Link to="/accounts/profile">
                 <Button variant="link" pt="2" fontSize="sm">
                   My Profile
                 </Button>
               </Link>
               <Link to="/accounts/change-password">
-                <Text pt="2" fontSize="sm">
+                <Button variant="link" pt="2" fontSize="sm">
                   Change My Password
-                </Text>
+                </Button>
               </Link>
 
               <Link to="/accounts/address">

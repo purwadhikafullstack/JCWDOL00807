@@ -24,6 +24,7 @@ module.exports = {
   getDataDashboard: async (req, res) => {
     try {
       const { admins_id, name, email, role, isActive } = req.dataToken;
+      console.log(req.dataToken);
       let dataToSend = {};
       console.log(admins_id, name, email, role);
       if (isActive == false) {

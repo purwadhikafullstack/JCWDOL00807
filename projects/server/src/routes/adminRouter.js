@@ -25,6 +25,17 @@ Router.patch(
   productController.updateProduct
 );
 Router.delete("/product/:id", tokenVerify, productController.deleteProduct);
+Router.patch(
+  "/product-stock/update/:id",
+  tokenVerify,
+  productController.UpdateStockProduct
+);
+Router.patch(
+  "/product-stock/delete/:id",
+  tokenVerify,
+  productController.deleteStock
+);
+Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
 
 Router.get('/login', adminController.Login)
 Router.get('/keep-login-admin', tokenVerify, adminController.keepLoginAdmin)

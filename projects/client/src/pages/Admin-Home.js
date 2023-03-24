@@ -166,7 +166,8 @@ const AdminHome = () => {
             headers: {
               // Authorization: `${token}`,
               Authorization:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NzEzMTUsImV4cCI6MTY3OTc0NDExNX0.VRuy9gTk6iAOKNcyYjaC8pvEFknfp4qonztJW_AXt9c",
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1Nzg3NzIsImV4cCI6MTY3OTc1MTU3Mn0.6Cyuzp1xqlGmQByTyX3XMtmMtLPiykGHoXuLWcKO9ok",
+
             },
           }
         );
@@ -188,16 +189,16 @@ const AdminHome = () => {
         console.log(error);
       }
     };
-    getDataDashboard();
+    // getDataDashboard();
     // if (!token) {
     //   navigate("/admin/login");
     // }
   }, []);
-  useEffect(() => {
-    dailySaleChart();
-    dailyOrderChart();
-    dailyProductSoldChart();
-  }, [dataDone]);
+  // useEffect(() => {
+  // dailySaleChart();
+  // dailyOrderChart();
+  // dailyProductSoldChart();
+  // }, [dataDone]);
   return (
     <div>
       <SidebarAdmin />

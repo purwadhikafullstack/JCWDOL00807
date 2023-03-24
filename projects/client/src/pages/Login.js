@@ -120,7 +120,8 @@ const Login = () => {
             </InputRightElement>
           </InputGroup>
           <Button
-            colorScheme="whatsapp"
+            colorScheme="gray"
+            bgColor="#DEF5E5"
             mt="6"
             w="full"
             rounded="12px"
@@ -130,7 +131,7 @@ const Login = () => {
           </Button>
           <div className=" flex justify-start mt-6">
             <Link to="/accounts/reset-password">
-              <div className=" text-sm text-[#69cb44] font-semibold">
+              <div className=" text-sm text-[#8EC3B0] font-semibold">
                 Forgot Password
               </div>
             </Link>
@@ -138,7 +139,7 @@ const Login = () => {
           <p className=" text-sm text-center mt-4 text-slate-500 ">
             Don't have an account?{" "}
             <Link to="/register">
-              <span className="text-sm text-[#69cb44] font-semibold ">
+              <span className="text-sm text-[#8EC3B0] font-semibold ">
                 Register
               </span>
             </Link>

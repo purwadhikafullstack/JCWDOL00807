@@ -70,7 +70,6 @@ module.exports = {
       token = createToken({ id: findUser.dataValues.id });
       res.status(200).send({
         isSuccess: true,
-        message: "Login success",
         name: findUser.dataValues.name,
         image: image,
         token: token,

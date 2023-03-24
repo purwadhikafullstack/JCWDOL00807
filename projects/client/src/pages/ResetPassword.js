@@ -12,8 +12,8 @@ import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
 import axios from "axios";
 import BackdropResetPassword from "../components/BackdropResetPassword";
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const ResetPassword = () => {
   const password = useRef();
@@ -83,77 +83,78 @@ const ResetPassword = () => {
 
   return (
     <>
-    <Navbar />
-    <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
-      <div className=" relative h-96 w-[full] md:w-[500px] flex-col justify-center items-center ">
-        {message ? (
-          <div>
-            <Alert status="error" mb="6" mt="2">
-              <AlertIcon />
-              <AlertTitle>{message}</AlertTitle>
-            </Alert>
-          </div>
-        ) : (
-          <div className=" flex flex-row  items-center gap-2 mb-10 ">
-            <Icon className=" text-xl " icon="ion:enter-outline" />
-            <h1>Reset Password</h1>
-          </div>
-        )}
+      <Navbar />
+      <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center   ">
+        <div className=" relative h-96 w-[full] md:w-[500px] flex-col justify-center items-center ">
+          {message ? (
+            <div>
+              <Alert status="error" mb="6" mt="2">
+                <AlertIcon />
+                <AlertTitle>{message}</AlertTitle>
+              </Alert>
+            </div>
+          ) : (
+            <div className=" flex flex-row  items-center gap-2 mb-10 ">
+              <Icon className=" text-xl " icon="ion:enter-outline" />
+              <h1>Reset Password</h1>
+            </div>
+          )}
 
-        <InputGroup
-          size="md"
-          mb="1.5"
-          mt="1.5"
-          className="w-[full] md:w-[500px]"
-        >
-          <Input
-            variant="flushed"
-            placeholder="Password"
+          <InputGroup
+            size="md"
+            mb="1.5"
+            mt="1.5"
             className="w-[full] md:w-[500px]"
-            type="password"
-            id="myInput"
-            p="5"
-            ref={password}
-          />
-          <InputRightElement>
-            <Icon onClick={handleVisible} icon={icon} />
-          </InputRightElement>
-        </InputGroup>
+          >
+            <Input
+              variant="flushed"
+              placeholder="Password"
+              className="w-[full] md:w-[500px]"
+              type="password"
+              id="myInput"
+              p="5"
+              ref={password}
+            />
+            <InputRightElement>
+              <Icon onClick={handleVisible} icon={icon} />
+            </InputRightElement>
+          </InputGroup>
 
-        <InputGroup
-          size="md"
-          mb="1.5"
-          mt="1.5"
-          className="w-[full] md:w-[500px]"
-        >
-          <Input
-            variant="flushed"
-            placeholder="Repeat Password"
-            type="password"
-            id="myInput2"
-            p="5"
+          <InputGroup
+            size="md"
+            mb="1.5"
+            mt="1.5"
             className="w-[full] md:w-[500px]"
-            ref={repeatPassword}
-          />
-          <InputRightElement>
-            <Icon onClick={handleVisible2} icon={icon2} />
-          </InputRightElement>
-        </InputGroup>
-        <Button
-          colorScheme="whatsapp"
-          mt="6"
-          w="full"
-          rounded="12px"
-          onClick={handleReset}
-        >
-          Reset Password
-        </Button>
-      </div>
-      {messageSuccess ? (
-        <BackdropResetPassword message={messageSuccess} />
-      ) : null}
-    </section>
-    <Footer />
+          >
+            <Input
+              variant="flushed"
+              placeholder="Repeat Password"
+              type="password"
+              id="myInput2"
+              p="5"
+              className="w-[full] md:w-[500px]"
+              ref={repeatPassword}
+            />
+            <InputRightElement>
+              <Icon onClick={handleVisible2} icon={icon2} />
+            </InputRightElement>
+          </InputGroup>
+          <Button
+            colorScheme="gray"
+            bgColor="#DEF5E5"
+            mt="6"
+            w="full"
+            rounded="12px"
+            onClick={handleReset}
+          >
+            Reset Password
+          </Button>
+        </div>
+        {messageSuccess ? (
+          <BackdropResetPassword message={messageSuccess} />
+        ) : null}
+      </section>
+      <Footer />
     </>
   );
 };

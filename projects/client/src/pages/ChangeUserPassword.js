@@ -176,9 +176,9 @@ const ChangeUserPassword = () => {
       <Navbar />
       <section
         className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
-      items-center  px-5 md:px-0  "
+      items-center  px-5 md:px-0 m-10 "
       >
-        <Card textColor="#234E52" className="w-[full] md:w-[800px]  ">
+        <Card textColor="#234E52" className="w-[full] md:w-[800px]   ">
           {message ? (
             <CardHeader textAlign="center">
               <AlertSuccess title={message} handleClick={handleClick} />
@@ -199,9 +199,9 @@ const ChangeUserPassword = () => {
               </Heading>
             </CardHeader>
           )}
-          <div className=" md:flex md:px-5 items-center flex flex-row ">
+          <div className=" md:flex md:px-5 items-center flex flex-row  ">
             <SidebarUser />
-            <CardBody className=" p-0 md:p-20  ">
+            <CardBody className=" p-0 md:p-20 mt-[-130px]    ">
               {messageError ? (
                 <div>
                   <Alert status="error" mt="16" mb="5" rounded="5">
@@ -251,7 +251,7 @@ const ChangeUserPassword = () => {
                 </>
               ) : (
                 <>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel mt="10">New Password</FormLabel>
                   <InputGroup
                     size="md"
                     mb="1.5"
