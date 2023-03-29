@@ -6,9 +6,6 @@ const db = require("../models/index");
 const products_categories = db.product_categories;
 const admins = db.admins;
 
-// // import JWT
-const { createToken } = require("./../lib/jwt");
-
 module.exports = {
   createCategories: async (req, res) => {
     try {
@@ -145,34 +142,6 @@ module.exports = {
         isSuccess: false,
         message: error.message,
       });
-    }
-  },
-
-  temporary: async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      console.log(email, password);
-      const findAdmin = await admins.findOne({
-        where: { email },
-      });
-      if (findAdmin === null) throw { message: "admin not found" };
-
-      console.log(findAdmin);
-
-      token = createToken({
-        admins_id: findAdmin.dataValues.id,
-        name: findAdmin.dataValues.name,
-        email: findAdmin.dataValues.email,
-        role: findAdmin.dataValues.role,
-        isActive: findAdmin.dataValues.isActive,
-      });
-      res.status(200).send({
-        isSuccess: true,
-        message: "login success",
-        token: token,
-      });
-    } catch (error) {
-      console.log(error);
     }
   },
 };

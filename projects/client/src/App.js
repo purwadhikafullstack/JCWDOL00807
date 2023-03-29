@@ -22,6 +22,7 @@ import EditProduct from "./pages/EditProduct";
 import ProductListByQuery from "./pages/ProductList";
 import AdminLogin from "./pages/Admin-Login";
 import ChangeUserPassword from "./pages/ChangeUserPassword";
+import { userProductList } from "./redux/action/userProduct";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
     dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
     dispatch(findAllCategory());
+    dispatch(userProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 

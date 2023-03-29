@@ -224,7 +224,8 @@ where admins_id=?
       const findAdmin = await admin.findOne({
         where: { email },
       });
-      console.log(findAdmin)
+      console.log(findAdmin.dataValues.branch_stores_id);
+
       if (findAdmin === null)
         throw {
           message: "Couldn't find the email you entered ",
@@ -242,28 +243,36 @@ where admins_id=?
           message:
             "Your account has not active. Please contact super Admin for further information",
         };
-        
-        // console.log(findAdmin.dataValues.role)
+
+      // console.log(findAdmin.dataValues.role)
 
       if (
         findAdmin.dataValues.role !== "admin branch" &&
         findAdmin.dataValues.role !== "super admin"
-        )
+      )
         throw {
           message:
-          "Your role is not permited. Please contact super Admin for further information",
+            "Your role is not permited. Please contact super Admin for further information",
         };
-        console.log(findAdmin.dataValues.role)
+      console.log(findAdmin.dataValues.role);
 
-        let admins_id = findAdmin.dataValues.id
-        let name = findAdmin.dataValues.name
-        let role = findAdmin.dataValues.role
-        let isActive = findAdmin.dataValues.isActive
+      let admins_id = findAdmin.dataValues.id;
+      let name = findAdmin.dataValues.name;
+      let role = findAdmin.dataValues.role;
+      let isActive = findAdmin.dataValues.isActive;
+      let branch_stores_id = findAdmin.dataValues.branch_stores_id;
 
-//         const password = await bcrypt.hash("admin123", 10);
-// console.log(password)
+      // //         const password = await bcrypt.hash("admin123", 10);
+      // // console.log(password)
 
-      let token = createToken({ admins_id, name, email, role, isActive });
+      let token = createToken({
+        admins_id,
+        name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      });
       res.status(200).send({
         isSuccess: true,
         message: "Login success",
@@ -278,17 +287,11 @@ where admins_id=?
     }
   },
 
-  
   keepLoginAdmin: async (req, res) => {
     try {
       let admins_id = req.dataToken.admins_id;
       const findAdmin = await admin.findOne({
-        attributes: [
-          "name",
-          "email",
-          "role",
-          "isActive"
-        ],
+        attributes: ["name", "email", "role", "isActive", "branch_stores_id"],
         where: {
           id: admins_id,
         },
@@ -298,7 +301,7 @@ where admins_id=?
         isSuccess: true,
         message: "getData Admin Login Success",
         data: findAdmin.dataValues,
-        role: findAdmin.role
+        role: findAdmin.role,
       });
       // console.log(findAdmin.dataValues)
     } catch (error) {

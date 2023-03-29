@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       start: DataTypes.DATE,
       end: DataTypes.DATE,
       cut_nominal: DataTypes.INTEGER,
+      cut_percentage: DataTypes.FLOAT,
       status: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
