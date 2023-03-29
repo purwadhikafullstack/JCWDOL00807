@@ -22,6 +22,13 @@ import EditProduct from "./pages/EditProduct";
 import ProductListByQuery from "./pages/ProductList";
 import AdminLogin from "./pages/Admin-Login";
 import ChangeUserPassword from "./pages/ChangeUserPassword";
+import VoucherReferral from "./pages/VocReferral";
+import CreateDiscount from "./pages/CreateDiscount";
+import EditDiscount from "./pages/EditDiscount"
+import CreateVoucher from "./pages/CreateVoucher"
+import EditVoucher from "./pages/EditVoucher"
+import DiscountList from"./pages/DiscountList"
+import VoucherList from "./pages/VoucherList"
 
 function App() {
   const dispatch = useDispatch();
@@ -70,6 +77,19 @@ function App() {
           path="/accounts/change-password"
           element={<ChangeUserPassword />}
         />
+        <Route path="/claimReferral/:token" element={<VoucherReferral />} />
+        <Route
+          path="/admin/manage-discount/create"
+          element={<CreateDiscount />}
+        />
+        <Route path="/admin/manage-discount/edit/:id" element={<EditDiscount/>}/>
+        <Route
+          path="/admin/manage-voucher/create"
+          element={<CreateVoucher />}
+        />
+        <Route path="/admin/manage-voucher/edit/:id" element={<EditVoucher/>}/>
+        <Route path="/admin/manage-discount" element={<DiscountList/>} />
+        <Route path="/admin/manage-voucher" element={<VoucherList/>} />
       </Routes>
     </div>
   );

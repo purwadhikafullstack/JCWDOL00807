@@ -25,6 +25,7 @@ import {
   useDisclosure,
   isOpen,
   onOpen,
+  flattenTokens,
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import axios from "axios";
@@ -34,6 +35,7 @@ import React from "react";
 import UpdateStock from "../components/UpdateStock";
 
 const ProductCRUD = () => {
+  const navigate = useNavigate();
   const [dataProduct, setDataProduct] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState("");
   const [idProduct, setIdProduct] = useState("");
@@ -46,31 +48,14 @@ const ProductCRUD = () => {
   const [keyword, setKeyword] = useState("");
   const [rows, setRows] = useState(0);
 
-  const getProductbyQuery = async () => {
-    const response = await axios.get(
-      `
-    ${process.env.REACT_APP_API_BASE_URL}/product_search?search_query=${keyword}&page=${page}&limit=${limit}`,
-      {
-        headers: {
-          authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
-        },
-      }
-    );
-    console.log(response);
-    setDataProduct(response?.data?.data?.result);
-    setPage(response?.data?.data?.page);
-    setPages(response?.data?.data?.totalPage);
-    setRows(response?.data?.data?.totalRows[0].count_row);
-  };
   const getProductList = async () => {
     try {
+      const token = localStorage.getItem("my_Token");
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
+            authorization: token,
           },
         }
       );
@@ -82,12 +67,12 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
+      const token = localStorage.getItem("my_Token");
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
+            authorization: token,
           },
         }
       );
@@ -98,12 +83,19 @@ const ProductCRUD = () => {
     }
   };
 
+  const handleOnEdit = (idProduct) => {
+    navigate(`edit/${idProduct}`);
+  };
   const handleOnOpen = async (id, name) => {
     setIdProduct(id);
     setNameProduct(name);
     onOpen();
   };
   useEffect(() => {
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getProductList();
     // getProductbyQuery();
   }, []);
@@ -168,8 +160,22 @@ const ProductCRUD = () => {
                       </Td>
                       <Td>{value.createdAt}</Td>
                       <Td>{value.updatedAt}</Td>
-                      <Td>{value.voucherType}</Td>
-                      <Td>{value.discountType}</Td>
+                      {value.voucherType ? (
+                        <>
+                          <Td>{value.voucherType}</Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.discountType ? (
+                        <>
+                          <Td>{value.discountType}</Td>
+                        </>
+                      ) : (
+                        <>
+                          <Td>-</Td>
+                        </>
+                      )}
                       <Td>
                         <UpdateStock
                           id_product={value.id}
@@ -177,12 +183,16 @@ const ProductCRUD = () => {
                           stock={value.stock}
                           getProductList={getProductList}
                         />
-                        <Button size="xs" colorScheme="whatsapp">
+                        <Button
+                          size="xs"
+                          colorScheme="whatsapp"
+                          onClick={() => handleOnEdit(value.id)}
+                        >
                           <Icon
                             icon="fluent:calendar-edit-16-regular"
                             className="text-lg"
                           />
-                          <Link to={`edit/${value.id}`}>Edit</Link>
+                          Edit
                         </Button>
                         <Button
                           ml={2}

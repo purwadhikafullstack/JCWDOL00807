@@ -30,6 +30,7 @@ module.exports = {
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       console.log(admins_id, admins_name, email, role, isActive);
 
@@ -98,6 +99,7 @@ module.exports = {
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       console.log(admins_id, admins_name, email, role, isActive);
 
@@ -117,13 +119,7 @@ module.exports = {
           data: null,
         });
       }
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
+
       //   console.log(branch_stores_id);
       let productList = await sequelize.query(
         `
@@ -231,6 +227,7 @@ Group by i.id;
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       console.log(admins_id, admins_name, email, role, isActive);
       let { id } = req.params;
@@ -250,13 +247,6 @@ Group by i.id;
         });
       }
 
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
       let dataProduct = await item_products.findOne({
         where: {
           id,
@@ -264,11 +254,11 @@ Group by i.id;
         },
       });
       if (!dataProduct) {
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Id Product is invalid, please input valid id product",
           data: null,
-        });
+        };
       }
 
       let getProduct = await sequelize.query(
@@ -315,6 +305,7 @@ Group by i.id;
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       let productImage = req.files.images;
       console.log(productImage);
@@ -337,6 +328,7 @@ Group by i.id;
           messasge: "Admin is not active, please contact to super admin",
           data: null,
         });
+        return;
       }
       if (role !== "admin branch") {
         res.status(404).send({
@@ -344,66 +336,51 @@ Group by i.id;
           message: "Role is not permitted",
           data: null,
         });
+        return;
       }
-      // Ambil branchstore id berdasarkan admins_id
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
-      console.log(branch_stores_id);
+
       // Validasi Input
       let checkName = await item_products.findOne({
         where: { name },
       });
 
       if (!name || !description || !weight || !stock || !price || !category) {
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Data is incomplete, please fulfill the field",
           data: null,
-        });
+        };
       }
 
       if (checkName) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Your name is already registered, please try another name",
           data: null,
-        });
+        };
       }
 
       if (weight <= 0) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message:
             "Weight field is invalid, please input positive integer or positive decimal",
           data: null,
-        });
+        };
       }
       if (stock < 1) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Stock field  is invalid, please input positive integer",
           data: null,
-        });
+        };
       }
       if (price <= 0) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Price field is invalid, please input positive integer",
           data: null,
-        });
+        };
       }
 
       let productCategories = await product_categories.findOne({
@@ -412,13 +389,11 @@ Group by i.id;
       });
       console.log(productCategories);
       if (productCategories == null) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Categories is invalid, please choose the exist category",
           data: null,
-        });
+        };
       }
 
       let product_categories_id = productCategories.dataValues.id;
@@ -426,13 +401,11 @@ Group by i.id;
       let voucher_id;
       let discount_id;
       if (discountType && voucherType) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Please input voucher type or discounty type only",
           data: null,
-        });
+        };
       }
 
       if (discountType) {
@@ -443,14 +416,12 @@ Group by i.id;
           attributes: ["discount_type", "id"],
         });
         if (!discountCheck) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message:
               "Discount type is invalid , please choose the exist discount type",
             data: null,
-          });
+          };
         }
         let discount_id = discountCheck.dataValues.id;
       }
@@ -463,14 +434,12 @@ Group by i.id;
           attributes: ["voucher_type", "id"],
         });
         if (!voucherCheck) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message:
               "Voucher type is invalid, please choose the exist voucher type",
             data: null,
-          });
+          };
         }
         let voucher_id = voucherCheck.dataValues.id;
       }
@@ -622,6 +591,7 @@ Group by i.id;
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       let {
         name,
@@ -640,6 +610,7 @@ Group by i.id;
           messasge: "Admin is not active, please contact to super admin",
           data: null,
         });
+        return;
       }
       if (role !== "admin branch") {
         res.status(404).send({
@@ -647,31 +618,31 @@ Group by i.id;
           message: "Role is not permitted",
           data: null,
         });
+        return;
       }
       let productImage = req.files.images;
       let dataToSend = {};
       let { id } = req.params;
       // Ambil branchstore id berdasarkan admins_id
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
+
       let dataProduct = await item_products.findOne({
         where: { id, branch_stores_id },
       });
       if (!dataProduct) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Id product invalid, please input valid id product",
           data: null,
-        });
+        };
       }
-      console.log(admins_id, admins_name, email, role, isActive);
+      console.log(
+        admins_id,
+        admins_name,
+        email,
+        role,
+        isActive,
+        branch_stores_id
+      );
 
       // Validasi Input
       if (name) {
@@ -680,13 +651,11 @@ Group by i.id;
         });
         console.log(checkName);
         if (checkName) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message: "Your name is already registered, please try another name",
             data: null,
-          });
+          };
         } else {
           await item_products.update(
             {
@@ -712,14 +681,12 @@ Group by i.id;
 
       if (weight) {
         if (weight <= 0) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message:
               "Weight field is invalid, please input positive integer or positive decimal",
             data: null,
-          });
+          };
         } else {
           await item_products.update(
             {
@@ -734,13 +701,11 @@ Group by i.id;
 
       if (stock) {
         if (stock < 1) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message: "Stock field  is invalid, please input positive integer",
             data: null,
-          });
+          };
         } else {
           await item_products.update(
             {
@@ -755,13 +720,11 @@ Group by i.id;
 
       if (price) {
         if (price <= 0) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message: "Price field is invalid, please input positive integer",
             data: null,
-          });
+          };
         } else {
           await item_products.update(
             {
@@ -780,13 +743,11 @@ Group by i.id;
           attributes: ["name", "id"],
         });
         if (!productCategories) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message: "Categories is invalid, please choose the exist category",
             data: null,
-          });
+          };
         } else {
           let product_categories_id = productCategories.dataValues.id;
           await item_products.update(
@@ -802,13 +763,11 @@ Group by i.id;
         }
       }
       if (discountType && voucherType) {
-        await t.rollback();
-        if (req.files.images) deleteFiles(req.files.images);
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Please input voucher type or discounty type only",
           data: null,
-        });
+        };
       }
       if (discountType) {
         let discountCheck = await discounts.findOne({
@@ -818,14 +777,12 @@ Group by i.id;
           attributes: ["discount_type", "id"],
         });
         if (!discountCheck) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message:
               "Discount type is invalid , please choose the exist discount type",
             data: null,
-          });
+          };
         }
         let discount_id = discountCheck.dataValues.id;
         await item_products.update(
@@ -845,14 +802,12 @@ Group by i.id;
           attributes: ["voucher_type", "id"],
         });
         if (!voucherCheck) {
-          await t.rollback();
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
+          throw {
             isError: true,
             message:
               "Voucher type is invalid, please choose the exist voucher type",
             data: null,
-          });
+          };
         }
         let voucher_id = voucherCheck.dataValues.id;
         await item_products.update(
@@ -865,15 +820,16 @@ Group by i.id;
         dataToSend.voucher_id = voucher_id;
       }
       if (productImage) {
+        if (dataProduct.dataValues.image) {
+          await fs.unlink(dataProduct.dataValues.image);
+        }
         let imagePath = productImage[0].path;
         await item_products.update(
           { images: imagePath },
           { where: { id, branch_stores_id } },
           { transaction: t }
         );
-        if (dataProduct.dataValues.image) {
-          await fs.unlink(dataProduct.dataValues.image);
-        }
+
         dataToSend.imagePath = imagePath;
       }
       await t.commit();
@@ -902,6 +858,7 @@ Group by i.id;
         email,
         role,
         isActive,
+        branch_stores_id,
       } = req.dataToken;
       const { id } = req.params;
       // Validasi Admin
@@ -911,6 +868,7 @@ Group by i.id;
           messasge: "Admin is not active, please contact to super admin",
           data: null,
         });
+        return;
       }
       if (role !== "admin branch") {
         res.status(404).send({
@@ -918,26 +876,22 @@ Group by i.id;
           message: "Role is not permitted",
           data: null,
         });
+        return;
       }
-      // Ambil branchstore id berdasarkan admins_id
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
+
       let dataProduct = await item_products.findOne({
         where: { id, branch_stores_id },
       });
       if (!dataProduct) {
-        await t.rollback();
-        res.status(404).send({
+        throw {
           isError: true,
           message: "Id product invalid, please input valid id product",
           data: null,
-        });
+        };
       } else {
+        if (dataProduct.dataValues.image) {
+          await fs.unlink(dataProduct.dataValues.image);
+        }
         let deletedProduct = await item_products.destroy(
           {
             where: {
@@ -947,12 +901,12 @@ Group by i.id;
           },
           { transaction: t }
         );
-        // await fs.unlink(dataProduct.dataValues.image);
+
         await t.commit();
         res.status(200).send({
           isError: false,
-          message: "Delete Product success",
-          data: `Product ID ${id} has been success deleted`,
+          message: `Product ID ${id} has been success deleted`,
+          data: deletedProduct,
         });
       }
     } catch (error) {
@@ -972,6 +926,7 @@ Group by i.id;
         email,
         role,
         isActive,
+        branch_stores_id
       } = req.dataToken;
       // Validasi Admin
       if (isActive === false) {
@@ -980,6 +935,7 @@ Group by i.id;
           messasge: "Admin is not active, please contact to super admin",
           data: null,
         });
+        return;
       }
       if (role !== "admin branch") {
         res.status(404).send({
@@ -987,16 +943,9 @@ Group by i.id;
           message: "Role is not permitted",
           data: null,
         });
+        return;
       }
-      // Ambil branchstore id berdasarkan admins_id
-      let getBranchStoreId = await branch_stores.findOne({
-        where: {
-          admins_id,
-        },
-        attributes: ["id"],
-      });
-      let branch_stores_id = getBranchStoreId.dataValues.id;
-      console.log(branch_stores_id);
+      
       const categories = req.query.categories || null;
       console.log(categories);
       const sortBy = req.query.sort;

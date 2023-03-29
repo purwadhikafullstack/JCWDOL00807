@@ -33,13 +33,16 @@ module.exports = {
           message: "Admin is not active, please contact to super admin",
           data: null,
         });
-        if (role !== "super admin" || role !== "admin branch") {
-          res.status(404).send({
-            isError: true,
-            message: "Role is not permitted",
-          });
-        }
+        return;
       }
+      if (role !== "super admin" && role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+        });
+        return;
+      }
+
       if (role == "super admin") {
         let topProduct = await sequelize.query(
           `
@@ -112,9 +115,12 @@ limit 3
       } else {
         let branchName = await sequelize.query(
           `
-          SELECT name 
-          FROM  branch_stores 
-where admins_id=?
+          SELECT bs.name 
+FROM online_groceries.admins a
+LEFT JOIN branch_stores bs ON a.branch_stores_id = bs.id
+where a.id=?
+group by a.id;
+
           `,
           {
             replacements: [admins_id],
@@ -224,7 +230,7 @@ where admins_id=?
       const findAdmin = await admin.findOne({
         where: { email },
       });
-      console.log(findAdmin)
+      console.log(findAdmin);
       if (findAdmin === null)
         throw {
           message: "Couldn't find the email you entered ",
@@ -242,28 +248,36 @@ where admins_id=?
           message:
             "Your account has not active. Please contact super Admin for further information",
         };
-        
-        // console.log(findAdmin.dataValues.role)
+
+      // console.log(findAdmin.dataValues.role)
 
       if (
         findAdmin.dataValues.role !== "admin branch" &&
         findAdmin.dataValues.role !== "super admin"
-        )
+      )
         throw {
           message:
-          "Your role is not permited. Please contact super Admin for further information",
+            "Your role is not permited. Please contact super Admin for further information",
         };
-        console.log(findAdmin.dataValues.role)
+      console.log(findAdmin.dataValues.role);
 
-        let admins_id = findAdmin.dataValues.id
-        let name = findAdmin.dataValues.name
-        let role = findAdmin.dataValues.role
-        let isActive = findAdmin.dataValues.isActive
+      let admins_id = findAdmin.dataValues.id;
+      let name = findAdmin.dataValues.name;
+      let role = findAdmin.dataValues.role;
+      let isActive = findAdmin.dataValues.isActive;
+      let branch_stores_id = findAdmin.dataValues.branch_stores_id;
 
-//         const password = await bcrypt.hash("admin123", 10);
-// console.log(password)
+      //         const password = await bcrypt.hash("admin123", 10);
+      // console.log(password)
 
-      let token = createToken({ admins_id, name, email, role, isActive });
+      let token = createToken({
+        admins_id,
+        name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      });
       res.status(200).send({
         isSuccess: true,
         message: "Login success",
@@ -278,17 +292,11 @@ where admins_id=?
     }
   },
 
-  
   keepLoginAdmin: async (req, res) => {
     try {
       let admins_id = req.dataToken.admins_id;
       const findAdmin = await admin.findOne({
-        attributes: [
-          "name",
-          "email",
-          "role",
-          "isActive"
-        ],
+        attributes: ["name", "email", "role", "isActive", "branch_stores_id"],
         where: {
           id: admins_id,
         },
@@ -298,13 +306,67 @@ where admins_id=?
         isSuccess: true,
         message: "getData Admin Login Success",
         data: findAdmin.dataValues,
-        role: findAdmin.role
+        role: findAdmin.role,
       });
       // console.log(findAdmin.dataValues)
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
         message: error.message,
+      });
+    }
+  },
+  getUserVerified: async (req, res) => {
+    try {
+      const {
+        admins_id,
+        name: admins_name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
+      console.log(admins_id, admins_name, email, role, isActive);
+
+      if (isActive === false) {
+        res.status(404).send({
+          isError: true,
+          messasge: "Admin is not active, please contact to super admin",
+          data: null,
+        });
+      }
+      if (role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+          data: null,
+        });
+      }
+
+      let dataUser = await users.findAll({
+        where: {
+          status: "verified",
+        },
+        attributes: ["id", "name", "email"],
+      });
+      if (!dataUser) {
+        throw {
+          isError: true,
+          message: "There is no verified user ",
+          data: null,
+        };
+      }
+
+      res.status(200).send({
+        isError: false,
+        message: "Get UserVerified is success",
+        data: dataUser,
+      });
+    } catch (error) {
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
       });
     }
   },

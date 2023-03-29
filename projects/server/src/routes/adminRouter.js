@@ -30,6 +30,7 @@ Router.patch(
   tokenVerify,
   productController.UpdateStockProduct
 );
+
 Router.patch(
   "/product-stock/delete/:id",
   tokenVerify,
@@ -37,7 +38,8 @@ Router.patch(
 );
 Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
 
-Router.get('/login', adminController.Login)
-Router.get('/keep-login-admin', tokenVerify, adminController.keepLoginAdmin)
+Router.get("/login", adminController.Login);
+Router.get("/keep-login-admin", tokenVerify, adminController.keepLoginAdmin);
+Router.get("/getUserVerified", tokenVerify, adminController.getUserVerified);
 
 module.exports = Router;

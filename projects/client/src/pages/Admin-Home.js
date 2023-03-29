@@ -11,7 +11,6 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
 ChartJS.register(...registerables);
 
-
 const AdminHome = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState();
@@ -153,10 +152,10 @@ const AdminHome = () => {
     );
   };
   useEffect(() => {
-    // const token = localStorage.getItem("token");
-    // const role = localStorage.getItem("role");
-    // console.log(token, role);
-    // setRole(role);
+    let token = localStorage.my_Token;
+    if (!token) {
+      navigate("/admin/login");
+    }
 
     let getDataDashboard = async () => {
       try {
@@ -165,9 +164,7 @@ const AdminHome = () => {
           {
             headers: {
               // Authorization: `${token}`,
-              Authorization:
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1Nzg3NzIsImV4cCI6MTY3OTc1MTU3Mn0.6Cyuzp1xqlGmQByTyX3XMtmMtLPiykGHoXuLWcKO9ok",
-
+              Authorization: token,
             },
           }
         );
@@ -189,7 +186,7 @@ const AdminHome = () => {
         console.log(error);
       }
     };
-    // getDataDashboard();
+    getDataDashboard();
     // if (!token) {
     //   navigate("/admin/login");
     // }
