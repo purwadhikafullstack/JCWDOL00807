@@ -1088,46 +1088,23 @@ LIMIT :limit OFFSET :offset
   UpdateStockProduct: async (req, res) => {
     const t = await sequelize.transaction();
     try {
-      const { admins_id: admin_id, role, isActive } = req.dataToken;
+      const {
+        admins_id: admin_id,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
       const { id } = req.params;
       const { stock, description } = req.query;
-      console.log(req.dataToken);
-
-      console.log(admin_id, id, role, isActive);
 
       if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
 
-      let branchId = await branch_stores.findOne({
-        attributes: [
-          ["id", "branch_id"],
-          "name",
-          [Sequelize.literal("admin.id"), "admins"],
-          [Sequelize.literal("admin.name"), "names"],
-        ],
-        include: [
-          {
-            model: admin,
-            attributes: [],
-            where: { id: admin_id },
-          },
-        ],
-      });
-
-      console.log(branchId.dataValues.branch_id);
-      console.log(id);
-
       let dataExist = await item_products.findOne({
         where: {
-          [Op.and]: [
-            { id: id },
-            { branch_stores_id: branchId.dataValues.branch_id },
-          ],
+          [Op.and]: [{ id: id }, { branch_stores_id }],
         },
       });
-
-      // console.log(branchId.dataValues.branch_id);
-      console.log(dataExist);
 
       if (dataExist === null)
         throw { message: "Only the related admin can change the stock " };
@@ -1147,17 +1124,17 @@ LIMIT :limit OFFSET :offset
             [Sequelize.literal("product_category.name"), "category"],
           ],
           where: {
-            id: id,
+            id,
           },
 
           include: [
             {
               model: branch_stores,
-              attributes: ["admins_id"],
+              attributes: ["id"],
               include: [
                 {
                   model: admin,
-                  attributes: ["name", "role", "isActive"],
+                  attributes: ["name", "isActive", "role"],
                 },
               ],
             },
@@ -1174,7 +1151,7 @@ LIMIT :limit OFFSET :offset
 
       if (newData.dataValues.new_stock < 0)
         throw {
-          message: `Can't change stock because it makes negative, current stock ${newData.dataValues.stock}`,
+          message: `Can't update stock because it makes negative, current stock ${newData.dataValues.stock}`,
         };
 
       const updateStock = await item_products.update(
@@ -1185,11 +1162,9 @@ LIMIT :limit OFFSET :offset
         { transaction: t }
       );
 
-      console.log(updateStock);
-
       await historyLog.create(
         {
-          admin_name: newData.dataValues.branch_store.dataValues.admin.name,
+          admin_name: newData.dataValues.branch_store.dataValues.admins.name,
           branch_store: newData.dataValues.branch,
           product_name: newData.dataValues.name,
           qty: stock,
@@ -1202,8 +1177,6 @@ LIMIT :limit OFFSET :offset
       res.status(201).send({
         isSuccess: true,
         message: "Updated stock success",
-        data: beforeUpdated,
-        // data: branchId,
       });
     } catch (error) {
       console.log(error);
@@ -1217,36 +1190,22 @@ LIMIT :limit OFFSET :offset
   deleteStock: async (req, res) => {
     const t = await sequelize.transaction();
     try {
-      const { admins_id: admin_id, role, isActive } = req.dataToken;
+      const {
+        admins_id: admin_id,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
       const { id } = req.params;
       const { description } = req.query;
 
       if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
 
-      let branchId = await branch_stores.findOne({
-        attributes: [
-          ["id", "branch_id"],
-          "name",
-          [Sequelize.literal("admin.id"), "admins"],
-          [Sequelize.literal("admin.name"), "names"],
-        ],
-        include: [
-          {
-            model: admin,
-            attributes: [],
-            where: { id: admin_id },
-          },
-        ],
-      });
-
       let dataExist = await item_products.findOne({
         attributes: ["stock"],
         where: {
-          [Op.and]: [
-            { id: id },
-            { branch_stores_id: branchId.dataValues.branch_id },
-          ],
+          [Op.and]: [{ id }, { branch_stores_id }],
         },
       });
 
@@ -1255,6 +1214,10 @@ LIMIT :limit OFFSET :offset
 
       if (!description)
         throw { message: " Input description why you delete stoct require  " };
+
+      if (dataExist.dataValues.stock <= 0) {
+        throw { message: "Cannot delete stock, because current stock 0" };
+      }
 
       await item_products.update(
         {
@@ -1281,7 +1244,7 @@ LIMIT :limit OFFSET :offset
           include: [
             {
               model: branch_stores,
-              attributes: ["admins_id"],
+              attributes: ["id"],
               include: [
                 {
                   model: admin,
@@ -1302,7 +1265,7 @@ LIMIT :limit OFFSET :offset
       await historyLog.create(
         {
           admin_name:
-            dataWasDelete.dataValues.branch_store.dataValues.admin.name,
+            dataWasDelete.dataValues.branch_store.dataValues.admins.name,
           branch_store: dataWasDelete.dataValues.branch,
           product_name: dataWasDelete.dataValues.name,
           qty: dataExist.dataValues.stock,

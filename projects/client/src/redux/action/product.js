@@ -8,7 +8,6 @@ export const createProduct = ({ formData }, { token }) => {
     console.log(formData);
     try {
       //   let token = localStorage.my_Token;
-
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         formData,
@@ -23,13 +22,13 @@ export const createProduct = ({ formData }, { token }) => {
       console.log(response.data);
       toast(response.data.message);
       alert("Create Product Success");
-
       window.location.reload();
     } catch (error) {
       console.log(error);
       alert(error.message);
       console.log(error.response.data.message);
-      toast(error.response.data.message);
+      alert("gabisa");
+      alert(error.response.data.message);
       dispatch(productSlice.actions.failed(error.response.data.message));
     }
   };

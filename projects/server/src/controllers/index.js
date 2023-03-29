@@ -6,6 +6,8 @@ const geoLocationController = require("./geoLocationController");
 const categoriesProductController = require("./categoriesProductController");
 const productController = require("./productController");
 const discountController = require("./discountController");
+const userProductController = require("./userProductController");
+
 module.exports = {
   usersController,
   usersAddressController,
@@ -15,4 +17,5 @@ module.exports = {
   categoriesProductController,
   productController,
   discountController,
+  userProductController,
 };

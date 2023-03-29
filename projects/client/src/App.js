@@ -29,6 +29,7 @@ import CreateVoucher from "./pages/CreateVoucher"
 import EditVoucher from "./pages/EditVoucher"
 import DiscountList from"./pages/DiscountList"
 import VoucherList from "./pages/VoucherList"
+import { userProductList } from "./redux/action/userProduct";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ function App() {
     dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
     dispatch(findAllCategory());
+    dispatch(userProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
