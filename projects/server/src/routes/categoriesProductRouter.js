@@ -9,7 +9,6 @@ Router.post(
   tokenVerify,
   categoriesProductController.createCategories
 );
-Router.post("/temp", categoriesProductController.temporary);
 Router.patch(
   "/products/update/:id",
   tokenVerify,

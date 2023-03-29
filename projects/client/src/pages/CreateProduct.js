@@ -77,8 +77,7 @@ const CreateProduct = () => {
         {
           headers: {
             authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk1NTM1NDEsImV4cCI6MTY3OTcyNjM0MX0.muIIcEYBVjC2TjVJD99B2UwBrhUiZFPZRuct-sg2oSw",
-
+              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4NDA3NzYsImV4cCI6MTY4MDAxMzU3Nn0.56saSlvuT3VdmYAW9SlqfS5J2hgIi5HmQMGbH2EUXRU",
           },
         }
       );
@@ -154,7 +153,7 @@ const CreateProduct = () => {
           formData,
         })
       );
-      alert("Create Product Success");
+      // alert("Create Product Success");
       navigate("/admin/manage-product");
       window.location.reload();
     } catch (error) {

@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const { tokenVerify } = require("../middleware/verifyToken");
 const uploadImages = require("../middleware/upload");
-const { usersController } = require("../controllers");
+const { usersController, userProductController } = require("../controllers");
 
 // Import All Controller
 
@@ -24,5 +24,6 @@ Router.get(
   tokenVerify,
   usersController.changePasswordStep1
 );
+Router.get("/list-product", userProductController.listProduct);
 
 module.exports = Router;
