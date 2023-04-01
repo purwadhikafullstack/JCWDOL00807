@@ -8,7 +8,6 @@ const { discountController } = require("../controllers");
 Router.post(
   "/referralcode",
   tokenVerify,
-  uploadImages,
   discountController.createReferralVoucher
 );
 Router.get(

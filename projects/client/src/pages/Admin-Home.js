@@ -7,13 +7,17 @@ import Footer from "../components/Footer";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 import CurrencyFormat from "react-currency-format";
-import { Chart as ChartJS, registerables } from "chart.js";
-import { Chart } from "react-chartjs-2";
-ChartJS.register(...registerables);
+import { Chart } from "react-google-charts";
 
 const AdminHome = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState();
+  const [data1, setData1] = useState([]);
+  const [options1, setOptions1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [options2, setOptions2] = useState([]);
+  const [data3, setData3] = useState([]);
+  const [options3, setOptions3] = useState([]);
   const [dataChart, setDataChart] = useState({});
   const [topBranch, setTopBranch] = useState(null);
   const [topProduct, setTopProduct] = useState(null);
@@ -25,131 +29,101 @@ const AdminHome = () => {
   const [dataDone, setDataDone] = useState(false);
 
   const dailySaleChart = () => {
-    if (dataChart?.length == 0) {
-      return <div>Loading...</div>;
-    } else {
-      const labels = [
-        dataChart[0]?.stat_day,
-        dataChart[1]?.stat_day,
-        dataChart[2]?.stat_day,
-        dataChart[3]?.stat_day,
-        dataChart[4]?.stat_day,
-        dataChart[5]?.stat_day,
-        dataChart[6]?.stat_day,
-      ];
-      const data = {
-        labels: labels,
-        datasets: [
-          {
-            label: "Revenue Last 7 Days(in Rupiahs)  ",
-            backgroundColor: "hsl(217, 57%, 51%)",
-            borderColor: "hsl(217, 57%, 51%)",
-            data: [
-              dataChart[0]?.sales,
-              dataChart[1]?.sales,
-              dataChart[2]?.sales,
-              dataChart[3]?.sales,
-              dataChart[4]?.sales,
-              dataChart[5]?.sales,
-              dataChart[6]?.sales,
-            ],
-          },
-        ],
-      };
-
-      const configLineChart = {
-        type: "line",
-        data,
-        options: {},
-      };
-
-      let dailySale = new ChartJS(
-        document.getElementById("dailySale"),
-        configLineChart
-      );
-    }
-  };
-  const dailyOrderChart = () => {
-    const labels = [
-      dataChart[0]?.stat_day,
-      dataChart[1]?.stat_day,
-      dataChart[2]?.stat_day,
-      dataChart[3]?.stat_day,
-      dataChart[4]?.stat_day,
-      dataChart[5]?.stat_day,
-      dataChart[6]?.stat_day,
+    const data = [
+      ["Date", "Daily Sale (Rp)"],
+      [dataChart[6]?.stat_day, dataChart[6]?.sales],
+      [dataChart[5]?.stat_day, dataChart[5]?.sales],
+      [dataChart[4]?.stat_day, dataChart[4]?.sales],
+      [dataChart[3]?.stat_day, dataChart[3]?.sales],
+      [dataChart[2]?.stat_day, dataChart[2]?.sales],
+      [dataChart[1]?.stat_day, dataChart[1]?.sales],
+      [dataChart[0]?.stat_day, dataChart[0]?.sales],
     ];
-    const data = {
-      labels: labels,
-      datasets: [
-        {
-          label: "Quantity Order in Last 7 Days ",
-          backgroundColor: "hsl(217, 57%, 51%)",
-          borderColor: "hsl(217, 57%, 51%)",
-          data: [
-            dataChart[0]?.total_order,
-            dataChart[1]?.total_order,
-            dataChart[2]?.total_order,
-            dataChart[3]?.total_order,
-            dataChart[4]?.total_order,
-            dataChart[5]?.total_order,
-            dataChart[6]?.total_order,
-          ],
-        },
-      ],
-    };
 
-    const configLineChart = {
-      type: "line",
-      data,
-      options: {},
-    };
+    // Convert string date values to Date data type
+    for (let i = 1; i < data.length; i++) {
+      data[i][1] = parseInt(data[i][1]);
+    }
 
-    let dailyOrder = new ChartJS(
-      document.getElementById("dailyOrder"),
-      configLineChart
-    );
+    setData1(data);
+    const options = {
+      title: "Daily Sales Last 7 days ",
+      curveType: "function",
+      legend: { position: "bottom" },
+      hAxis: {
+        title: "Date",
+        format: "dd-MM-YYYY",
+      },
+      vAxis: {
+        title: "Daily Sales",
+      },
+    };
+    setOptions1(options);
+  };
+
+  const dailyOrderChart = () => {
+    const data = [
+      ["Date", "Daily Order"],
+      [dataChart[6]?.stat_day, dataChart[6]?.total_order],
+      [dataChart[5]?.stat_day, dataChart[5]?.total_order],
+      [dataChart[4]?.stat_day, dataChart[4]?.total_order],
+      [dataChart[3]?.stat_day, dataChart[3]?.total_order],
+      [dataChart[2]?.stat_day, dataChart[2]?.total_order],
+      [dataChart[1]?.stat_day, dataChart[1]?.total_order],
+      [dataChart[0]?.stat_day, dataChart[0]?.total_order],
+    ];
+
+    // Convert string date values to Date data type
+    for (let i = 1; i < data.length; i++) {
+      data[i][1] = parseInt(data[i][1]);
+    }
+
+    setData2(data);
+    const options = {
+      title: "Daily Order Last 7 days ",
+      curveType: "function",
+      legend: { position: "bottom" },
+      hAxis: {
+        title: "Date",
+        format: "dd-MM-YYYY",
+      },
+      vAxis: {
+        title: "Daily Order",
+      },
+    };
+    setOptions2(options);
   };
   const dailyProductSoldChart = () => {
-    const labels = [
-      dataChart[0]?.stat_day,
-      dataChart[1]?.stat_day,
-      dataChart[2]?.stat_day,
-      dataChart[3]?.stat_day,
-      dataChart[4]?.stat_day,
-      dataChart[5]?.stat_day,
-      dataChart[6]?.stat_day,
+    const data = [
+      ["Date", "Daily Total Product Sold"],
+      [dataChart[6]?.stat_day, dataChart[6]?.total_product],
+      [dataChart[5]?.stat_day, dataChart[5]?.total_product],
+      [dataChart[4]?.stat_day, dataChart[5]?.total_product],
+      [dataChart[3]?.stat_day, dataChart[3]?.total_product],
+      [dataChart[2]?.stat_day, dataChart[2]?.total_product],
+      [dataChart[1]?.stat_day, dataChart[1]?.total_product],
+      [dataChart[0]?.stat_day, dataChart[0]?.total_product],
     ];
-    const data = {
-      labels: labels,
-      datasets: [
-        {
-          label: "Quantity Product Sold in Last 7 Days ",
-          backgroundColor: "hsl(217, 57%, 51%)",
-          borderColor: "hsl(217, 57%, 51%)",
-          data: [
-            dataChart[0]?.total_product,
-            dataChart[1]?.total_product,
-            dataChart[2]?.total_product,
-            dataChart[3]?.total_product,
-            dataChart[4]?.total_product,
-            dataChart[5]?.total_product,
-            dataChart[6]?.total_product,
-          ],
-        },
-      ],
-    };
 
-    const configLineChart = {
-      type: "line",
-      data,
-      options: {},
-    };
+    // Convert string date values to Date data type
+    for (let i = 1; i < data.length; i++) {
+      data[i][1] = parseInt(data[i][1]);
+    }
 
-    let dailyProductSold = new ChartJS(
-      document.getElementById("dailyProductSold"),
-      configLineChart
-    );
+    setData3(data);
+    const options = {
+      title: "Daily Total Product Sold Last 7 days ",
+      curveType: "function",
+      legend: { position: "bottom" },
+      hAxis: {
+        title: "Date",
+        format: "dd-MM-YYYY",
+      },
+      vAxis: {
+        title: "Daily Total Product Sold",
+      },
+    };
+    setOptions3(options);
   };
   useEffect(() => {
     let token = localStorage.my_Token;
@@ -180,22 +154,18 @@ const AdminHome = () => {
         setAdminRole(response?.data?.data?.role);
         setDataBranchTransaction(response?.data?.data?.dataBranchTransaction);
         setDataDone(true);
-
         console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
     };
     getDataDashboard();
-    // if (!token) {
-    //   navigate("/admin/login");
-    // }
   }, []);
-  // useEffect(() => {
-  // dailySaleChart();
-  // dailyOrderChart();
-  // dailyProductSoldChart();
-  // }, [dataDone]);
+  useEffect(() => {
+    dailySaleChart();
+    dailyOrderChart();
+    dailyProductSoldChart();
+  }, [dataDone]);
   return (
     <div>
       <SidebarAdmin />
@@ -353,25 +323,43 @@ const AdminHome = () => {
             <div className="bg-neutral-50 py-3 px-5 dark:bg-neutral-700 dark:text-black-200 text-2xl font-bold">
               Daily Sale Chart
             </div>
-            <canvas className="p-10" id="dailySale"></canvas>
+            <Chart
+              chartType="LineChart"
+              data={data1}
+              options={options1}
+              width="110%"
+              height="500px"
+            />
           </div>
           <div className="overflow-hidden rounded-lg shadow-lg w-1/2">
             <div className="bg-neutral-50 py-3 px-5 dark:bg-neutral-700 dark:text-black-200 text-2xl font-bold">
               Daily Order Chart
             </div>
-            <canvas className="p-10" id="dailyOrder"></canvas>
+            <Chart
+              chartType="LineChart"
+              data={data2}
+              options={options2}
+              width="110%"
+              height="500px"
+            />
           </div>
           <div className="overflow-hidden rounded-lg shadow-lg w-1/2">
             <div className="bg-neutral-50 py-3 px-5 dark:bg-neutral-700 dark:text-black-200 text-2xl font-bold">
               Daily Product Sold Chart
             </div>
-            <canvas className="p-10" id="dailyProductSold"></canvas>
+            <Chart
+              chartType="LineChart"
+              data={data3}
+              options={options3}
+              width="110%"
+              height="500px"
+            />
           </div>
         </div>
         {branchName?.name ? (
           <>
             <div className="bg-neutral-50 py-3 px-5 dark:bg-neutral-700 dark:text-black-200 text-2xl font-bold">
-              <center>Transaction</center>
+              <center>Last 10 Transactions</center>
             </div>
             <section className="container px-4 mx-auto mb-5">
               <div className="flex flex-col">
@@ -523,97 +511,6 @@ const AdminHome = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="flex items-center justify-between mt-6 mb-10">
-                <a
-                  href="true"
-                  className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-5 h-5 rtl:-scale-x-100"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
-                    />
-                  </svg>
-
-                  <span>previous</span>
-                </a>
-
-                <div className="items-center hidden md:flex gap-x-3">
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-blue-500 rounded-md dark:bg-gray-800 bg-blue-100/60"
-                  >
-                    1
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    2
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    3
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    ...
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    12
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    13
-                  </a>
-                  <a
-                    href="true"
-                    className="px-2 py-1 text-sm text-gray-500 rounded-md dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-                  >
-                    14
-                  </a>
-                </div>
-
-                <a
-                  href="true"
-                  className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                >
-                  <span>Next</span>
-
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-5 h-5 rtl:-scale-x-100"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                    />
-                  </svg>
-                </a>
-              </div> */}
             </section>
           </>
         ) : null}

@@ -926,7 +926,7 @@ Group by i.id;
         email,
         role,
         isActive,
-        branch_stores_id
+        branch_stores_id,
       } = req.dataToken;
       // Validasi Admin
       if (isActive === false) {
@@ -945,7 +945,7 @@ Group by i.id;
         });
         return;
       }
-      
+
       const categories = req.query.categories || null;
       console.log(categories);
       const sortBy = req.query.sort;
@@ -1018,6 +1018,11 @@ LIMIT :limit OFFSET :offset
             type: sequelize.QueryTypes.SELECT,
           }
         );
+        result.map((value, index) => {
+          if (typeof value.images === "string") {
+            value.images = generateUrlAdmin(value.images);
+          }
+        });
         // console.log(result);
         let dataToSend = { result, page, limit, totalRows, totalPage };
         res.status(200).send({
@@ -1070,6 +1075,11 @@ LIMIT :limit OFFSET :offset
           }
         );
         // console.log(result);
+        result.map((value, index) => {
+          if (typeof value.images === "string") {
+            value.images = generateUrlAdmin(value.images);
+          }
+        });
         let dataToSend = { result, page, limit, totalRows, totalPage };
         res.status(200).send({
           isError: false,

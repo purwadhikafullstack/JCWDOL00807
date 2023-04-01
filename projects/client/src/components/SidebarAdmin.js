@@ -203,6 +203,38 @@ const SidebarAdmin = () => {
             </li>
             <li>
               <a
+                href="http://localhost:3000/admin/order-list"
+                className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Icon
+                  icon="fluent-mdl2:activate-orders"
+                  width="25"
+                  height="25"
+                />
+
+                <span className="flex-1 ml-3 whitespace-nowrap">
+                  Order List
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="http://localhost:3000/admin/detail-order-list"
+                className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Icon
+                  icon="fluent-mdl2:activate-orders"
+                  width="25"
+                  height="25"
+                />
+
+                <span className="flex-1 ml-3 whitespace-nowrap">
+                  Detail Order List
+                </span>
+              </a>
+            </li>
+            <li>
+              <a
                 href="true"
                 className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
               >

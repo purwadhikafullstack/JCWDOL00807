@@ -9,6 +9,7 @@ const branch_stores = db.branch_stores;
 const discounts = db.discounts;
 const vouchers = db.vouchers;
 const users = db.users;
+const item_products = db.item_products;
 const generateUrlAdmin = require("../helper/generateUrlAdmin");
 //import env
 require("dotenv").config();
@@ -23,9 +24,7 @@ module.exports = {
     const t = await sequelize.transaction();
     try {
       const { users_id, name, email, otp } = req.dataToken;
-      let voucherImage = req.files.images;
-      console.log(voucherImage);
-      console.log(users_id, name, email, otp);
+
       const checkUser = await users.findOne({
         where: { id: users_id },
       });
@@ -36,15 +35,23 @@ module.exports = {
           data: null,
         });
       }
-      let imagePath = voucherImage[0].path;
       const expired_at = moment()
         .add(1, "weeks")
         .tz("Asia/Jakarta")
         .format("YYYY-MM-DD HH:mm:ss");
-      let checkDuplicate = await vouchers.findOne({
-        where: { voucher_type: "Referral Code", users_id },
-      });
-      if (checkDuplicate) {
+      let checkDuplicate = await sequelize.query(
+        `
+      SELECT *
+from online_groceries.vouchers
+where users_id=:users_id and voucher_type like "%Referral Code%";
+      `,
+        {
+          replacements: {
+            users_id,
+          },
+        }
+      );
+      if (checkDuplicate[0].length >= 1) {
         return res.status(404).send({
           isError: true,
           message: "Referral code already claimed",
@@ -54,7 +61,6 @@ module.exports = {
       let createVoucher = await vouchers.create(
         {
           voucher_type: "Referral Code ",
-          image: imagePath,
           cut_nominal: 25000,
           description: "Free 25K OFF of one transaction, Expired 7 days",
           status: true,
@@ -64,7 +70,6 @@ module.exports = {
         { transaction: t }
       );
       let voucherId = createVoucher.id;
-      console.log(voucherId);
       await sequelize.query(
         `CREATE EVENT change_status_vouchers_${voucherId} 
         ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 WEEK)
@@ -77,11 +82,11 @@ module.exports = {
       res.status(200).send({
         isError: false,
         message: "Create Voucher Referral Code Success",
-        data: `voucher id : ${voucherId}`,
+        data: createVoucher,
+        name,
       });
     } catch (error) {
       await t.rollback();
-      if (req.files.images) deleteFiles(req.files.images);
       console.log(error);
       res.status(500).send({
         isError: true,
@@ -273,6 +278,11 @@ LIMIT :limit OFFSET :offset
           type: sequelize.QueryTypes.SELECT,
         }
       );
+      result.map((value, index) => {
+        if (typeof value.image === "string") {
+          value.image = generateUrlAdmin(value.image);
+        }
+      });
       // console.log(result);
       let dataToSend = { result, page, limit, totalRows, totalPage };
       res.status(200).send({
@@ -309,8 +319,13 @@ LIMIT :limit OFFSET :offset
         end,
         cut_nominal,
         cut_percentage,
+        idProduct,
       } = req.body;
       // Validasi Admin
+      let id_product = [];
+      idProduct.map((value) => {
+        id_product.push(parseInt(value));
+      });
       if (cut_nominal) {
         cut_nominal = parseInt(cut_nominal);
         if (cut_percentage) {
@@ -425,6 +440,18 @@ LIMIT :limit OFFSET :offset
         );
 
         await t.commit();
+        await sequelize.query(
+          `
+        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+          {
+            replacements: {
+              discountId: discountId,
+              idProduct: id_product,
+            },
+          },
+          { type: sequelize.QueryTypes.UPDATE }
+        );
+
         res.status(200).send({
           isError: false,
           message: "Create Discount is success",
@@ -460,8 +487,19 @@ LIMIT :limit OFFSET :offset
                 WHERE id = ?;`,
           { replacements: [discountId] }
         );
-
         await t.commit();
+        await sequelize.query(
+          `
+        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+          {
+            replacements: {
+              discountId: discountId,
+              idProduct: id_product,
+            },
+          },
+          { type: sequelize.QueryTypes.UPDATE }
+        );
+
         res.status(200).send({
           isError: false,
           message: "Create Discount is success",
@@ -496,8 +534,19 @@ LIMIT :limit OFFSET :offset
                 WHERE id = ?;`,
           { replacements: [discountId] }
         );
-
         await t.commit();
+        await sequelize.query(
+          `
+        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+          {
+            replacements: {
+              discountId: discountId,
+              idProduct: id_product,
+            },
+          },
+          { type: sequelize.QueryTypes.UPDATE }
+        );
+
         res.status(200).send({
           isError: false,
           message: "Create Discount is success",
@@ -931,7 +980,7 @@ LIMIT :limit OFFSET :offset
 
       let { voucher_type, description, cut_percentage, cut_nominal, username } =
         req.body;
-      let { id: voucherId } = req.params;
+
       if (cut_percentage) {
         cut_percentage = parseFloat(cut_percentage);
       }
@@ -1009,23 +1058,12 @@ LIMIT :limit OFFSET :offset
       }
 
       if (cut_percentage) {
-        if (cut_percentage < 0 || cut_percentage >= 1) {
+        if (cut_percentage >= 1) {
           if (req.files.images) deleteFiles(req.files.images);
           res.status(404).send({
             isError: true,
-            message:
-              "Input cut_percentage cannot lesser than 0 and greater than 0",
+            message: "Input cut_percentage cannot greater than 1",
             data: null,
-          });
-          return;
-        }
-      }
-      if (cut_nominal) {
-        if (cut_nominal < 0) {
-          if (req.files.images) deleteFiles(req.files.images);
-          res.status(404).send({
-            isError: true,
-            message: "Input cut_nominal cannot lesser than 0",
           });
           return;
         }
@@ -1035,7 +1073,7 @@ LIMIT :limit OFFSET :offset
         .tz("Asia/Jakarta")
         .format("YYYY-MM-DD HH:mm:ss");
       let updateVoucher;
-      if (voucherImage && cut_percentage) {
+      if (voucherImage) {
         if (dataVoucher.dataValues.image) {
           await fs.unlink(dataVoucher.dataValues.image);
         }
@@ -1044,6 +1082,7 @@ LIMIT :limit OFFSET :offset
           {
             voucher_type,
             image: imagePath,
+            cut_nominal,
             cut_percentage,
             description,
             expired_at,
@@ -1071,78 +1110,12 @@ LIMIT :limit OFFSET :offset
           message: `Edit Voucher id : ${id} is success`,
           data: updateVoucher,
         });
-      } else if (voucherImage && cut_nominal) {
-        if (dataVoucher.dataValues.image) {
-          await fs.unlink(dataVoucher.dataValues.image);
-        }
-        let imagePath = voucherImage[0].path;
+      } else if (!voucherImage) {
         updateVoucher = await vouchers.update(
           {
             voucher_type,
-            image: imagePath,
             cut_nominal,
-            description,
-            expired_at,
-            status: true,
-            users_id,
-          },
-          { where: { id } },
-          { transaction: t }
-        );
-
-        await sequelize.query(`
-        DROP EVENT IF EXISTS change_status_vouchers_${voucherId}`);
-
-        await sequelize.query(
-          `CREATE EVENT change_status_vouchers_${voucherId} 
-        ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 WEEK)
-        DO
-            UPDATE vouchers SET status = '0'
-            WHERE id = ?;`,
-          { replacements: [voucherId] }
-        );
-        await t.commit();
-        res.status(200).send({
-          isError: false,
-          message: `Edit Voucher id : ${voucherId} is success`,
-          data: updateVoucher,
-        });
-      } else if (!voucherImage && cut_percentage) {
-        updateVoucher = await vouchers.update(
-          {
-            voucher_type,
             cut_percentage,
-            description,
-            expired_at,
-            status: true,
-            users_id,
-          },
-          { where: { id } },
-          { transaction: t }
-        );
-
-        await sequelize.query(`
-        DROP EVENT IF EXISTS change_status_vouchers_${id}`);
-
-        await sequelize.query(
-          `CREATE EVENT change_status_vouchers_${id} 
-        ON SCHEDULE AT DATE_ADD(NOW(), INTERVAL 1 WEEK)
-        DO
-            UPDATE vouchers SET status = '0'
-            WHERE id = ?;`,
-          { replacements: [id] }
-        );
-        await t.commit();
-        res.status(200).send({
-          isError: false,
-          message: `Edit Voucher id : ${id} is success`,
-          data: updateVoucher,
-        });
-      } else if (!voucherImage && cut_nominal) {
-        updateVoucher = await vouchers.update(
-          {
-            voucher_type,
-            cut_nominal,
             description,
             expired_at,
             status: true,

@@ -4,6 +4,7 @@ const { tokenVerify } = require("../middleware/verifyToken");
 const uploadImages = require("../middleware/uploadProduct");
 const { adminController } = require("../controllers");
 const { productController } = require("../controllers");
+const { transactionController } = require("../controllers");
 
 // Import All Controller
 
@@ -42,4 +43,14 @@ Router.get("/login", adminController.Login);
 Router.get("/keep-login-admin", tokenVerify, adminController.keepLoginAdmin);
 Router.get("/getUserVerified", tokenVerify, adminController.getUserVerified);
 
+Router.get(
+  "/order_search",
+  tokenVerify,
+  transactionController.getOrderListByQuery
+);
+Router.get(
+  "/detailorder_search",
+  tokenVerify,
+  transactionController.getDetailOrderByQuery
+);
 module.exports = Router;

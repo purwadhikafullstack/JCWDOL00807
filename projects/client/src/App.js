@@ -24,13 +24,14 @@ import AdminLogin from "./pages/Admin-Login";
 import ChangeUserPassword from "./pages/ChangeUserPassword";
 import VoucherReferral from "./pages/VocReferral";
 import CreateDiscount from "./pages/CreateDiscount";
-import EditDiscount from "./pages/EditDiscount"
-import CreateVoucher from "./pages/CreateVoucher"
-import EditVoucher from "./pages/EditVoucher"
-import DiscountList from"./pages/DiscountList"
-import VoucherList from "./pages/VoucherList"
+import EditDiscount from "./pages/EditDiscount";
+import CreateVoucher from "./pages/CreateVoucher";
+import EditVoucher from "./pages/EditVoucher";
+import DiscountList from "./pages/DiscountList";
+import VoucherList from "./pages/VoucherList";
 import { userProductList } from "./redux/action/userProduct";
-
+import OrderList from "./pages/OrderList";
+import DetailOrderList from "./pages/DetailOrderList";
 function App() {
   const dispatch = useDispatch();
   let admin = useSelector((state) => state.admin);
@@ -84,14 +85,22 @@ function App() {
           path="/admin/manage-discount/create"
           element={<CreateDiscount />}
         />
-        <Route path="/admin/manage-discount/edit/:id" element={<EditDiscount/>}/>
+        <Route
+          path="/admin/manage-discount/edit/:id"
+          element={<EditDiscount />}
+        />
         <Route
           path="/admin/manage-voucher/create"
           element={<CreateVoucher />}
         />
-        <Route path="/admin/manage-voucher/edit/:id" element={<EditVoucher/>}/>
-        <Route path="/admin/manage-discount" element={<DiscountList/>} />
-        <Route path="/admin/manage-voucher" element={<VoucherList/>} />
+        <Route
+          path="/admin/manage-voucher/edit/:id"
+          element={<EditVoucher />}
+        />
+        <Route path="/admin/manage-discount" element={<DiscountList />} />
+        <Route path="/admin/manage-voucher" element={<VoucherList />} />
+        <Route path="/admin/order-list" element={<OrderList />} />
+        <Route path="/admin/detail-order-list" element={<DetailOrderList />} />
       </Routes>
     </div>
   );

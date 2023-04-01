@@ -11,6 +11,14 @@ import {
   Image,
   Select,
   Textarea,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Th,
+  Td,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
@@ -32,6 +40,9 @@ const CreateDiscount = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //   let admin = useSelector((state) => state.auth);
+  const checkboxRefs = useRef([]);
+  const [idProduct, setIdProduct] = useState([]);
+  const [dataProduct, setDataProduct] = useState([]);
   const [discountType, setDiscountType] = useState("");
   const [value1, setValue1] = useState("");
   const [value2, setValue2] = useState("");
@@ -132,6 +143,7 @@ const CreateDiscount = () => {
           start: inputStart,
           end: inputEnd,
           token,
+          idProduct,
         })
       );
     } catch (error) {
@@ -140,13 +152,38 @@ const CreateDiscount = () => {
       console.log(error);
     }
   };
+  const handleCheckboxChange = () => {
+    const checkedValues = checkboxRefs.current
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
+    console.log(checkedValues);
+    setIdProduct(checkedValues);
+  };
 
+  const getProductList = async () => {
+    try {
+      const token = localStorage.getItem("my_Token");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      console.log(response.data.data);
+      setDataProduct(response?.data?.data.productList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     setLoading(true);
     const token = localStorage.getItem("my_Token");
     if (!token) {
       navigate("/admin/login");
     }
+    getProductList();
   }, []);
 
   return (
@@ -159,14 +196,9 @@ const CreateDiscount = () => {
           <div>
             <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
               <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                <div className="text-gray-600">
-                  <p className="font-medium text-lg">Discount Details</p>
-                  <p>Please fill out all the fields that required.</p>
-                </div>
-
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-3">
                   <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
-                    <div className="md:col-span-5">
+                    <div className="md:col-span-2">
                       {message ? (
                         <div>
                           <Alert status="error" mb="6" mt="2">
@@ -375,6 +407,60 @@ const CreateDiscount = () => {
                           </FormErrorMessage>
                         )}
                       </FormControl>
+                    </div>
+                    <div className="md:col-span-5">
+                      <FormLabel>Applied Discount for Product :</FormLabel>
+                      <ul className="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <TableContainer>
+                          <Table variant="striped">
+                            <TableCaption
+                              placement="top"
+                              fontSize="lg"
+                              fontWeight="bold"
+                              textAlign="center"
+                            >
+                              Product List Table
+                            </TableCaption>
+                            <Thead className=" text-center">
+                              <Tr>
+                                <Th>CheckList</Th>
+                                <Th>Name</Th>
+                                <Th>Images</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {dataProduct?.map((value, index) => {
+                                return (
+                                  <Tr className=" text-center " key={value.id}>
+                                    <Td>
+                                      <input
+                                        id={value + "-checkbox"}
+                                        type="checkbox"
+                                        name="category"
+                                        value={value.id}
+                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                        ref={(el) =>
+                                          (checkboxRefs.current[index] = el)
+                                        }
+                                        onChange={handleCheckboxChange}
+                                      />
+                                    </Td>
+                                    <Td>{value.name}</Td>
+                                    <Td>
+                                      <img
+                                        src={value.images}
+                                        alt="*"
+                                        width="150"
+                                        height="75"
+                                      ></img>
+                                    </Td>
+                                  </Tr>
+                                );
+                              })}
+                            </Tbody>
+                          </Table>
+                        </TableContainer>
+                      </ul>
                     </div>
                     <div className="md:col-span-5 text-right">
                       <div className="inline-flex items-end">

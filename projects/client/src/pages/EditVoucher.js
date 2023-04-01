@@ -53,13 +53,9 @@ const UpdateVoucher = () => {
   };
   const handleInputChangeNominal = (e) => {
     setFieldCutNominal(e.target.value);
-    setValue1(e.target.value);
-    setValue2("");
   };
   const handleInputChangePercentage = (e) => {
     setFieldCutPercentage(e.target.value);
-    setValue2(e.target.value);
-    setValue1("");
   };
   const handleInputChangeUsername = (e) => {
     setFieldUsername(e.target.value);
@@ -150,16 +146,6 @@ const UpdateVoucher = () => {
         (!inputDescription && (!inputCut_nominal || !inputCut_percentage))
       ) {
         setMessage("Data is incomplete");
-      } else if (inputCut_nominal) {
-        if (inputCut_nominal < 0) {
-          return setMessage("Please input positive number");
-        }
-      } else if (inputCut_percentage) {
-        if (inputCut_percentage < 0 || inputCut_percentage > 100) {
-          return setMessage(
-            "Please input discount percentage value greater than 0 and less than 100"
-          );
-        }
       }
       console.log(id);
       let formData = new FormData();
@@ -307,7 +293,6 @@ const UpdateVoucher = () => {
                           value={fieldCutNominal}
                           ref={cut_nominal}
                           onChange={handleInputChangeNominal}
-                          disabled={value2 !== ""}
                         />
 
                         {!isErrorNominal ? (
@@ -326,12 +311,9 @@ const UpdateVoucher = () => {
                         <FormLabel> Voucher Percentage(%)</FormLabel>
                         <Input
                           type="number"
-                          min="0"
-                          max="100"
                           value={fieldCutPercentage}
                           ref={cut_percentage}
                           onChange={handleInputChangePercentage}
-                          disabled={value1 !== ""}
                         />
 
                         {!isErrorPercentage ? (

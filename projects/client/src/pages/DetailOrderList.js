@@ -30,17 +30,17 @@ import {
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
-const DiscountListByQuery = () => {
+const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
-  const [dataDiscount, setDataDiscount] = useState([]);
-  const [idDiscount, setIdDiscount] = useState("");
-  const [discountType, setDiscountType] = useState("");
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = React.useRef();
 
+  const checkboxRefs = useRef([]);
+  const [branch, setBranch] = useState("");
+  const [dataDetailOrder, setDataDetailOrder] = useState([]);
+  const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -51,16 +51,17 @@ const DiscountListByQuery = () => {
   let sort = useRef();
   let asc = useRef();
 
-  const getDiscountList = async () => {
+  const getDetailOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
       console.log(inputSort, inputAsc);
       console.log(keyword, page);
+      console.log(status);
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/discount/discount_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
+      ${process.env.REACT_APP_API_BASE_URL}/admin/detailorder_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
       `,
         {
           headers: {
@@ -69,8 +70,8 @@ const DiscountListByQuery = () => {
         }
       );
       console.log(response);
-      setDataDiscount(response?.data?.data?.result);
-      console.log(response?.data?.data?.result);
+      setDataDetailOrder(response?.data?.data?.result);
+      setBranch(response?.data?.data?.branchName);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       console.log(response.data.data.totalRows[0].count_row);
@@ -90,51 +91,27 @@ const DiscountListByQuery = () => {
       setMsg("");
     }
   };
-  const handleConfirm = async (idDiscount) => {
-    try {
-      const token = localStorage.getItem("my_Token");
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/discount/discount/${idDiscount}`,
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      );
-      onClose();
-      getDiscountList();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleOnEdit = (idDiscount) => {
-    navigate(`edit/${idDiscount}`);
-  };
+
   const searchData = (e) => {
     e.preventDefault();
     setPage(0);
     setKeyword(query);
-    getDiscountList();
+    getDetailOrderList();
   };
-  const handleOnOpen = async (idDiscount, discountType) => {
-    setIdDiscount(idDiscount);
-    setDiscountType(discountType);
-    onOpen();
-  };
+
   useEffect(() => {
     const token = localStorage.getItem("my_Token");
 
     if (!token) {
       navigate("/admin/login");
     }
-    getDiscountList();
+    getDetailOrderList();
   }, [page, keyword]);
   return (
     <>
       <SidebarAdmin />
       <div className="p-4 sm:ml-64">
         <Navbar />
-
         <form className="m-10" onSubmit={searchData}>
           <label
             for="default-search"
@@ -164,7 +141,7 @@ const DiscountListByQuery = () => {
               type="search"
               id="default-search"
               className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search Discount Type and status"
+              placeholder="Search id or product name or quantity or discount type or voucher type or username "
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -184,10 +161,16 @@ const DiscountListByQuery = () => {
             </h3>
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
-              <option value="type">Sort By Type</option>
-              <option value="start">Sort By Discount Start </option>
-              <option value="end">Sort By Discount End</option>
-              <option value="status">Sort By Status</option>
+              <option value="transaction">Sort By Transaction Id</option>
+              <option value="product">Sort By Product Name </option>
+              <option value="qty">Sort By Quantity</option>
+              <option value="discount">Sort By Discount Type</option>
+              <option value="voucher">Sort By Voucher Type</option>
+              <option value="price">Sort By Price</option>
+              <option value="name">Sort by Username</option>
+              <option value="weight">Sort By Weight</option>
+              <option value="percentage">Sort by Percentage Off</option>
+              <option value="nominal">Sort By Nominal Off</option>
             </Select>
           </div>
           <div className="ml-10 ">
@@ -202,10 +185,6 @@ const DiscountListByQuery = () => {
             </Select>
           </div>
         </div>
-        <Button size="xs" colorScheme="whatsapp" className="mt-5 ml-10 mr-10">
-          <Icon icon="wpf:create-new" className="text-lg" />
-          <Link to="/admin/manage-discount/create">+Create New Discount </Link>
-        </Button>
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
             <SidebarAdmin />
@@ -216,42 +195,73 @@ const DiscountListByQuery = () => {
                 fontWeight="bold"
                 textAlign="center"
               >
-                Discount List Table
+                Detail Order List Table - {branch}
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id Discount</Th>
+                  <Th>Id</Th>
+                  <Th>Transaction Id</Th>
+                  <Th>Product Name</Th>
+                  <Th>Quantity</Th>
+                  <Th>Price per item</Th>
+                  <Th>Weight(kg)</Th>
                   <Th>Discount Type</Th>
-                  <Th>Description</Th>
+                  <Th>Voucher Type</Th>
                   <Th>Discount(Rp)</Th>
                   <Th>Discount(%)</Th>
-                  <Th>Discount Start at</Th>
-                  <Th>Discount End at</Th>
-                  <Th>Status</Th>
-                  <Th>Created At</Th>
-                  <Th>Updated At</Th>
-                  <Th className=" flex flex-row justify-between ">
-                    <Text>Action</Text>
-                  </Th>
+                  <Th>CreatedAt</Th>
+                  <Th>UpdatedAt</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {dataDiscount?.map((value, index) => {
+                {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
                       <Td>{value.id}</Td>
-                      <Td>{value.discount_type}</Td>
-                      <Td>{value.description}</Td>
-                      {value.cut_nominal ? (
+                      <Td>{value.transactions_id}</Td>
+                      <Td>{value.product_name}</Td>
+                      <Td>{value.qty}</Td>
+                      <Td>
+                        <CurrencyFormat
+                          value={value.price_per_item}
+                          displayType={"text"}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          prefix={"Rp"}
+                        />
+                      </Td>
+                      <Td>{value.weight}</Td>
+                      {value.discount_type ? (
                         <>
-                          <Td>{value.cut_nominal}</Td>
+                          <Td>{value.discount_type}</Td>
                         </>
                       ) : (
                         <>
                           <Td>-</Td>
                         </>
                       )}
-
+                      {value.voucher_type ? (
+                        <>
+                          <Td>{value.voucher_type}</Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.cut_nominal ? (
+                        <>
+                          <Td>
+                            <CurrencyFormat
+                              value={value.cut_nominal}
+                              displayType={"text"}
+                              thousandSeparator={"."}
+                              decimalSeparator={","}
+                              prefix={"Rp"}
+                            />
+                          </Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
                       {value.cut_percentage ? (
                         <>
                           <Td>{value.cut_percentage * 100}%</Td>
@@ -261,44 +271,8 @@ const DiscountListByQuery = () => {
                           <Td>-</Td>
                         </>
                       )}
-                      <Td>{value.start}</Td>
-                      <Td>{value.end}</Td>
-                      {value.status == 1 ? (
-                        <>
-                          <Td>Active</Td>
-                        </>
-                      ) : (
-                        <Td>Not Active</Td>
-                      )}
                       <Td>{value.createdAt}</Td>
                       <Td>{value.updatedAt}</Td>
-                      <Td>
-                        <Button
-                          size="xs"
-                          colorScheme="whatsapp"
-                          onClick={() => handleOnEdit(value.id)}
-                        >
-                          <Icon
-                            icon="fluent:calendar-edit-16-regular"
-                            className="text-lg"
-                          />
-                          Edit
-                        </Button>
-                        <Button
-                          ml={2}
-                          size="xs"
-                          colorScheme="red"
-                          onClick={() =>
-                            handleOnOpen(value.id, value.discount_type)
-                          }
-                        >
-                          <Icon
-                            icon="ph:trash-simple-thin"
-                            className="text-lg"
-                          />
-                          Delete
-                        </Button>
-                      </Td>
                     </Tr>
                   );
                 })}
@@ -334,40 +308,8 @@ const DiscountListByQuery = () => {
           </nav>
         </div>
         <Footer />
-        <AlertDialog
-          isOpen={isOpen}
-          leastDestructiveRef={cancelRef}
-          onClose={onClose}
-        >
-          <AlertDialogOverlay>
-            <AlertDialogContent>
-              <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                Delete Discount Type {discountType}
-              </AlertDialogHeader>
-
-              <AlertDialogBody>
-                Are you sure? You can't undo this action afterwards.
-              </AlertDialogBody>
-
-              <AlertDialogFooter>
-                <Button ref={cancelRef} onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  colorScheme="red"
-                  onClick={() => {
-                    handleConfirm(idDiscount);
-                  }}
-                  ml={3}
-                >
-                  Delete
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialogOverlay>
-        </AlertDialog>
       </div>
     </>
   );
 };
-export default DiscountListByQuery;
+export default DetailOrderListByQuery;

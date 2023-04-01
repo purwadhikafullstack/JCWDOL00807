@@ -223,7 +223,7 @@ const DiscountListByQuery = () => {
                   <Th>Id Voucher</Th>
                   <Th>Voucher Type</Th>
                   <Th>Description</Th>
-                  {/* <Th>Images</Th> */}
+                  <Th>Images</Th>
                   <Th>Discount(Rp)</Th>
                   <Th>Discount(%)</Th>
                   <Th>Expired Date</Th>
@@ -243,14 +243,14 @@ const DiscountListByQuery = () => {
                       <Td>{value.id}</Td>
                       <Td>{value.voucher_type}</Td>
                       <Td>{value.description}</Td>
-                      {/* <Td>
+                      <Td>
                         <img
                           src={value.image}
                           alt="*"
                           width="100"
-                          height="50"
+                          height="100"
                         ></img>
-                      </Td> */}
+                      </Td>
                       {value.cut_nominal ? (
                         <>
                           <Td>{value.cut_nominal}</Td>

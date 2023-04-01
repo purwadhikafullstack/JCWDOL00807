@@ -4,36 +4,35 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import voucherImage from "../supports/assets/voucher.png";
+import voucher from "../supports/assets/voucher.png";
 const VoucherReferral = () => {
   let { token } = useParams();
-  console.log(token);
+
   let [user, setUser] = useState("");
-  const formData = new FormData();
-  formData.append("images", voucherImage);
-  const handleVoucher = async () => {
-    try {
-      let response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/referralcode`,
-        formData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      console.log(response);
-      setUser(response.data.data);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
-  };
+
   useEffect(() => {
+    const handleVoucher = async (event) => {
+      try {
+        console.log(token);
+        let response = await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/discount/referralcode`,
+          {},
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        console.log(response);
+        setUser(response.data.name);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
     handleVoucher();
   });
   return (
     <div>
-      <Navbar />
       {user === "" ? (
         <p> Loading... </p>
       ) : (
@@ -53,7 +52,6 @@ const VoucherReferral = () => {
           </div>
         </div>
       )}
-      <Footer />
     </div>
   );
 };

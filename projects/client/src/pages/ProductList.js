@@ -296,8 +296,22 @@ const ProductListByQuery = () => {
                       </Td>
                       <Td>{value.createdAt}</Td>
                       <Td>{value.updatedAt}</Td>
-                      <Td>{value.voucherType}</Td>
-                      <Td>{value.discountType}</Td>
+                      {value.voucherType ? (
+                        <>
+                          <Td>{value.voucherType}</Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.discountType ? (
+                        <>
+                          <Td>{value.discountType}</Td>
+                        </>
+                      ) : (
+                        <>
+                          <Td>-</Td>
+                        </>
+                      )}
                     </Tr>
                   );
                 })}

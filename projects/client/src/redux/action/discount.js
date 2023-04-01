@@ -11,6 +11,7 @@ export const createDiscount = ({
   start,
   end,
   token,
+  idProduct,
 }) => {
   return async (dispatch) => {
     console.log(discount_type, description, cut_nominal, start, end);
@@ -20,7 +21,15 @@ export const createDiscount = ({
 
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/discount/discount`,
-        { discount_type, description, cut_nominal, cut_percentage, start, end },
+        {
+          discount_type,
+          description,
+          cut_nominal,
+          cut_percentage,
+          start,
+          end,
+          idProduct,
+        },
         {
           headers: {
             Authorization: token,
