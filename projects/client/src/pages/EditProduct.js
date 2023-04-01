@@ -78,12 +78,12 @@ const EditProduct = () => {
 
   const getData = async () => {
     try {
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+            authorization: token,
           },
         }
       );
@@ -99,13 +99,13 @@ const EditProduct = () => {
 
   const getProductById = async () => {
     try {
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${id}
         `,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+            authorization: token,
           },
         }
       );
@@ -126,6 +126,7 @@ const EditProduct = () => {
 
   const handleUpdate = () => {
     try {
+      const token = localStorage.getItem("my_Token");
       setLoading(true);
       let inputName = name.current.value;
       let inputDescription = description.current.value;
@@ -186,10 +187,7 @@ const EditProduct = () => {
         formData.append("voucherType", inputVoucherType);
       }
       let id_product = id;
-      dispatch(editProduct({ formData }, { id_product }));
-      alert(`Edit Product Berhasil`);
-      navigate("/admin/manage-product");
-      window.location.reload();
+      dispatch(editProduct({ formData }, { id_product }, { token }));
     } catch (error) {
       setLoading(false);
       setMessage(error.response.data.message);
@@ -199,12 +197,12 @@ const EditProduct = () => {
 
   useEffect(() => {
     setLoading(true);
-    // const token = localStorage.getItem("my_Token");
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getData();
     getProductById();
-    // if(!token){
-    //     navigate("/admin/login")
-    // }
   }, []);
   return (
     <>

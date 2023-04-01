@@ -33,13 +33,16 @@ module.exports = {
           message: "Admin is not active, please contact to super admin",
           data: null,
         });
-        if (role !== "super admin" || role !== "admin branch") {
-          res.status(404).send({
-            isError: true,
-            message: "Role is not permitted",
-          });
-        }
+        return;
       }
+      if (role !== "super admin" && role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+        });
+        return;
+      }
+
       if (role == "super admin") {
         let topProduct = await sequelize.query(
           `
@@ -88,7 +91,8 @@ limit 3
             JOIN transaction_details td ON td.transactions_id = t.id
             where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
             Group by DATE_FORMAT(t.createdAt, "%d %M %Y")
-            order by stat_day  
+            order by stat_day desc
+            limit 7 
             `,
           {
             type: sequelize.QueryTypes.SELECT,
@@ -112,27 +116,32 @@ limit 3
       } else {
         let branchName = await sequelize.query(
           `
-          SELECT name 
-          FROM  branch_stores 
-where admins_id=?
+          SELECT bs.name 
+FROM online_groceries.admins a
+LEFT JOIN branch_stores bs ON a.branch_stores_id = bs.id
+where a.id=?
+group by a.id;
+
           `,
           {
             replacements: [admins_id],
             type: sequelize.QueryTypes.SELECT,
           }
         );
+
+        let branch = branchName[0].name;
         let topProduct = await sequelize.query(
           `SELECT (td.product_name) , sum(td.qty) as qty
         from transactions t
         join transaction_details td on td.transactions_id = t.id
-        where t.admin_name =? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+        where t.branch_store = ? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
         group by td.product_name
         order by sum(td.qty)
         desc
+        limit 3
        `,
           {
-            replacements: [name],
-            limit: 3,
+            replacements: [branch],
             type: sequelize.QueryTypes.SELECT,
           }
         );
@@ -141,10 +150,10 @@ where admins_id=?
           Select count(distinct t.users_id) as total_users , sum(t.total_price) as total_sales , count(DISTINCT t.id) as total_order , SUM(td.qty) as total_product_sold
           FROM transactions t
           JOIN transaction_details td ON td.transactions_id = t.id
-          where t.admin_name =? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing");
+          where t.branch_store= ? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing");
         `,
           {
-            replacements: [name],
+            replacements: [branch],
             type: sequelize.QueryTypes.SELECT,
           }
         );
@@ -154,31 +163,32 @@ where admins_id=?
             SELECT DATE_FORMAT(t.createdAt, "%d %M %Y") as stat_day, SUM(td.qty) as total_product , SUM(t.total_price) as sales , COUNT(DISTINCT t.id) as total_order
             FROM transactions t
             JOIN transaction_details td ON td.transactions_id = t.id
-            where t.admin_name = ? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+            where t.branch_store=? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
             Group by DATE_FORMAT(t.createdAt, "%d %M %Y")
             order by stat_day
             DESC
             ) as sub
-            order by stat_day asc;
+            order by stat_day desc
+            limit 7;
           `,
           {
-            replacements: [name],
-            limit: 7,
+            replacements: [branch],
             type: sequelize.QueryTypes.SELECT,
           }
         );
         let dataBranchTransaction = await sequelize.query(
           `
-          SELECT t.id, t.admin_name,t.branch_store,t.total_price,t.status, us.name, t.users_id,group_concat(td.product_name) as purchase, DATE_FORMAT(t.createdAt, "%d %M %Y") as Date
+          SELECT t.id,t.invoice_no, t.admin_name,t.branch_store,t.total_price,t.status, us.name, t.users_id,group_concat(td.product_name) as purchase, DATE_FORMAT(t.createdAt, "%d %M %Y") as Date
           FROM transactions t
           JOIN transaction_details td ON td.transactions_id = t.id
           LEFT JOIN users us on t.users_id = us.id
-          where t.admin_name = ?
-          Group by t.id;
+          where t.branch_store = ?
+          Group by t.id
+          order by t.id desc
+          limit 10;
           `,
           {
-            replacements: [name],
-            limit: 10,
+            replacements: [branch],
             type: sequelize.QueryTypes.SELECT,
           }
         );
@@ -224,8 +234,7 @@ where admins_id=?
       const findAdmin = await admin.findOne({
         where: { email },
       });
-      console.log(findAdmin.dataValues.branch_stores_id);
-
+      console.log(findAdmin);
       if (findAdmin === null)
         throw {
           message: "Couldn't find the email you entered ",
@@ -262,8 +271,8 @@ where admins_id=?
       let isActive = findAdmin.dataValues.isActive;
       let branch_stores_id = findAdmin.dataValues.branch_stores_id;
 
-      // //         const password = await bcrypt.hash("admin123", 10);
-      // // console.log(password)
+      //         const password = await bcrypt.hash("admin123", 10);
+      // console.log(password)
 
       let token = createToken({
         admins_id,
@@ -308,6 +317,60 @@ where admins_id=?
       res.status(500).send({
         isSuccess: false,
         message: error.message,
+      });
+    }
+  },
+  getUserVerified: async (req, res) => {
+    try {
+      const {
+        admins_id,
+        name: admins_name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
+      console.log(admins_id, admins_name, email, role, isActive);
+
+      if (isActive === false) {
+        res.status(404).send({
+          isError: true,
+          messasge: "Admin is not active, please contact to super admin",
+          data: null,
+        });
+      }
+      if (role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+          data: null,
+        });
+      }
+
+      let dataUser = await users.findAll({
+        where: {
+          status: "verified",
+        },
+        attributes: ["id", "name", "email"],
+      });
+      if (!dataUser) {
+        throw {
+          isError: true,
+          message: "There is no verified user ",
+          data: null,
+        };
+      }
+
+      res.status(200).send({
+        isError: false,
+        message: "Get UserVerified is success",
+        data: dataUser,
+      });
+    } catch (error) {
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
       });
     }
   },

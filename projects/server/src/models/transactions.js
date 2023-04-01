@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
   transactions.init(
     {
       admin_name: DataTypes.STRING,
+      invoice_no: DataTypes.STRING,
       branch_store: DataTypes.STRING,
       total_price: DataTypes.INTEGER,
       status: {

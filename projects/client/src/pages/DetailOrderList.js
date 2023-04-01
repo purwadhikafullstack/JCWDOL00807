@@ -34,16 +34,13 @@ import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
-const ProductListByQuery = () => {
+const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
-  const [dataCategories, setDataCategories] = useState([]);
-  // const [categories, setCategories] = useState({
-  //   category: [],
-  //   response: [],
-  // });
+
   const checkboxRefs = useRef([]);
-  const [dataProduct, setDataProduct] = useState([]);
-  const [category, setCategory] = useState("");
+  const [branch, setBranch] = useState("");
+  const [dataDetailOrder, setDataDetailOrder] = useState([]);
+  const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -53,36 +50,18 @@ const ProductListByQuery = () => {
   const [msg, setMsg] = useState("");
   let sort = useRef();
   let asc = useRef();
-  const getData = async () => {
-    try {
-      const token = localStorage.getItem("my_Token");
-      let response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      );
-      console.log(response);
-      await setDataCategories(response?.data?.data?.dataCategory);
-      // console.log(dataCategories, dataDiscountType, dataVoucherType);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const getProductList = async () => {
+  const getDetailOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
       console.log(inputSort, inputAsc);
       console.log(keyword, page);
-      console.log(category);
+      console.log(status);
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/admin/product_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&categories=${category}
+      ${process.env.REACT_APP_API_BASE_URL}/admin/detailorder_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
       `,
         {
           headers: {
@@ -91,7 +70,8 @@ const ProductListByQuery = () => {
         }
       );
       console.log(response);
-      setDataProduct(response?.data?.data?.result);
+      setDataDetailOrder(response?.data?.data?.result);
+      setBranch(response?.data?.data?.branchName);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       console.log(response.data.data.totalRows[0].count_row);
@@ -99,14 +79,6 @@ const ProductListByQuery = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-  const handleCheckboxChange = () => {
-    const checkedValues = checkboxRefs.current
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.value);
-    console.log(checkedValues.join(","));
-    let checkedValuesString = checkedValues.join(",");
-    setCategory(checkedValuesString);
   };
 
   const changePage = ({ selected }) => {
@@ -124,19 +96,16 @@ const ProductListByQuery = () => {
     e.preventDefault();
     setPage(0);
     setKeyword(query);
-    getProductList();
+    getDetailOrderList();
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
   useEffect(() => {
     const token = localStorage.getItem("my_Token");
 
     if (!token) {
       navigate("/admin/login");
     }
-    getProductList();
+    getDetailOrderList();
   }, [page, keyword]);
   return (
     <>
@@ -172,7 +141,7 @@ const ProductListByQuery = () => {
               type="search"
               id="default-search"
               className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search Product Name, Discount Type, Categories and Voucher Type"
+              placeholder="Search id or product name or quantity or discount type or voucher type or username "
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -186,47 +155,22 @@ const ProductListByQuery = () => {
         </form>
 
         <div className="m-10 flex justify-start">
-          <div>
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Category Product - Filter
-            </h3>
-            <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-              {dataCategories?.map((value, index) => {
-                return (
-                  <>
-                    <li className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-                      <div className="flex items-center pl-3">
-                        <input
-                          id={value + "-checkbox"}
-                          type="checkbox"
-                          name="category"
-                          value={value}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                          ref={(el) => (checkboxRefs.current[index] = el)}
-                          onChange={handleCheckboxChange}
-                        />
-                        <label
-                          for={value + "-checkbox"}
-                          className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          {value}
-                        </label>
-                      </div>
-                    </li>
-                  </>
-                );
-              })}
-            </ul>
-          </div>
           <div className="ml-10 ">
             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
               Sorting Data By:
             </h3>
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
+              <option value="transaction">Sort By Transaction Id</option>
+              <option value="product">Sort By Product Name </option>
+              <option value="qty">Sort By Quantity</option>
+              <option value="discount">Sort By Discount Type</option>
+              <option value="voucher">Sort By Voucher Type</option>
               <option value="price">Sort By Price</option>
-              <option value="name">Sort By Name </option>
-              <option value="category">Sort By Category</option>
+              <option value="name">Sort by Username</option>
+              <option value="weight">Sort By Weight</option>
+              <option value="percentage">Sort by Percentage Off</option>
+              <option value="nominal">Sort By Nominal Off</option>
             </Select>
           </div>
           <div className="ml-10 ">
@@ -251,67 +195,84 @@ const ProductListByQuery = () => {
                 fontWeight="bold"
                 textAlign="center"
               >
-                Product List Table
+                Detail Order List Table - {branch}
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id Product</Th>
-                  <Th>Name</Th>
-                  <Th>Images</Th>
-                  <Th>Categories</Th>
-                  <Th>Weight</Th>
-                  <Th>Stock</Th>
-                  <Th>Price</Th>
-                  <Th>Created At</Th>
-                  <Th>Updated At</Th>
-                  <Th>Voucher Type</Th>
+                  <Th>Id</Th>
+                  <Th>Transaction Id</Th>
+                  <Th>Product Name</Th>
+                  <Th>Quantity</Th>
+                  <Th>Price per item</Th>
+                  <Th>Weight(kg)</Th>
                   <Th>Discount Type</Th>
+                  <Th>Voucher Type</Th>
+                  <Th>Discount(Rp)</Th>
+                  <Th>Discount(%)</Th>
+                  <Th>CreatedAt</Th>
+                  <Th>UpdatedAt</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {dataProduct?.map((value, index) => {
+                {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
                       <Td>{value.id}</Td>
-                      <Td>{value.name}</Td>
-                      <Td>
-                        <img
-                          src={value.images}
-                          alt="*"
-                          width="150"
-                          height="75"
-                        ></img>
-                      </Td>
-                      <Td>{value.categories}</Td>
-                      <Td>{value.weight}</Td>
-                      <Td>{value.stock}</Td>
+                      <Td>{value.transactions_id}</Td>
+                      <Td>{value.product_name}</Td>
+                      <Td>{value.qty}</Td>
                       <Td>
                         <CurrencyFormat
-                          value={value.price}
+                          value={value.price_per_item}
                           displayType={"text"}
                           thousandSeparator={"."}
                           decimalSeparator={","}
                           prefix={"Rp"}
                         />
                       </Td>
-                      <Td>{value.createdAt}</Td>
-                      <Td>{value.updatedAt}</Td>
-                      {value.voucherType ? (
+                      <Td>{value.weight}</Td>
+                      {value.discount_type ? (
                         <>
-                          <Td>{value.voucherType}</Td>
-                        </>
-                      ) : (
-                        <Td>-</Td>
-                      )}
-                      {value.discountType ? (
-                        <>
-                          <Td>{value.discountType}</Td>
+                          <Td>{value.discount_type}</Td>
                         </>
                       ) : (
                         <>
                           <Td>-</Td>
                         </>
                       )}
+                      {value.voucher_type ? (
+                        <>
+                          <Td>{value.voucher_type}</Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.cut_nominal ? (
+                        <>
+                          <Td>
+                            <CurrencyFormat
+                              value={value.cut_nominal}
+                              displayType={"text"}
+                              thousandSeparator={"."}
+                              decimalSeparator={","}
+                              prefix={"Rp"}
+                            />
+                          </Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.cut_percentage ? (
+                        <>
+                          <Td>{value.cut_percentage * 100}%</Td>
+                        </>
+                      ) : (
+                        <>
+                          <Td>-</Td>
+                        </>
+                      )}
+                      <Td>{value.createdAt}</Td>
+                      <Td>{value.updatedAt}</Td>
                     </Tr>
                   );
                 })}
@@ -351,4 +312,4 @@ const ProductListByQuery = () => {
     </>
   );
 };
-export default ProductListByQuery;
+export default DetailOrderListByQuery;

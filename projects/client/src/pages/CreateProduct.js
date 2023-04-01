@@ -72,12 +72,12 @@ const CreateProduct = () => {
 
   const getData = async () => {
     try {
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4NDA3NzYsImV4cCI6MTY4MDAxMzU3Nn0.56saSlvuT3VdmYAW9SlqfS5J2hgIi5HmQMGbH2EUXRU",
+            authorization: token,
           },
         }
       );
@@ -94,6 +94,7 @@ const CreateProduct = () => {
   const handleSubmit = () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem("my_Token");
       let inputName = name.current.value;
       let inputDescription = description.current.value;
       let inputCategory = category.current.value;
@@ -151,11 +152,9 @@ const CreateProduct = () => {
       dispatch(
         createProduct({
           formData,
+          token,
         })
       );
-      // alert("Create Product Success");
-      navigate("/admin/manage-product");
-      window.location.reload();
     } catch (error) {
       setLoading(false);
       setMessage(error.response.data.message);
@@ -164,12 +163,12 @@ const CreateProduct = () => {
   };
 
   useEffect(() => {
-    // setLoading(true);
-    // const token = localStorage.getItem("my_Token");
+    setLoading(true);
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getData();
-    // if(!token){
-    //     navigate("/admin/login")
-    // }
   }, []);
   return (
     <>
@@ -301,7 +300,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorWeight}>
                         <FormLabel>Weight (kg)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldWeight}
                           ref={weight}
                           onChange={handleInputChangeWeight}
@@ -321,7 +320,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorStock}>
                         <FormLabel>Stock (unit)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldStock}
                           ref={stock}
                           onChange={handleInputChangeStock}
@@ -339,7 +338,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorPrice}>
                         <FormLabel>Price (Rp.)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldPrice}
                           ref={price}
                           onChange={handleInputChangePrice}

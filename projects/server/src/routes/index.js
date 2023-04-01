@@ -4,6 +4,7 @@ const usersAddressRouter = require("./usersAddressRouter");
 const rajaOngkirRouter = require("./rajaOngkirRouter");
 const geoLocationRouter = require("./geoLocationRouter");
 const categoriesProductRouter = require("./categoriesProductRouter");
+const discountRouter = require("./discountRouter");
 
 module.exports = {
   usersRouter,
@@ -12,4 +13,5 @@ module.exports = {
   geoLocationRouter,
   adminRouter,
   categoriesProductRouter,
+  discountRouter,
 };
