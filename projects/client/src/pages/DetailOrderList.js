@@ -1,16 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
 import {
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
   Select,
   Table,
   TableCaption,
@@ -20,27 +14,16 @@ import {
   Th,
   Thead,
   Tr,
-  Tfoot,
-  Button,
-  Text,
-  useDisclosure,
-  isOpen,
-  onOpen,
 } from "@chakra-ui/react";
-import { Icon } from "@iconify/react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
 const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
 
-  const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
-  const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -56,9 +39,6 @@ const DetailOrderListByQuery = () => {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
-      console.log(inputSort, inputAsc);
-      console.log(keyword, page);
-      console.log(status);
       let response = await axios.get(
         `
       ${process.env.REACT_APP_API_BASE_URL}/admin/detailorder_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
@@ -69,12 +49,10 @@ const DetailOrderListByQuery = () => {
           },
         }
       );
-      console.log(response);
       setDataDetailOrder(response?.data?.data?.result);
       setBranch(response?.data?.data?.branchName);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
-      console.log(response.data.data.totalRows[0].count_row);
       setRows(response?.data?.data?.totalRows[0].count_row);
     } catch (error) {
       console.log(error);
@@ -112,15 +90,15 @@ const DetailOrderListByQuery = () => {
       <SidebarAdmin />
       <div className="p-4 sm:ml-64">
         <Navbar />
-        <form className="m-10" onSubmit={searchData}>
+        <form className="m-5 flex justify-start" onSubmit={searchData}>
           <label
             for="default-search"
-            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
           >
             Search
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <div className="mt-3 absolute inset-y-0 left-0 flex items-center pl-3  pointer-events-none">
               <svg
                 aria-hidden="true"
                 className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -140,25 +118,21 @@ const DetailOrderListByQuery = () => {
             <input
               type="search"
               id="default-search"
-              className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search id or product name or quantity or discount type or voucher type or username "
+              className=" mt-5 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search id or product name or quantity or discount type or voucher type"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              style={{ width: "50em" }}
             />
             <button
               type="submit"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className=" text-white absolute right-2.5 bottom-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search
             </button>
           </div>
-        </form>
 
-        <div className="m-10 flex justify-start">
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Sorting Data By:
-            </h3>
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
               <option value="transaction">Sort By Transaction Id</option>
@@ -173,10 +147,7 @@ const DetailOrderListByQuery = () => {
               <option value="nominal">Sort By Nominal Off</option>
             </Select>
           </div>
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Ordered by
-            </h3>
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={asc}>
               <option selected value="asc">
                 Ascending
@@ -184,7 +155,8 @@ const DetailOrderListByQuery = () => {
               <option value="desc">Descending</option>
             </Select>
           </div>
-        </div>
+        </form>
+
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
             <SidebarAdmin />

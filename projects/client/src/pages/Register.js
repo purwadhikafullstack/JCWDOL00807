@@ -12,8 +12,7 @@ import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/action/user";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar"
-
+import Navbar from "../components/Navbar";
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -21,13 +20,11 @@ const Register = () => {
   let user = useSelector((state) => state.auth);
   // console.log(user);
   let [message, setMessage] = useState("");
-  const navigate = useNavigate();
+
   let regxEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   let regxPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
   let regxPhoneNumber =
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-  //Ambil Variable untuk fetching post ke DB
 
   let name = useRef();
   let email = useRef();
@@ -36,8 +33,9 @@ const Register = () => {
   let phone_number = useRef();
   let referral_code = useRef();
 
-  const handleRegister = () => {
+  const handleRegister = (e) => {
     try {
+      e.preventDefault();
       setLoading(true);
       let inputName = name.current.value;
       let inputEmail = email.current.value;
@@ -45,14 +43,6 @@ const Register = () => {
       let inputRepeatPassword = repeatPassword.current.value;
       let inputPhoneNumber = phone_number.current.value;
       let inputReferralCode = referral_code.current.value;
-      // console.log(
-      //   inputName,
-      //   inputEmail,
-      //   inputPassword,
-      //   inputRepeatPassword,
-      //   inputPhoneNumber,
-      //   inputReferralCode
-      // );
       if (
         !inputName ||
         !inputEmail ||
@@ -101,7 +91,6 @@ const Register = () => {
       phone_number.current.value = "";
       referral_code.current.value = "";
       setLoading(false);
-      // navigate("/login");
     } else {
       setLoading(false);
     }

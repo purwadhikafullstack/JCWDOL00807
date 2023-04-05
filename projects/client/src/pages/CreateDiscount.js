@@ -19,15 +19,16 @@ import {
   Td,
   Thead,
   Tr,
+  Button,
 } from "@chakra-ui/react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+
 import { useState, useRef, useEffect } from "react";
 import { createDiscount } from "../redux/action/discount";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import { Icon } from "@iconify/react";
 
 const CreateDiscount = () => {
   let discount_type = useRef();
@@ -39,7 +40,6 @@ const CreateDiscount = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //   let admin = useSelector((state) => state.auth);
   const checkboxRefs = useRef([]);
   const [idProduct, setIdProduct] = useState([]);
   const [dataProduct, setDataProduct] = useState([]);
@@ -73,6 +73,9 @@ const CreateDiscount = () => {
   };
   const handleInputChangeStart = (e) => setFieldStart(e.target.value);
   const handleInputChangeEnd = (e) => setFieldEnd(e.target.value);
+  function handleClick() {
+    window.history.back();
+  }
 
   const isErrorName = fieldName === "";
   const isErrorDescription = fieldDescription === "";
@@ -98,14 +101,6 @@ const CreateDiscount = () => {
       }
       let inputStart = start.current.value;
       let inputEnd = end.current.value;
-      console.log(
-        inputDiscount_type,
-        inputDescription,
-        inputCut_nominal,
-        inputCut_percentage,
-        inputStart,
-        inputEnd
-      );
       let now = moment();
       if (
         !inputDiscount_type ||
@@ -188,6 +183,15 @@ const CreateDiscount = () => {
 
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Create Discount Form</h1>
       </div>
