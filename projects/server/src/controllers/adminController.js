@@ -111,7 +111,7 @@ limit 3
         let branchName = await sequelize.query(
           `
           SELECT bs.name 
-FROM online_groceries.admins a
+FROM admins a
 LEFT JOIN branch_stores bs ON a.branch_stores_id = bs.id
 where a.id=?
 group by a.id;
@@ -245,7 +245,6 @@ group by a.id;
           message:
             "Your account has not active. Please contact super Admin for further information",
         };
-
 
       if (
         findAdmin.dataValues.role !== "admin branch" &&

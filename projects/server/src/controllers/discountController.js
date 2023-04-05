@@ -42,7 +42,7 @@ module.exports = {
       let checkDuplicate = await sequelize.query(
         `
       SELECT *
-from online_groceries.vouchers
+from vouchers
 where users_id=:users_id and voucher_type like "%Referral Code%";
       `,
         {
@@ -148,7 +148,7 @@ where users_id=:users_id and voucher_type like "%Referral Code%";
       let totalRows = await sequelize.query(
         `
       SELECT count(*) as count_row
-FROM online_groceries.discounts d
+FROM discounts d
 where  d.discount_type like :search  or d.status like :search 
 `,
         {
@@ -163,7 +163,7 @@ where  d.discount_type like :search  or d.status like :search
       let result = await sequelize.query(
         `
       SELECT d.id,d.discount_type,d.description,d.cut_nominal,d.cut_percentage,DATE_FORMAT(d.start,"%d %M %Y") as start, DATE_FORMAT(d.end, "%d %M %Y") as end,d.status, DATE_FORMAT(d.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(d.updatedAt, "%d %M %Y") as updatedAt  
-FROM online_groceries.discounts d
+FROM discounts d
 where d.discount_type like :search  or d.status like :search 
 group by d.id
 order by ${sort}
@@ -246,7 +246,7 @@ LIMIT :limit OFFSET :offset
       let totalRows = await sequelize.query(
         `
       SELECT count(*) as count_row
-FROM online_groceries.vouchers v
+FROM vouchers v
 LEFT JOIN users us on v.users_id = us.id
 where  v.voucher_type like :search  or v.status like :search or us.name like :search
 `,
@@ -262,7 +262,7 @@ where  v.voucher_type like :search  or v.status like :search or us.name like :se
       let result = await sequelize.query(
         `
       SELECT v.id,us.name as username,v.voucher_type,v.image,v.description,v.cut_nominal,v.cut_percentage,DATE_FORMAT(v.expired_at,"%d %M %Y") as ExpiredDate, v.status, DATE_FORMAT(v.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(v.updatedAt, "%d %M %Y") as updatedAt  
-FROM online_groceries.vouchers v
+FROM vouchers v
 LEFT JOIN users us ON v.users_id = us.id
 where v.voucher_type like :search  or v.status like :search or us.name like :search
 group by v.id
@@ -442,7 +442,7 @@ LIMIT :limit OFFSET :offset
         await t.commit();
         await sequelize.query(
           `
-        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+        UPDATE item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
           {
             replacements: {
               discountId: discountId,
@@ -490,7 +490,7 @@ LIMIT :limit OFFSET :offset
         await t.commit();
         await sequelize.query(
           `
-        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+        UPDATE item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
           {
             replacements: {
               discountId: discountId,
@@ -537,7 +537,7 @@ LIMIT :limit OFFSET :offset
         await t.commit();
         await sequelize.query(
           `
-        UPDATE online_groceries.item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
+        UPDATE item_products SET discount_id = :discountId WHERE (id in (:idProduct));`,
           {
             replacements: {
               discountId: discountId,
@@ -1324,7 +1324,7 @@ LIMIT :limit OFFSET :offset
       let getDiscount = await sequelize.query(
         `
         SELECT d.id,d.discount_type,d.description,d.start,d.end,d.cut_nominal,d.cut_percentage  
-FROM online_groceries.discounts d
+FROM discounts d
 where d.id=?
 Group by d.id;
         `,
@@ -1392,7 +1392,7 @@ Group by d.id;
       let getVoucher = await sequelize.query(
         `
         SELECT v.id,v.voucher_type,v.image,v.description,v.expired_at,v.cut_nominal,v.cut_percentage,us.name as Username  
-FROM online_groceries.vouchers v
+FROM vouchers v
 LEFT JOIN users us ON v.users_id = us.id
 where v.id=?
 Group by v.id;

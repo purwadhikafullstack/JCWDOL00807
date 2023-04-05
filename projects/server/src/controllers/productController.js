@@ -124,7 +124,7 @@ module.exports = {
       let productList = await sequelize.query(
         `
         SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
@@ -264,7 +264,7 @@ Group by i.id;
       let getProduct = await sequelize.query(
         `
         SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
@@ -977,7 +977,7 @@ Group by i.id;
         let totalRows = await sequelize.query(
           `
       SELECT count(*) as count_row
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
@@ -998,7 +998,7 @@ where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name 
         let result = await sequelize.query(
           `
       SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
@@ -1034,7 +1034,7 @@ LIMIT :limit OFFSET :offset
         let totalRows = await sequelize.query(
           `
       SELECT count(*) as count_row
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
@@ -1054,7 +1054,7 @@ where branch_stores_id = :branch_stores_id and( i.name like :search  or pc.name 
         let result = await sequelize.query(
           `
       SELECT i.id,i.name,i.images,i.description,i.weight,pc.name as categories,i.stock,i.price,DATE_FORMAT(i.createdAt, "%d %M %Y") as createdAt, DATE_FORMAT(i.updatedAt, "%d %M %Y") as updatedAt, v.voucher_type as voucherType, d.discount_type as discountType  
-FROM online_groceries.item_products i
+FROM item_products i
 LEFT JOIN product_categories pc ON i.product_categories_id = pc.id
 LEFT JOIN vouchers v on i.vouchers_id = v.id
 LEFT JOIN discounts d on i.discount_id = d.id
