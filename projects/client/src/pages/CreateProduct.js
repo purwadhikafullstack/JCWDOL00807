@@ -11,14 +11,15 @@ import {
   Image,
   Select,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+
 import { useState, useRef, useEffect } from "react";
 import { createProduct } from "../redux/action/product";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Icon } from "@iconify/react";
 
 const CreateProduct = () => {
   let image = useRef();
@@ -33,7 +34,6 @@ const CreateProduct = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //   let admin = useSelector((state) => state.auth);
 
   const [message, setMessage] = useState("");
   const [fieldName, setFieldName] = useState("");
@@ -72,7 +72,7 @@ const CreateProduct = () => {
 
   const getData = async () => {
     try {
-      let token = localStorage.myToken;
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
@@ -85,15 +85,20 @@ const CreateProduct = () => {
       await setDataCategories(response?.data?.data?.dataCategory);
       await setDataDiscountType(response?.data?.data?.dataDiscountType);
       await setDataVoucherType(response?.data?.data?.dataVoucherType);
-      // console.log(dataCategories, dataDiscountType, dataVoucherType);
     } catch (error) {
       console.log(error);
     }
   };
 
+  function handleClick() {
+    window.history.back();
+  }
+
   const handleSubmit = () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem("my_Token");
+      console.log(token);
       let inputName = name.current.value;
       let inputDescription = description.current.value;
       let inputCategory = category.current.value;
@@ -102,16 +107,6 @@ const CreateProduct = () => {
       let inputPrice = price.current.value;
       let inputDiscountType = discountType.current.value;
       let inputVoucherType = voucherType.current.value;
-      console.log(
-        inputName,
-        inputDescription,
-        inputCategory,
-        inputWeight,
-        inputStock,
-        inputPrice,
-        inputDiscountType,
-        inputVoucherType
-      );
       if (
         !inputName ||
         !inputDescription ||
@@ -148,14 +143,9 @@ const CreateProduct = () => {
       if (inputVoucherType) {
         formData.append("voucherType", inputVoucherType);
       }
-      dispatch(
-        createProduct({
-          formData,
-        })
-      );
-      // alert("Create Product Success");
-      navigate("/admin/manage-product");
-      window.location.reload();
+      console.log(formData);
+      console.log(token);
+      dispatch(createProduct({ formData }, { token }));
     } catch (error) {
       setLoading(false);
       setMessage(error.response.data.message);
@@ -164,15 +154,24 @@ const CreateProduct = () => {
   };
 
   useEffect(() => {
-    // setLoading(true);
-    // const token = localStorage.getItem("my_Token");
+    setLoading(true);
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getData();
-    // if(!token){
-    //     navigate("/admin/login")
-    // }
   }, []);
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Create Product Form</h1>
       </div>
@@ -301,7 +300,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorWeight}>
                         <FormLabel>Weight (kg)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldWeight}
                           ref={weight}
                           onChange={handleInputChangeWeight}
@@ -321,7 +320,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorStock}>
                         <FormLabel>Stock (unit)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldStock}
                           ref={stock}
                           onChange={handleInputChangeStock}
@@ -339,7 +338,7 @@ const CreateProduct = () => {
                       <FormControl isInvalid={isErrorPrice}>
                         <FormLabel>Price (Rp.)</FormLabel>
                         <Input
-                          type="text"
+                          type="number"
                           value={fieldPrice}
                           ref={price}
                           onChange={handleInputChangePrice}

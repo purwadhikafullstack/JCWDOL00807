@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      invoice_no: {
+        type: Sequelize.STRING,
+      },
       admin_name: {
         type: Sequelize.STRING,
       },
@@ -22,9 +25,6 @@ module.exports = {
         type: Sequelize.STRING,
       },
       payment_proof: {
-        type: Sequelize.STRING,
-      },
-      invoice_no: {
         type: Sequelize.STRING,
       },
       expired_date: {

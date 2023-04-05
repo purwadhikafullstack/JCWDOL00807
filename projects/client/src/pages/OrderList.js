@@ -21,12 +21,21 @@ import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
-const ProductListByQuery = () => {
+const OrderListByQuery = () => {
   const navigate = useNavigate();
-  const [dataCategories, setDataCategories] = useState([]);
+
   const checkboxRefs = useRef([]);
-  const [dataProduct, setDataProduct] = useState([]);
-  const [category, setCategory] = useState("");
+  const [branch, setBranch] = useState("");
+  const [dataOrder, setDataOrder] = useState([]);
+  const [dataStatus, setDataStatus] = useState([
+    "Waiting For Payment",
+    "Waiting For Confirmation Payment",
+    "Canceled",
+    "Ongoing",
+    "On Delivering",
+    "Order Confirmed",
+  ]);
+  const [status, setStatus] = useState("");
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -36,35 +45,18 @@ const ProductListByQuery = () => {
   const [msg, setMsg] = useState("");
   let sort = useRef();
   let asc = useRef();
-  const getData = async () => {
-    try {
-      const token = localStorage.getItem("my_Token");
-      let response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      );
-      console.log(response);
-      await setDataCategories(response?.data?.data?.dataCategory);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const getProductList = async () => {
+  const getOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
       console.log(inputSort, inputAsc);
       console.log(keyword, page);
-      console.log(category);
+      console.log(status);
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/admin/product_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&categories=${category}
+      ${process.env.REACT_APP_API_BASE_URL}/admin/order_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}
       `,
         {
           headers: {
@@ -72,11 +64,10 @@ const ProductListByQuery = () => {
           },
         }
       );
-
-      setDataProduct(response?.data?.data?.result);
+      setDataOrder(response?.data?.data?.result);
+      setBranch(response?.data?.data?.result[0].branch_store);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
-
       setRows(response?.data?.data?.totalRows[0].count_row);
     } catch (error) {
       console.log(error);
@@ -88,7 +79,7 @@ const ProductListByQuery = () => {
       .map((checkbox) => checkbox.value);
     console.log(checkedValues.join(","));
     let checkedValuesString = checkedValues.join(",");
-    setCategory(checkedValuesString);
+    setStatus(checkedValuesString);
   };
 
   const changePage = ({ selected }) => {
@@ -106,19 +97,16 @@ const ProductListByQuery = () => {
     e.preventDefault();
     setPage(0);
     setKeyword(query);
-    getProductList();
+    getOrderList();
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
   useEffect(() => {
     const token = localStorage.getItem("my_Token");
 
     if (!token) {
       navigate("/admin/login");
     }
-    getProductList();
+    getOrderList();
   }, [page, keyword]);
   return (
     <>
@@ -153,24 +141,24 @@ const ProductListByQuery = () => {
             <input
               type="search"
               id="default-search"
-              className=" mt-5 mb-5 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search Product Name, Discount Type ETC"
+              className=" mt-5 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search Username or Invoice Number"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               style={{ width: "30em" }}
             />
             <button
               type="submit"
-              className=" text-white absolute right-2.5 bottom-7 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className=" text-white absolute right-2.5 bottom-8 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search
             </button>
           </div>
-          <h3 className="mt-8 ml-5 mb-6 font-semibold text-gray-900 dark:text-white">
-            Category - Filter
+          <h3 className="mt-6 ml-5 mb-6 font-semibold text-gray-900 dark:text-white">
+            Status- Filter
           </h3>
 
-          {dataCategories?.map((value, index) => {
+          {dataStatus?.map((value, index) => {
             return (
               <>
                 <Stack direction={["column", "row"]}>
@@ -195,15 +183,18 @@ const ProductListByQuery = () => {
               </>
             );
           })}
-          <div className="mt-7 mb-5 ml-5 ">
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
               <option value="price">Sort By Price</option>
-              <option value="name">Sort By Name </option>
-              <option value="category">Sor t By Category</option>
+              <option value="status">Sort By Status </option>
+              <option value="invoice">Sort By Invoice Number</option>
+              <option value="expired">Sort By Expired Date</option>
+              <option value="name">Sort by Username</option>
+              <option value="date">Sort by Date</option>
             </Select>
           </div>
-          <div className="mt-7 mb-5 ml-5 ">
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={asc}>
               <option selected value="asc">
                 Ascending
@@ -213,9 +204,6 @@ const ProductListByQuery = () => {
           </div>
         </form>
 
-        <div className="m-10 flex justify-start">
-          <div></div>
-        </div>
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
             <SidebarAdmin />
@@ -226,67 +214,76 @@ const ProductListByQuery = () => {
                 fontWeight="bold"
                 textAlign="center"
               >
-                Product List Table
+                Order List Table - {branch}
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id Product</Th>
-                  <Th>Name</Th>
-                  <Th>Images</Th>
-                  <Th>Categories</Th>
-                  <Th>Weight</Th>
-                  <Th>Stock</Th>
-                  <Th>Price</Th>
-                  <Th>Created At</Th>
-                  <Th>Updated At</Th>
-                  <Th>Voucher Type</Th>
-                  <Th>Discount Type</Th>
+                  <Th>Transaction Id</Th>
+                  <Th>Username</Th>
+                  <Th>Invoice Number</Th>
+                  <Th>Date</Th>
+                  <Th>Total Price</Th>
+                  <Th>Status</Th>
+                  <Th>Payment Proof</Th>
+                  <Th>Expired Date</Th>
+                  <Th>UpdatedAt</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {dataProduct?.map((value, index) => {
+                {dataOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
                       <Td>{value.id}</Td>
                       <Td>{value.name}</Td>
-                      <Td>
-                        <img
-                          src={value.images}
-                          alt="*"
-                          width="150"
-                          height="75"
-                        ></img>
-                      </Td>
-                      <Td>{value.categories}</Td>
-                      <Td>{value.weight}</Td>
-                      <Td>{value.stock}</Td>
+                      <Td>{value.invoice_no}</Td>
+                      <Td>{value.Date}</Td>
                       <Td>
                         <CurrencyFormat
-                          value={value.price}
+                          value={value.total_price}
                           displayType={"text"}
                           thousandSeparator={"."}
                           decimalSeparator={","}
                           prefix={"Rp"}
                         />
                       </Td>
-                      <Td>{value.createdAt}</Td>
+                      <Td>
+                        {value?.status === "Waiting For Payment" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        ) : value?.status === "Canceled" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-red-500 bg-red-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        ) : value?.status ===
+                          "Waiting For Confirmation Payment" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        )}
+                      </Td>
+                      <Td>
+                        <img
+                          src={value.payment_proof}
+                          alt="*"
+                          width="100"
+                          height="150"
+                        ></img>
+                      </Td>
+                      <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
-                      {value.voucherType ? (
-                        <>
-                          <Td>{value.voucherType}</Td>
-                        </>
-                      ) : (
-                        <Td>-</Td>
-                      )}
-                      {value.discountType ? (
-                        <>
-                          <Td>{value.discountType}</Td>
-                        </>
-                      ) : (
-                        <>
-                          <Td>-</Td>
-                        </>
-                      )}
                     </Tr>
                   );
                 })}
@@ -326,4 +323,4 @@ const ProductListByQuery = () => {
     </>
   );
 };
-export default ProductListByQuery;
+export default OrderListByQuery;

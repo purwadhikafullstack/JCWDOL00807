@@ -25,6 +25,7 @@ import {
   useDisclosure,
   isOpen,
   onOpen,
+  flattenTokens,
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import axios from "axios";
@@ -34,6 +35,7 @@ import React from "react";
 import UpdateStock from "../components/UpdateStock";
 
 const ProductCRUD = () => {
+  const navigate = useNavigate();
   const [dataProduct, setDataProduct] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState("");
   const [idProduct, setIdProduct] = useState("");
@@ -46,26 +48,9 @@ const ProductCRUD = () => {
   const [keyword, setKeyword] = useState("");
   const [rows, setRows] = useState(0);
 
-  const getProductbyQuery = async () => {
-    let token = localStorage.my_Token;
-    const response = await axios.get(
-      `
-    ${process.env.REACT_APP_API_BASE_URL}/product_search?search_query=${keyword}&page=${page}&limit=${limit}`,
-      {
-        headers: {
-          authorization: token,
-        },
-      }
-    );
-    console.log(response);
-    setDataProduct(response?.data?.data?.result);
-    setPage(response?.data?.data?.page);
-    setPages(response?.data?.data?.totalPage);
-    setRows(response?.data?.data?.totalRows[0].count_row);
-  };
   const getProductList = async () => {
     try {
-      let token = localStorage.my_Token;
+      const token = localStorage.getItem("my_Token");
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         {
@@ -82,7 +67,8 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
-      let token = localStorage.my_Token;
+
+      const token = localStorage.getItem("my_Token");
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,
         {
@@ -98,12 +84,19 @@ const ProductCRUD = () => {
     }
   };
 
+  const handleOnEdit = (idProduct) => {
+    navigate(`edit/${idProduct}`);
+  };
   const handleOnOpen = async (id, name) => {
     setIdProduct(id);
     setNameProduct(name);
     onOpen();
   };
   useEffect(() => {
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getProductList();
     // getProductbyQuery();
   }, []);
@@ -168,8 +161,22 @@ const ProductCRUD = () => {
                       </Td>
                       <Td>{value.createdAt}</Td>
                       <Td>{value.updatedAt}</Td>
-                      <Td>{value.voucherType}</Td>
-                      <Td>{value.discountType}</Td>
+                      {value.voucherType ? (
+                        <>
+                          <Td>{value.voucherType}</Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
+                      {value.discountType ? (
+                        <>
+                          <Td>{value.discountType}</Td>
+                        </>
+                      ) : (
+                        <>
+                          <Td>-</Td>
+                        </>
+                      )}
                       <Td>
                         <UpdateStock
                           id_product={value.id}
@@ -177,12 +184,16 @@ const ProductCRUD = () => {
                           stock={value.stock}
                           getProductList={getProductList}
                         />
-                        <Button size="xs" colorScheme="whatsapp">
+                        <Button
+                          size="xs"
+                          colorScheme="whatsapp"
+                          onClick={() => handleOnEdit(value.id)}
+                        >
                           <Icon
                             icon="fluent:calendar-edit-16-regular"
                             className="text-lg"
                           />
-                          <Link to={`edit/${value.id}`}>Edit</Link>
+                          Edit
                         </Button>
                         <Button
                           ml={2}

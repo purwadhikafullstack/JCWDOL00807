@@ -11,15 +11,15 @@ import {
   Image,
   Select,
   Textarea,
+  Button
 } from "@chakra-ui/react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import { useState, useRef, useEffect } from "react";
 import { editProduct } from "../redux/action/product";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Toaster from "react-hot-toast";
+import { Icon } from "@iconify/react";
 
 const EditProduct = () => {
   let image = useRef();
@@ -34,8 +34,6 @@ const EditProduct = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // let product = useSelector((state) => state.product);
-  // console.log(product);
   const { id } = useParams();
 
   const [message, setMessage] = useState("");
@@ -46,7 +44,6 @@ const EditProduct = () => {
   const [fieldWeight, setFieldWeight] = useState("");
   const [fieldStock, setFieldStock] = useState("");
   const [fieldPrice, setFieldPrice] = useState("");
-  const [fieldImage, setFieldImage] = useState("");
   const [fieldDiscountType, setFieldDiscountType] = useState("");
   const [fieldVoucherType, setFieldVoucherType] = useState("");
   const [dataCategories, setDataCategories] = useState([]);
@@ -78,7 +75,8 @@ const EditProduct = () => {
 
   const getData = async () => {
     try {
-      let token = localStorage.my_Token;
+
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
@@ -87,11 +85,9 @@ const EditProduct = () => {
           },
         }
       );
-      console.log(response);
       await setDataCategories(response?.data?.data?.dataCategory);
       await setDataDiscountType(response?.data?.data?.dataDiscountType);
       await setDataVoucherType(response?.data?.data?.dataVoucherType);
-      // console.log(dataCategories, dataDiscountType, dataVoucherType);
     } catch (error) {
       console.log(error);
     }
@@ -99,18 +95,18 @@ const EditProduct = () => {
 
   const getProductById = async () => {
     try {
+      const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${id}
         `,
         {
           headers: {
-            authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJicmFuY2hfc3RvcmVzX2lkIjoxLCJpYXQiOjE2ODA1MjU2MzEsImV4cCI6MTY4MDY5ODQzMX0.T_ALDuUPoVHOKhsQMoYveeREhWTEuc5u9fTT7vk7It8`,
+            authorization: token,
           },
         }
       );
       console.log(response?.data?.data[0]);
       setFieldName(response?.data?.data[0].name);
-      // await setFieldImage(response?.data?.data[0].images);
       setFieldDescription(response?.data?.data[0].description);
       setFieldCategory(response?.data?.data[0].categories);
       setFieldWeight(response?.data?.data[0].weight);
@@ -125,6 +121,7 @@ const EditProduct = () => {
 
   const handleUpdate = () => {
     try {
+      const token = localStorage.getItem("my_Token");
       setLoading(true);
       let inputName = name.current.value;
       let inputDescription = description.current.value;
@@ -185,10 +182,7 @@ const EditProduct = () => {
         formData.append("voucherType", inputVoucherType);
       }
       let id_product = id;
-      dispatch(editProduct({ formData }, { id_product }));
-      alert(`Edit Product Berhasil`);
-      navigate("/admin/manage-product");
-      window.location.reload();
+      dispatch(editProduct({ formData }, { id_product }, { token }));
     } catch (error) {
       setLoading(false);
       setMessage(error.response.data.message);
@@ -198,15 +192,27 @@ const EditProduct = () => {
 
   useEffect(() => {
     setLoading(true);
-    // const token = localStorage.getItem("my_Token");
+    const token = localStorage.getItem("my_Token");
+    if (!token) {
+      navigate("/admin/login");
+    }
     getData();
     getProductById();
-    // if(!token){
-    //     navigate("/admin/login")
-    // }
   }, []);
+  function handleClick() {
+    window.history.back();
+  }
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Edit Product Form</h1>
       </div>
