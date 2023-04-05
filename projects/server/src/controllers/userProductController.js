@@ -3,12 +3,10 @@ const { Op } = require("sequelize");
 
 // import model
 const db = require("../models/index");
-const admin = db.admins;
 const branch_stores = db.branch_stores;
 const item_products = db.item_products;
 const product_categories = db.product_categories;
 const discounts = db.discounts;
-const vouchers = db.vouchers;
 const radians = require("../helper/radians");
 const generateUrlAdmin = require("../helper/generateUrlAdmin");
 
@@ -17,7 +15,7 @@ module.exports = {
     try {
       const { latitude, longitude } = req.query;
       const branchLocation = await branch_stores.findAll({
-        attributes: ["latitude", "longitude", "name"],
+        attributes: ["latitude", "longitude", "name", "id"],
       });
       const R = 6371; // radius Bumi dalam kilometer
       let distances = [];
@@ -42,105 +40,253 @@ module.exports = {
         }
       }
 
-      console.log(closest);
-
-      const listProduct = await sequelize.query(
-        `select bs.name as branch, ip.id,pc.name as category,  ip.name, ip.images, ip.description, ip.weight, ip.stock, ip.price,
-        d.cut_nominal, CONCAT(Round((d.cut_percentage * 100),0),"%") AS cut_percentage,
-        CASE WHEN d.status = 1 THEN ROUND(ip.price - (CASE WHEN d.cut_percentage THEN ip.price * d.cut_percentage ELSE COALESCE(d.cut_nominal,0) END),0) ELSE Null END AS price_after_discount,
-        d.status, ip.createdAt,ip.branch_stores_id,ip.vouchers_id, d.discount_type  from item_products ip 
-        left join discounts d on d.id = ip.discount_id 
-        join product_categories pc on pc.id = ip.product_categories_id 
-        join branch_stores bs on bs.id = ip.branch_stores_id where ip.branch_stores_id = ? LIMIT 5;`,
-        {
-          replacements: [closest + 1],
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
+      const listProduct = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { branch_stores_id: closest + 1 },
+      });
 
       listProduct.map((val) => {
-        return (val.images = generateUrlAdmin(val.images));
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.images = generateUrlAdmin(val.images));
+        }
       });
 
-      const promotion = await sequelize.query(
-        `select bs.name as branch, ip.id,pc.name as category,  ip.name, ip.images, ip.description, ip.weight, ip.stock, ip.price,
-        d.cut_nominal, CONCAT(Round((d.cut_percentage * 100),0),"%") AS cut_percentage,
-        CASE WHEN d.status = 1 THEN ROUND(ip.price - (CASE WHEN d.cut_percentage THEN ip.price * d.cut_percentage ELSE COALESCE(d.cut_nominal,0) END),0) ELSE Null END AS price_after_discount,
-        d.status, ip.createdAt,ip.branch_stores_id,ip.vouchers_id, d.discount_type  from item_products ip 
-        left join discounts d on d.id = ip.discount_id 
-        join product_categories pc on pc.id = ip.product_categories_id 
-        join branch_stores bs on bs.id = ip.branch_stores_id where ip.branch_stores_id = ? and status = 1 LIMIT 5;
-     `,
-        {
-          replacements: [closest + 1],
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
+      const promotion = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+            where: { status: 1 },
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { branch_stores_id: closest + 1 },
+      });
 
       promotion.map((val) => {
-        return (val.images = generateUrlAdmin(val.images));
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.images = generateUrlAdmin(val.images));
+        }
       });
 
-      const latest = await sequelize.query(
-        `select bs.name as branch, ip.id,pc.name as category,  ip.name, ip.images, ip.description, ip.weight, ip.stock, ip.price,
-        d.cut_nominal, CONCAT(Round((d.cut_percentage * 100),0),"%") AS cut_percentage,
-        CASE WHEN d.status = 1 THEN ROUND(ip.price - (CASE WHEN d.cut_percentage THEN ip.price * d.cut_percentage ELSE COALESCE(d.cut_nominal,0) END),0) ELSE Null END AS price_after_discount,
-        d.status, ip.createdAt,ip.branch_stores_id,ip.vouchers_id, d.discount_type  from item_products ip 
-        left join discounts d on d.id = ip.discount_id 
-        join product_categories pc on pc.id = ip.product_categories_id 
-        join branch_stores bs on bs.id = ip.branch_stores_id where ip.branch_stores_id = ?  ORDER BY ip.createdAt DESC LIMIT 5 ;`,
-
-        {
-          replacements: [closest + 1],
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
+      const latest = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { branch_stores_id: closest + 1 },
+        order: [["createdAt", "DESC"]],
+      });
 
       latest.map((val) => {
-        return (val.images = generateUrlAdmin(val.images));
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.images = generateUrlAdmin(val.images));
+        }
       });
 
       const getDataBestSeller = await sequelize.query(
         `SELECT (td.product_name) , sum(td.qty) as qty from transactions t join transaction_details td on td.transactions_id = t.id
         where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") AND branch_store = ?
-        group by td.product_name order by sum(td.qty) desc 
-        limit 5;`,
+        group by td.product_name order by sum(td.qty) desc`,
 
         {
           replacements: [branchLocation[closest].name],
           type: sequelize.QueryTypes.SELECT,
         }
       );
-      console.log(getDataBestSeller);
 
       let dataBestSeller = getDataBestSeller.map(
         (val) => `${val.product_name}`
       );
 
-      const productBestSeller = await sequelize.query(
-        `SELECT bs.name AS branch, ip.id, pc.name AS category, ip.name, ip.images, ip.description, ip.weight, ip.stock, ip.price,
-      d.cut_nominal, CONCAT(ROUND((d.cut_percentage * 100),0),"%") AS cut_percentage,
-      CASE WHEN d.status = 1 THEN ROUND(ip.price - (CASE WHEN d.cut_percentage THEN ip.price * d.cut_percentage ELSE COALESCE(d.cut_nominal,0) END),0) ELSE NULL END AS price_after_discount,
-      d.status, ip.createdAt, ip.branch_stores_id, ip.vouchers_id, d.discount_type
-      FROM item_products ip
-      LEFT JOIN discounts d ON d.id = ip.discount_id
-      JOIN product_categories pc ON pc.id = ip.product_categories_id
-      JOIN branch_stores bs ON bs.id = ip.branch_stores_id
-      WHERE ip.branch_stores_id = ? AND ip.name IN ("${dataBestSeller[0]}", "${dataBestSeller[1]}", "${dataBestSeller[2]}", "${dataBestSeller[3]}", "${dataBestSeller[4]}" );`,
-
-        {
-          replacements: [closest + 1],
-          type: sequelize.QueryTypes.SELECT,
-        }
-      );
+      const productBestSeller = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { branch_stores_id: closest + 1, name: dataBestSeller },
+      });
 
       productBestSeller.map((val) => {
-        return (val.images = generateUrlAdmin(val.images));
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.images = generateUrlAdmin(val.images));
+        }
       });
 
       const category = await sequelize.query(
-        `select Distinct pc.name FROM item_products ip JOIN product_categories pc ON pc.id = ip.product_categories_id where branch_stores_id =?;
-     `,
+        `select Distinct pc.name FROM item_products ip JOIN product_categories pc ON pc.id = ip.product_categories_id where branch_stores_id =? ORDER BY pc.name ASC;`,
         {
           replacements: [closest + 1],
           type: sequelize.QueryTypes.SELECT,
@@ -155,6 +301,7 @@ module.exports = {
         isSuccess: true,
         message: "List Product Success",
         data: {
+          branch_id: branchLocation[closest].id,
           branch: branchLocation[closest].name,
           category: newCategories,
           allProduct: listProduct,
@@ -166,6 +313,317 @@ module.exports = {
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  productFilterQuery: async (req, res) => {
+    try {
+      const {
+        branch_stores_id,
+        branch_store_name,
+        promotion,
+        latest,
+        bestSeller,
+        allProduct,
+        categories,
+        sortBy,
+        search,
+      } = req.query;
+
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 0;
+      const offset = limit * page;
+
+      const getDataBestSeller = await sequelize.query(
+        `SELECT (td.product_name) , sum(td.qty) as qty from transactions t join transaction_details td on td.transactions_id = t.id
+        where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") AND branch_store = ?
+        group by td.product_name order by sum(td.qty) desc `,
+
+        {
+          replacements: [branch_store_name],
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      let dataBestSeller = getDataBestSeller.map(
+        (val) => `${val.product_name}`
+      );
+
+      let inputPromotion;
+      let inputLatest;
+      let inputBestSeller;
+      let inputCategories;
+      let inputSort;
+      let inputSearch;
+
+      if (promotion) {
+        inputPromotion = { status: 1 };
+      }
+      if (latest) {
+        inputLatest = [["createdAt", "DESC"]];
+      }
+
+      if (bestSeller) {
+        inputBestSeller = { branch_stores_id, name: dataBestSeller };
+      } else {
+        inputBestSeller = { branch_stores_id };
+      }
+
+      if (categories) {
+        let newCategories = categories.split(",");
+        inputCategories = { name: [...newCategories] };
+      }
+      if (sortBy === "highPrice") {
+        inputSort = [["price_after_discount_notNull", "DESC"]];
+      }
+      if (sortBy === "lowestPrice") {
+        inputSort = [["price_after_discount_notNull", "ASC"]];
+      }
+      if (sortBy === "nameAsc") {
+        inputSort = [["name", "ASC"]];
+      }
+      if (sortBy === "nameDesc") {
+        inputSort = [["name", "DESC"]];
+      }
+      if (search) {
+        inputSearch = { name: { [Op.substring]: search } };
+      }
+
+      if (allProduct === "allProduct") {
+        inputLatest = [["createdAt", "ASC"]];
+      }
+
+      let order = [];
+      if (inputSort) {
+        order.push(...inputSort);
+      }
+      if (inputLatest) {
+        order.push(...inputLatest);
+      }
+
+      const { count } = await item_products.findAndCountAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE item_products.price END"
+            ),
+            "price_after_discount_notNull",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+            where: inputPromotion,
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+            where: inputCategories,
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: {
+          [Op.and]: [inputBestSeller, inputSearch],
+        },
+        order: order,
+      });
+
+      let totalPages = Math.ceil(count / limit);
+
+      const productList = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE item_products.price END"
+            ),
+            "price_after_discount_notNull",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+            where: inputPromotion,
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+            where: inputCategories,
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: {
+          [Op.and]: [inputBestSeller, inputSearch],
+        },
+        order: order,
+        limit: limit,
+        offset: offset,
+      });
+      productList.map((val) => {
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.dataValues.images = generateUrlAdmin(val.images));
+        }
+      });
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get list product by query success",
+        data: productList,
+        count,
+        page,
+        totalPages,
+        limit,
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  productDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const product = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE item_products.price END"
+            ),
+            "price_after_discount_notNull",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { id },
+      });
+      product.map((val) => {
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.dataValues.images = generateUrlAdmin(val.images));
+        }
+      });
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get product detail success",
+        data: product[0],
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: true,
         message: error.message,
       });
     }

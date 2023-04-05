@@ -1,75 +1,43 @@
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import { Icon } from "@iconify/react";
 import CardProduct from "../components/CardProduct";
 import { Button } from "@chakra-ui/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { userProductList } from "../redux/action/userProduct";
 import Banner from "../components/Banner";
 import Carousel from "nuka-carousel";
 import ramadhanSales from "../asset/banner/ramadhan-sales.png";
 import shipping from "../asset/banner/shipping.png";
+import { Link } from "react-router-dom";
 import { keepLogin } from "../redux/action/user";
 
 const Home = () => {
   let userProduct = useSelector((state) => state.userProduct);
-  let address = useSelector((state) => state.address.userAddress);
-  const dispatch = useDispatch();
-
+  let dispatch = useDispatch();
   const [allProduct, setAllProduct] = useState([]);
   const [category, setCategory] = useState([]);
   const [latest, setLatest] = useState([]);
   const [promotion, setPromotion] = useState([]);
   const [bestSeller, setBestSeller] = useState([]);
-  const [branch, setBranch] = useState([]);
-
-  const geolocation = () => {
-    dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
-    if (address?.data) {
-      let lat = address?.data[0]?.latitude;
-      let lng = address?.data[0]?.longitude;
-      dispatch(userProductList({ lat: lat, lng: lng }));
-    } else {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          function (position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            dispatch(userProductList({ lat: latitude, lng: longitude }));
-          },
-          function (error) {
-            console.log("cannot access location because user deny");
-            dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
-          }
-        );
-      } else {
-        console.log("Browser not support geolocation");
-        dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
-      }
-    }
-  };
+  // const [branch, setBranch] = useState([]);
 
   useEffect(() => {
+    dispatch(keepLogin());
     if (userProduct?.userProduct?.data?.branch) {
       setAllProduct(userProduct?.userProduct?.data?.allProduct);
       setCategory(userProduct?.userProduct?.data?.category);
       setLatest(userProduct?.userProduct?.data?.latest);
       setPromotion(userProduct?.userProduct?.data?.promotion);
       setBestSeller(userProduct?.userProduct?.data?.bestSeller);
-      setBranch(userProduct?.userProduct?.data?.branch);
+      // setBranch(userProduct?.userProduct?.data?.branch);
     }
   }, [userProduct]);
-
-  useEffect(() => {
-    geolocation();
-    dispatch(keepLogin());
-  }, [address]);
 
   return (
     <section>
       <Navbar />
-      <div className=" container mx-auto flex flex-col gap-10  mt-3 ">
+      <div className=" container mx-auto flex flex-col gap-10 mt-5 ">
         <Carousel
           renderCenterLeftControls
           renderCenterRightControls
@@ -88,25 +56,25 @@ const Home = () => {
             }
             button={"Shop now"}
           />
-          {/* <img
-            className=" w-full h-[300px] object-cover"
-            src={ramadhanSales}
-            alt=""
-          /> */}
           <img
             className=" w-full h-[300px] object-cover"
             src={shipping}
             alt=""
           />
+          <img
+            className=" w-full h-[300px] object-cover"
+            src={ramadhanSales}
+            alt=""
+          />
         </Carousel>
 
-        <div className="flex gap-1  border p-1 rounded-md w-fit ">
+        {/* <div className="flex gap-1  border p-1 rounded-md w-fit ">
           <Icon
             className="text-lg"
             icon="material-symbols:location-on-outline"
           />
           <h1 className=" font-bold ">Store Location : {branch}</h1>
-        </div>
+        </div> */}
 
         <div>
           <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
@@ -114,7 +82,9 @@ const Home = () => {
           </h1>
           <div className=" flex justify-between items-center container px-10 py-5 shadow shadow-slate-200 rounded-lg   ">
             {category.map((val, idx) => (
-              <div>{val}</div>
+              <Link key={idx} to={`/category-${val.toLowerCase()}`}>
+                <div>{val}</div>
+              </Link>
             ))}
           </div>
         </div>
@@ -123,64 +93,73 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               Promotion
             </h1>
-            <Button
-              bg="#3C6255"
-              textColor="white"
-              className=" font-bold mb-3  text-lg "
-              size="xs"
-            >
-              View All{" "}
-              <Icon
-                className="text-[25px]"
-                icon="material-symbols:arrow-right-alt-rounded"
-              />
-            </Button>
+            <Link to={`/promotion`}>
+              <Button
+                bg="#3C6255"
+                textColor="white"
+                className=" font-bold mb-3  text-lg "
+                size="xs"
+              >
+                View All{" "}
+                <Icon
+                  className="text-[25px]"
+                  icon="material-symbols:arrow-right-alt-rounded"
+                />
+              </Button>
+            </Link>
           </div>
 
-          <div className="flex  justify-between gap-3 items-center">
+          <div className="flex overflow-x-auto w-[full] gap-5 ">
             {promotion.map((val, idx) => (
-              <CardProduct
-                key={idx}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-              />
+              <Link to={`/product/${val.id}`}>
+                <CardProduct
+                  key={idx}
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                />
+              </Link>
             ))}
           </div>
         </div>
         <div>
           <div className=" flex justify-between">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">Latest</h1>
-            <Button
-              bg="#3C6255"
-              textColor="white"
-              className=" font-bold mb-3  text-lg "
-              size="xs"
-            >
-              View All{" "}
-              <Icon
-                className="text-[25px]"
-                icon="material-symbols:arrow-right-alt-rounded"
-              />
-            </Button>
+            <Link to={`/latest`}>
+              <Button
+                bg="#3C6255"
+                textColor="white"
+                className=" font-bold mb-3  text-lg "
+                size="xs"
+              >
+                View All{" "}
+                <Icon
+                  className="text-[25px]"
+                  icon="material-symbols:arrow-right-alt-rounded"
+                />
+              </Button>
+            </Link>
           </div>
 
-          <div className="flex  justify-between gap-4">
+          <div className="flex  overflow-x-auto w-[full] gap-5 ">
             {latest.map((val, idx) => (
-              <CardProduct
-                key={idx}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-              />
+              <Link key={idx} to={`/product/${val.id}`}>
+                <CardProduct
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                />
+              </Link>
             ))}
           </div>
         </div>
@@ -189,31 +168,36 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               All Product
             </h1>
-            <Button
-              bg="#3C6255"
-              textColor="white"
-              className=" font-bold mb-3  text-lg "
-              size="xs"
-            >
-              View All{" "}
-              <Icon
-                className="text-[25px]"
-                icon="material-symbols:arrow-right-alt-rounded"
-              />
-            </Button>
+            <Link to={`/allproduct`}>
+              <Button
+                bg="#3C6255"
+                textColor="white"
+                className=" font-bold mb-3  text-lg "
+                size="xs"
+              >
+                View All{" "}
+                <Icon
+                  className="text-[25px]"
+                  icon="material-symbols:arrow-right-alt-rounded"
+                />
+              </Button>
+            </Link>
           </div>
 
-          <div className="flex  justify-between gap-4">
-            {allProduct.map((val) => (
-              <CardProduct
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-              />
+          <div className="flex  overflow-x-auto w-[full] gap-5 ">
+            {allProduct.map((val, idx) => (
+              <Link key={idx} to={`/product/${val.id}`}>
+                <CardProduct
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                />
+              </Link>
             ))}
           </div>
         </div>
@@ -222,30 +206,35 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               Best Selling Product
             </h1>
-            <Button
-              bg="#3C6255"
-              textColor="white"
-              className=" font-bold mb-3  text-lg "
-              size="xs"
-            >
-              View All{" "}
-              <Icon
-                className="text-[25px]"
-                icon="material-symbols:arrow-right-alt-rounded"
-              />
-            </Button>
+            <Link to={`/bestSeller`}>
+              <Button
+                bg="#3C6255"
+                textColor="white"
+                className=" font-bold mb-3  text-lg "
+                size="xs"
+              >
+                View All{" "}
+                <Icon
+                  className="text-[25px]"
+                  icon="material-symbols:arrow-right-alt-rounded"
+                />
+              </Button>
+            </Link>
           </div>
-          <div className="flex justify-between gap-4 mb-4">
+          <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  ">
             {bestSeller.map((val, idx) => (
-              <CardProduct
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-              />
+              <Link key={idx} to={`/product/${val.id}`}>
+                <CardProduct
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                />
+              </Link>
             ))}
           </div>
         </div>

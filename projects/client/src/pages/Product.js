@@ -67,6 +67,7 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
+
       const token = localStorage.getItem("my_Token");
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,

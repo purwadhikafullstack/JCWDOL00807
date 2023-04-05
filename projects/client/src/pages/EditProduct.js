@@ -75,6 +75,7 @@ const EditProduct = () => {
 
   const getData = async () => {
     try {
+
       const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,

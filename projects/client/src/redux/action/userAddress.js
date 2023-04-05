@@ -17,6 +17,9 @@ export const handleStateError = (name) => {
 export const findAllAddress = () => {
   return async (dispatch) => {
     dispatch({ type: findAll_address_request });
+    // loading jadikeun true
+    // dispatch(addressSlice.actions.loadingAddress(true));
+    // dispatch(addressSlice.actions.getAllAddress());
     try {
       let token = localStorage.my_Token;
 
@@ -29,10 +32,12 @@ export const findAllAddress = () => {
         }
       );
       dispatch(addressSlice.actions.getAllAddress(response.data));
+      // loading jadikeun false
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
       dispatch(addressSlice.actions.failed(error.response.data.message));
+      // loading jadikeun false
     }
   };
 };
