@@ -11,7 +11,6 @@ import { Chart } from "react-google-charts";
 
 const AdminHome = () => {
   const navigate = useNavigate();
-  const [role, setRole] = useState();
   const [data1, setData1] = useState([]);
   const [options1, setOptions1] = useState([]);
   const [data2, setData2] = useState([]);
@@ -142,7 +141,6 @@ const AdminHome = () => {
             },
           }
         );
-        console.log(response.data.data);
         await setDataChart(response?.data?.data?.dataChart);
         setTopBranch(response?.data?.data?.topBranch);
         setTopProduct(response?.data?.data?.topProduct);
@@ -154,13 +152,12 @@ const AdminHome = () => {
         setAdminRole(response?.data?.data?.role);
         setDataBranchTransaction(response?.data?.data?.dataBranchTransaction);
         setDataDone(true);
-        console.log(response.data.data);
       } catch (error) {
         console.log(error);
       }
     };
     getDataDashboard();
-  }, []);
+  }, [dataDone]);
   useEffect(() => {
     dailySaleChart();
     dailyOrderChart();

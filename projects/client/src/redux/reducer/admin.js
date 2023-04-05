@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 const initialState = {
   admin: {},
   role: null,
@@ -36,28 +35,9 @@ export const adminSlice = createSlice({
       state.admin = action.payload;
       state.loading = null;
     },
-    // updateProfileSuccess: (state, action) => {
-    //   state.user = action.payload;
-    //   state.loading = null;
-    //   state.errorMessage = null;
-    // },
-    // stateError: (state, action) => {
-    //   state.user = action.payload;
-    //   state.errorMessage = null;
-    // },
-    // updateAddressSuccess: (state, action) => {
-    //   state.user = action.payload;
-    //   state.loading = null;
-    //   state.errorMessage = null;
-    // },
   },
 });
 
-export const {
-//   registerSuccess,
-  loginSuccess,
-//   updateProfileSuccess,
-//   updateAddressSuccess,
-} = adminSlice.actions;
+export const { loginSuccess } = adminSlice.actions;
 
 export default adminSlice.reducer;

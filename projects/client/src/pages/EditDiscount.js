@@ -8,17 +8,18 @@ import {
   FormErrorMessage,
   FormHelperText,
   Input,
-  Image,
   Select,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
 
 import { useState, useRef, useEffect } from "react";
 import { updateDiscount } from "../redux/action/discount";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import { Icon } from "@iconify/react";
 
 const EditDiscount = () => {
   let discount_type = useRef();
@@ -30,7 +31,6 @@ const EditDiscount = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //   let admin = useSelector((state) => state.auth);
   const [initialStart, setInitialStart] = useState("");
   const [initialEnd, setInitialEnd] = useState("");
   const { id } = useParams();
@@ -73,6 +73,10 @@ const EditDiscount = () => {
   const isErrorPercentage = fieldCutPercentage === "";
   const isErrorStart = fieldStart === "";
   const isErrorEnd = fieldEnd === "";
+
+  function handleClick() {
+    window.history.back();
+  }
 
   const handleUpdate = (event) => {
     try {
@@ -158,7 +162,6 @@ const EditDiscount = () => {
           },
         }
       );
-      console.log(response);
       setFieldName(response?.data?.data[0].discount_type);
       setFieldDescription(response?.data?.data[0].description);
       setFieldCutNominal(response?.data?.data[0].cut_nominal);
@@ -192,6 +195,15 @@ const EditDiscount = () => {
 
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Edit Discount Form</h1>
       </div>
@@ -229,7 +241,7 @@ const EditDiscount = () => {
                           type="text"
                           value={fieldName}
                           ref={discount_type}
-                          placeholder="Select Discount Type"
+                          // placeholder="Select Discount Type"
                           onChange={handleInputChangeName}
                         >
                           <option value="Discount Tanpa Ketentuan (Nominal)">

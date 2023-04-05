@@ -15,7 +15,7 @@ import {
 
 import { useState, useRef, useEffect } from "react";
 import { updateVoucher } from "../redux/action/voucher";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -31,12 +31,9 @@ const UpdateVoucher = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //   let admin = useSelector((state) => state.auth);
   const [voucherType, setVoucherType] = useState("");
   const [dataUser, setDataUser] = useState([]);
   const [addFile, setAddFile] = useState("");
-  const [value1, setValue1] = useState("");
-  const [value2, setValue2] = useState("");
   const [message, setMessage] = useState("");
   const [fieldName, setFieldName] = useState("");
   const [fieldDescription, setFieldDescription] = useState("");
@@ -79,8 +76,6 @@ const UpdateVoucher = () => {
           },
         }
       );
-      console.log(response);
-      console.log(response?.data?.data);
       setDataUser(response?.data?.data);
     } catch (error) {
       console.log(error);
@@ -98,7 +93,6 @@ const UpdateVoucher = () => {
           },
         }
       );
-      console.log(response);
       setFieldName(response?.data?.data[0].voucher_type);
       setFieldDescription(response?.data?.data[0].description);
       setFieldCutNominal(response?.data?.data[0].cut_nominal);
@@ -118,7 +112,6 @@ const UpdateVoucher = () => {
     const token = localStorage.getItem("my_Token");
     try {
       setLoading(true);
-      // event.preventDefault();
 
       let inputUsername = username.current.value;
       let inputVoucher_type = voucher_type.current.value;
@@ -219,7 +212,7 @@ const UpdateVoucher = () => {
                           type="text"
                           value={fieldName}
                           ref={voucher_type}
-                          placeholder="Select voucher type"
+                          //   placeholder="Select voucher type"
                           onChange={handleInputChangeName}
                         >
                           <option value="Potongan Ongkir (Nominal)">

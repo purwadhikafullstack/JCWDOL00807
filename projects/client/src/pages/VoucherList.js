@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
 import {
   AlertDialog,
@@ -20,16 +19,12 @@ import {
   Th,
   Thead,
   Tr,
-  Tfoot,
   Button,
   Text,
   useDisclosure,
-  isOpen,
-  onOpen,
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
@@ -56,8 +51,6 @@ const DiscountListByQuery = () => {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
-      console.log(inputSort, inputAsc);
-      console.log(keyword, page);
       let response = await axios.get(
         `
       ${process.env.REACT_APP_API_BASE_URL}/discount/voucher_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
@@ -68,12 +61,9 @@ const DiscountListByQuery = () => {
           },
         }
       );
-      console.log(response);
       setDataVoucher(response?.data?.data?.result);
-      console.log(response?.data?.data?.result);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
-      console.log(response.data.data.totalRows[0].count_row);
       setRows(response?.data?.data?.totalRows[0].count_row);
     } catch (error) {
       console.log(error);
@@ -135,15 +125,15 @@ const DiscountListByQuery = () => {
       <div className="p-4 sm:ml-64">
         <Navbar />
 
-        <form className="m-10" onSubmit={searchData}>
+        <form className="m-5 flex justify-start" onSubmit={searchData}>
           <label
             for="default-search"
-            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
           >
             Search
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 mb-3 pointer-events-none">
               <svg
                 aria-hidden="true"
                 className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -163,25 +153,20 @@ const DiscountListByQuery = () => {
             <input
               type="search"
               id="default-search"
-              className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search Voucher Type and status"
+              className=" mb-3 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search Voucher Type"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              style={{ width: "30em" }}
             />
             <button
               type="submit"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className=" text-white absolute right-2.5 bottom-5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search
             </button>
           </div>
-        </form>
-
-        <div className="m-10 flex justify-start">
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Sorting Data By:
-            </h3>
+          <div className="ml-10 mt-3 ">
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
               <option value="type">Sort By Type</option>
@@ -190,10 +175,7 @@ const DiscountListByQuery = () => {
               <option value="status">Sort By Status</option>
             </Select>
           </div>
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Ordered by
-            </h3>
+          <div className="ml-10 mt-3 ">
             <Select ref={asc}>
               <option selected value="asc">
                 Ascending
@@ -201,7 +183,8 @@ const DiscountListByQuery = () => {
               <option value="desc">Descending</option>
             </Select>
           </div>
-        </div>
+        </form>
+
         <Button size="xs" colorScheme="whatsapp" className="mt-5 ml-10 mr-10">
           <Icon icon="wpf:create-new" className="text-lg" />
           <Link to="/admin/manage-voucher/create">+Create New Voucher </Link>
@@ -272,7 +255,7 @@ const DiscountListByQuery = () => {
                       )}
                       <Td>{value.ExpiredDate}</Td>
                       <Td>{value.username}</Td>
-                      {value.status == 1 ? (
+                      {value.status === 1 ? (
                         <>
                           <Td>Active</Td>
                         </>

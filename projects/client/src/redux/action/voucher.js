@@ -1,7 +1,6 @@
 import axios from "axios";
 import { voucherSlice } from "../reducer/voucher";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 
 export const createVoucher = ({ formData }, { token }) => {
   return async (dispatch) => {

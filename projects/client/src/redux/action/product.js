@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 export const createProduct = ({ formData }, { token }) => {
   return async (dispatch) => {
-    console.log(formData);
     try {
       //   let token = localStorage.my_Token;
+      console.log(formData);
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         formData,
@@ -17,17 +17,15 @@ export const createProduct = ({ formData }, { token }) => {
           },
         }
       );
+      console.log("a");
       dispatch(productSlice.actions.createProductSuccess(response.data));
 
-      console.log(response.data);
-      toast(response.data.message);
+      console.log(response);
       alert("Create Product Success");
       window.location.reload();
     } catch (error) {
       console.log(error);
-      alert(error.message);
       console.log(error.response.data.message);
-      alert("gabisa");
       alert(error.response.data.message);
       dispatch(productSlice.actions.failed(error.response.data.message));
     }

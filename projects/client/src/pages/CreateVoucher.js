@@ -11,16 +11,14 @@ import {
   Image,
   Select,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
 import { useState, useRef, useEffect } from "react";
 import { createVoucher } from "../redux/action/voucher";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import moment from "moment";
-
+import { Icon } from "@iconify/react";
 const CreateVoucher = () => {
   let username = useRef();
   let voucher_type = useRef();
@@ -31,7 +29,6 @@ const CreateVoucher = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //   let admin = useSelector((state) => state.auth);
   const [voucherType, setVoucherType] = useState("");
   const [dataUser, setDataUser] = useState([]);
   const [addFile, setAddFile] = useState("");
@@ -90,16 +87,19 @@ const CreateVoucher = () => {
       console.log(error);
     }
   };
+  function handleClick() {
+    window.history.back();
+  }
   const isErrorName = fieldName === "";
   const isErrorDescription = fieldDescription === "";
   const isErrorNominal = fieldCutNominal === "";
   const isErrorPercentage = fieldCutPercentage === "";
   const isErrorUsername = fieldUsername === "";
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
     const token = localStorage.getItem("my_Token");
     try {
       setLoading(true);
-      // event.preventDefault();
+      event.preventDefault();
 
       let inputUsername = username.current.value;
       let inputVoucher_type = voucher_type.current.value;
@@ -175,6 +175,15 @@ const CreateVoucher = () => {
 
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Create Voucher Form</h1>
       </div>

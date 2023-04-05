@@ -18,14 +18,12 @@ const createToken = (payload) => {
   });
 };
 
-let admins_id = 2;
 let name = "abdul";
 let email = "abdul@gmail.com";
 let role = "admin branch";
 let isActive = true;
 let branch_stores_id = 1;
 let token = createToken({
-  admins_id,
   name,
   email,
   role,

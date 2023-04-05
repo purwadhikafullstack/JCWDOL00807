@@ -1,16 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
 import {
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogBody,
-  AlertDialogFooter,
   Select,
   Table,
   TableCaption,
@@ -20,17 +14,10 @@ import {
   Th,
   Thead,
   Tr,
-  Tfoot,
-  Button,
-  Text,
-  useDisclosure,
-  isOpen,
-  onOpen,
+  Stack,
+  Checkbox,
 } from "@chakra-ui/react";
-import { Icon } from "@iconify/react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-import BackdropResetPassword from "../components/BackdropResetPassword";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
@@ -77,12 +64,10 @@ const OrderListByQuery = () => {
           },
         }
       );
-      console.log(response);
       setDataOrder(response?.data?.data?.result);
       setBranch(response?.data?.data?.result[0].branch_store);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
-      console.log(response.data.data.totalRows[0].count_row);
       setRows(response?.data?.data?.totalRows[0].count_row);
     } catch (error) {
       console.log(error);
@@ -128,15 +113,15 @@ const OrderListByQuery = () => {
       <SidebarAdmin />
       <div className="p-4 sm:ml-64">
         <Navbar />
-        <form className="m-10" onSubmit={searchData}>
+        <form className="m-5 flex justify-start" onSubmit={searchData}>
           <label
             for="default-search"
-            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
           >
             Search
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3  pointer-events-none">
               <svg
                 aria-hidden="true"
                 className="w-5 h-5 text-gray-500 dark:text-gray-400"
@@ -156,57 +141,49 @@ const OrderListByQuery = () => {
             <input
               type="search"
               id="default-search"
-              className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search username or status or invoice number or transaction id "
+              className=" mt-5 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search Username or Invoice Number"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              style={{ width: "30em" }}
             />
             <button
               type="submit"
-              className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className=" text-white absolute right-2.5 bottom-8 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Search
             </button>
           </div>
-        </form>
+          <h3 className="mt-6 ml-5 mb-6 font-semibold text-gray-900 dark:text-white">
+            Status- Filter
+          </h3>
 
-        <div className="m-10 flex justify-start">
-          <div>
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Status Order - Filter
-            </h3>
-            <ul className="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-              {dataStatus?.map((value, index) => {
-                return (
-                  <>
-                    <li className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
-                      <div className="flex items-center pl-3">
-                        <input
-                          id={value + "-checkbox"}
-                          type="checkbox"
-                          name="category"
-                          value={value}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                          ref={(el) => (checkboxRefs.current[index] = el)}
-                          onChange={handleCheckboxChange}
-                        />
-                        <label
-                          for={value + "-checkbox"}
-                          className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                          {value}
-                        </label>
-                      </div>
-                    </li>
-                  </>
-                );
-              })}
-            </ul>
-          </div>
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Sorting Data By:
-            </h3>
+          {dataStatus?.map((value, index) => {
+            return (
+              <>
+                <Stack direction={["column", "row"]}>
+                  <div className="flex items-center pl-3">
+                    <Checkbox
+                      id={value + "-checkbox"}
+                      type="checkbox"
+                      name="category"
+                      value={value}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                      ref={(el) => (checkboxRefs.current[index] = el)}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label
+                      for={value + "-checkbox"}
+                      className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                    >
+                      {value}
+                    </label>
+                  </div>
+                </Stack>
+              </>
+            );
+          })}
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort}>
               <option value="id">Sort By Id</option>
               <option value="price">Sort By Price</option>
@@ -217,10 +194,7 @@ const OrderListByQuery = () => {
               <option value="date">Sort by Date</option>
             </Select>
           </div>
-          <div className="ml-10 ">
-            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-              Ordered by
-            </h3>
+          <div className="mt-5 mb-5 ml-5 ">
             <Select ref={asc}>
               <option selected value="asc">
                 Ascending
@@ -228,7 +202,8 @@ const OrderListByQuery = () => {
               <option value="desc">Descending</option>
             </Select>
           </div>
-        </div>
+        </form>
+
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
             <SidebarAdmin />

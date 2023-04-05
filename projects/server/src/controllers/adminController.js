@@ -1,8 +1,6 @@
 // import sequelize
 const { sequelize } = require("./../models");
-const { Op } = require("sequelize");
-const transporter = require("../lib/nodemailer");
-const handlebars = require("handlebars");
+
 const fs = require("fs").promises;
 const { createToken } = require("./../lib/jwt");
 
@@ -98,10 +96,6 @@ limit 3
             type: sequelize.QueryTypes.SELECT,
           }
         );
-        // console.log(totalStats);
-        // console.log(dataChart);
-        // console.log(topProduct);
-        // console.log(topBranch);
         dataToSend.totalStats = totalStats;
         dataToSend.dataChart = dataChart;
         dataToSend.topProduct = topProduct;
@@ -200,7 +194,6 @@ group by a.id;
         console.log(branchName);
         dataToSend.role = role;
         dataToSend.isActive = isActive;
-        // console.log(totalStats, dataChart, dataBranchTransaction, topProduct);
 
         res.status(200).send({
           isError: false,
@@ -253,7 +246,6 @@ group by a.id;
             "Your account has not active. Please contact super Admin for further information",
         };
 
-      // console.log(findAdmin.dataValues.role)
 
       if (
         findAdmin.dataValues.role !== "admin branch" &&
@@ -270,9 +262,6 @@ group by a.id;
       let role = findAdmin.dataValues.role;
       let isActive = findAdmin.dataValues.isActive;
       let branch_stores_id = findAdmin.dataValues.branch_stores_id;
-
-      //         const password = await bcrypt.hash("admin123", 10);
-      // console.log(password)
 
       let token = createToken({
         admins_id,
@@ -312,7 +301,6 @@ group by a.id;
         data: findAdmin.dataValues,
         role: findAdmin.role,
       });
-      // console.log(findAdmin.dataValues)
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
