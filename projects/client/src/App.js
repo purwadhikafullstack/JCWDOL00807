@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import UsersAddress from "./pages/UsersAddress";
 import CategoryProduct from "./pages/CategoryProduct.js";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { keepLogin } from "./redux/action/user";
 import { keepLoginAdmin } from "./redux/action/admin";
@@ -24,31 +24,37 @@ import EditProduct from "./pages/EditProduct";
 import { getProductList } from "./redux/action/product";
 
 import AdminLogin from "./pages/Admin-Login";
+import AdminManagement from "./pages/Admin-Management"
+// import PrivateRoute from "./components/PrivateRoute";
+import adminSlice from "./redux/reducer/admin"
+
+import Router from "./routes";
 
 function App() {
-  const dispatch = useDispatch();
-  let admin = useSelector((state) => state.admin);
-  console.log(admin)
-  
-  useEffect(() => {
-    dispatch(keepLogin());
-    dispatch(keepLoginAdmin())
-    dispatch(findAllAddress());
-    dispatch(findAllCategory());
-    // dispatch(getProductList());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  // const dispatch = useDispatch();
+  // const { admin } = useSelector((state) => state.admin);
+  // const { role, token } = admin;
+
+  // console.log(admin)
+
+  // useEffect(() => {
+  //   dispatch(keepLogin());
+  //   dispatch(keepLoginAdmin())
+  //   dispatch(findAllAddress());
+  //   dispatch(findAllCategory());
+  //   // dispatch(getProductList());
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dispatch]);
 
   return (
     <div>
-      <Routes>
+      {/* <Routes>
         <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/accounts/address" element={<UsersAddress />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/accounts/reset-password" element={<ForgotPassword />} />
-        <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/accounts/profile" element={<UserProfile />} />
         <Route path="/admin/manage-product" element={<ProductCRUD />} />
         <Route
@@ -64,11 +70,13 @@ function App() {
           path="/accounts/reset-password/:token"
           element={<ResetPassword />}
         />
+        <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/admin/categories" element={<CategoryProduct />} />
-
         <Route path="/admin/login" element={<AdminLogin />} />
-
-      </Routes>
+        <Route path="/admin/management" element={<AdminManagement />} />
+        
+      </Routes> */}
+      <Router />
     </div>
   );
 }

@@ -62,8 +62,8 @@ const Login = () => {
   useEffect(() => {
     if (user.user.token) {
       setMessage("");
-
       localStorage.setItem("my_Token", user.user.token);
+      localStorage.setItem("my_Role", user.user.role);
       navigate("/");
     }
 
@@ -126,10 +126,6 @@ const Login = () => {
               <Icon onClick={handleVisible} icon={icon} />
             </InputRightElement>
           </InputGroup>
-
-
-
-
           <Button
             colorScheme="whatsapp"
             mt="6"

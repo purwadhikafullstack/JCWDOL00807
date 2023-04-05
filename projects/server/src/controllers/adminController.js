@@ -14,11 +14,17 @@ require("dotenv").config();
 
 // import model
 const db = require("./../models/index");
+const { exit, off } = require("process");
+const admins = require("../models/admins");
 const users = db.users;
 const transactions = db.transactions;
 const transaction_details = db.transaction_details;
 const admin = db.admins;
 const branch_stores = db.branch_stores;
+
+const getOffset = (page = 1, limit = 10) => {
+  return (page - 1) * limit;
+}
 
 module.exports = {
   getDataDashboard: async (req, res) => {
@@ -306,4 +312,262 @@ where admins_id=1
       });
     }
   },
+
+  managementAdmin: async (req, res) => {
+    try {
+      let { role, _page, _limit, _search } = req.query;
+      const page = parseInt(_page)
+      const limit = parseInt(_limit);
+      const offset = getOffset(page, limit);
+
+      const findAdmin = await admin.findAll({
+        where: {
+          role: {
+            [Op.eq]: role
+          },
+          name: {
+            [Op.like]: `%${_search}%`
+          },
+          email: {
+            [Op.like]: `%${_search}%`
+          }
+        },
+        include: [{
+          model: branch_stores,
+          attributes: ['name']
+        }],
+        offset,
+        limit,
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      });
+
+      const adminBranch = await admin.findAll({
+        where: {
+          role: {
+            [Op.eq]: role,
+          },
+          name: {
+            [Op.like]: `%${_search}%`
+          },
+          email: {
+            [Op.like]: `%${_search}%`
+          }
+        }
+      })
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "getData Admin Success",
+        data: {
+          totalRecord: adminBranch.length,
+          totalReturn: findAdmin.length,
+          searchText: _search,
+          contents: findAdmin
+        }
+      });
+      // console.log(findAdmin.dataValues)
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  getAdminByEmail: async (email) => {
+    try {
+      const findAdmin = await admin.findOne({
+        attributes: [
+          "name",
+        ],
+        where: {
+          email,
+        },
+      });
+      
+      return true
+    } catch (error) {
+      return false
+    }
+  },
+
+  createAdminBranch: async (req, res) => {
+    let t;
+    // const t = await sequelize.transaction();
+    try {
+      t = await sequelize.transaction();
+      let { name, role, password, isActive, email, branch_stores_id } = req.body;
+
+      console.log(req.body);
+      const hashedPassword = await hashPassword(password);
+
+      let checkEmail = await admin.findOne({
+        where: { email },
+        transactions : t
+      });
+
+      if (checkEmail) {
+        await t.rollback();
+        return res.status(401).send({
+          isError: true,
+          message: "Your email is already registered, please try another email",
+          data: null,
+        });
+      }
+
+      await admin.create(
+        {
+          name,
+          role,
+          password: hashedPassword,
+          isActive,
+          email,
+          branch_stores_id
+        },
+        { transaction: t }
+      );
+      await t.commit();
+      res.status(200).send({
+        isError: false,
+        message: "Create admin success",
+        data: await admin.findOne({
+          where: {
+            email: {
+              [Op.eq]: email
+            },
+          },
+          include: [{
+            model: branch_stores,
+            attributes: ['name']
+          }]
+        }),
+      });
+    } catch (error) {
+      await t.rollback();
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  getBranchStore: async (req, res) => {
+    try {
+      let branch_store = await branch_stores.findAll()
+      console.log(branch_store)
+      res.status(200).send({
+        isError: false,
+        message: "Create branch_stores_id success",
+        data: branch_store,
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  updateAdminBranch: async (req, res) => {
+    let t;
+    try {
+      t = await sequelize.transaction();
+      let { name, role, password, isActive, email, branch_stores_id } = req.body;
+      let { id } = req.query;
+      console.log(id)
+
+      console.log(req.body);
+
+      const hashedPassword = await hashPassword(password);
+
+      let checkEmail = await admin.findOne({
+        where: { email, id: { [Op.ne]: id } },
+        transactions: t
+      });
+
+      if (checkEmail) {
+        await t.rollback();
+        return res.status(401).send({
+          isError: true,
+          message: "Your email is already registered, please try another email",
+          data: null,
+        });
+      }
+
+      await admin.update(
+        {
+          name,
+          role,
+          password: hashedPassword,
+          isActive,
+          email,
+          branch_stores_id
+        },
+        { where: { id },
+        transaction: t
+       },
+      );
+      await t.commit();
+      res.status(200).send({
+        isError: false,
+        message: "Update admin success",
+        data: await admin.findOne({
+          where: {
+            email: {
+              [Op.eq]: email
+            },
+          },
+          include: [{
+            model: branch_stores,
+            attributes: ['name']
+          }]
+        }),
+      });
+    } catch (error) {
+      await t.rollback();
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+  deleteAdminBranch: async (req, res) => {
+    let t;
+    // const t = await sequelize.transaction();
+    try {
+      t = await sequelize.transaction();
+      let { id } = req.query;
+
+      console.log(id);
+
+      let getAdmin = await admin.findOne({where: {id}});
+
+      await admin.destroy(
+        {
+          where: {
+            id,
+          },
+        },
+        { transaction: t }
+      );
+      await t.commit();
+      res.status(200).send({
+        isError: false,
+        message: "Delete admin success",
+        data: getAdmin,
+      });
+    } catch (error) {
+      if (t) await t.rollback();
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
+
+
 };
