@@ -5,6 +5,7 @@ const uploadImages = require("../middleware/uploadProduct");
 const { adminController } = require("../controllers");
 const { productController } = require("../controllers");
 const { transactionController } = require("../controllers");
+const {validationAdminBranch, validationRun} = require("../validation/admin")
 
 // Import All Controller
 
@@ -38,6 +39,14 @@ Router.patch(
   productController.deleteStock
 );
 Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
+// Admin
+Router.get('/login', adminController.Login)
+Router.get('/keep-login-admin', tokenVerify, adminController.keepLoginAdmin)
+Router.get('/management', tokenVerify, adminController.managementAdmin)
+Router.post('/create-admin-branch', tokenVerify, validationAdminBranch, validationRun, adminController.createAdminBranch)
+Router.patch('/update-admin-branch', tokenVerify, validationAdminBranch, validationRun, adminController.updateAdminBranch)
+Router.delete('/delete-admin-branch', tokenVerify, adminController.deleteAdminBranch )
+Router.get('/branch-store', tokenVerify, adminController.getBranchStore)
 
 Router.get("/login", adminController.Login);
 Router.get("/keep-login-admin", tokenVerify, adminController.keepLoginAdmin);
