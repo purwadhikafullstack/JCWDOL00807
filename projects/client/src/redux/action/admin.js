@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { adminSlice } from "../reducer/admin";
-import { useNavigate,  } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const keep_login_admin_request = "keep_login_admin_request";
 export const keep_login_admin_payload = "keep_login_admin_payload";
@@ -32,29 +32,24 @@ export const keep_login_admin_payload = "keep_login_admin_payload";
 //   };
 // };
 
-
-
 export const loginAdmin = ({ email, password }) => {
-    return async (dispatch) => {
-        console.log(email, password)
-        try {
-            const getAdminLogin = await axios.get(
-                `${process.env.REACT_APP_API_BASE_URL}/admin/login?email=${email}&password=${password}`
-            );
-            console.log(getAdminLogin.data.token)
-            console.log(getAdminLogin.data)
+  return async (dispatch) => {
+    console.log(email, password);
+    try {
+      const getAdminLogin = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/admin/login?email=${email}&password=${password}`
+      );
+      console.log(getAdminLogin.data.token);
+      console.log(getAdminLogin.data);
 
-            // Meneruskan informasi role pengguna ke action creator loginSuccess
-            dispatch(adminSlice.actions.loginSuccess( getAdminLogin.data));
-
-        } catch (error) {   
-            console.log(error);
-            dispatch(adminSlice.actions.failed(error.response.data.message));
-        }
-    };
+      // Meneruskan informasi role pengguna ke action creator loginSuccess
+      dispatch(adminSlice.actions.loginSuccess(getAdminLogin.data));
+    } catch (error) {
+      console.log(error);
+      dispatch(adminSlice.actions.failed(error.response.data.message));
+    }
+  };
 };
-
-
 
 export const keepLoginAdmin = () => {
   return async (dispatch) => {
@@ -70,19 +65,17 @@ export const keepLoginAdmin = () => {
         }
       );
       dispatch(adminSlice.actions.keep_login_admin_payload(response.data.data));
-      console.log(response.data.data)
+      // console.log(response.data.data)
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 };
 
-
 export const setUserRole = (role) => ({
-    type: 'SET_USER_ROLE',
-    payload: role,
-  });
-
+  type: "SET_USER_ROLE",
+  payload: role,
+});
 
 // export const updateProfile = ({ formData }) => {
 //   return async (dispatch) => {
@@ -110,7 +103,7 @@ export const handleStateError = (name) => {
   return async (dispatch) => {
     try {
       dispatch(adminSlice.actions.stateError(name));
-    //   dispatch(keepLogin());
+      //   dispatch(keepLogin());
     } catch (error) {
       console.log(error);
     }

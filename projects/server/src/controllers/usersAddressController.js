@@ -221,7 +221,7 @@ module.exports = {
       res.status(200).send({
         isSuccess: true,
         message: "update address success",
-        data: isDefaultExist,
+        // data: isDefaultExist,
       });
     } catch (error) {
       await t.rollback();

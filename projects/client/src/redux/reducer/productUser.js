@@ -12,16 +12,26 @@ export const userProductSlice = createSlice({
   reducers: {
     getAllListProduct: (state, action) => {
       state.userProduct = action.payload;
-      state.loading = null;
       state.errorMessage = null;
     },
     failed: (state, action) => {
       state.errorMessage = action.payload;
-      state.loading = null;
+      state.loading = false;
+    },
+    getLoading: (state) => {
+      state.loading = true;
+    },
+    getLoadingFalse: (state) => {
+      state.loading = false;
     },
   },
 });
 
-export const { getAllListProduct, failed, findAll_productList_request } =
-  userProductSlice.actions;
+export const {
+  getAllListProduct,
+  failed,
+  findAll_productList_request,
+  getLoading,
+  getLoadingFalse,
+} = userProductSlice.actions;
 export default userProductSlice.reducer;

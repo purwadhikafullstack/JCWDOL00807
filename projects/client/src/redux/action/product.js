@@ -6,9 +6,9 @@ export const createProduct = ({ formData }) => {
   return async (dispatch) => {
     console.log(formData);
     try {
-      //   let token = localStorage.my_Token;
-      let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830";
+      let token = localStorage.my_Token;
+      // let token =
+      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830";
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         formData,
@@ -37,9 +37,9 @@ export const editProduct = ({ formData }, { id_product }) => {
   return async (dispatch) => {
     console.log(formData);
     try {
-      //   let token = localStorage.my_Token;
-      let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830";
+      let token = localStorage.my_Token;
+      // let token =
+      //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830";
       const response = await axios.patch(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${id_product}`,
         formData,

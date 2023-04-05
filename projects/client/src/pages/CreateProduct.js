@@ -72,12 +72,12 @@ const CreateProduct = () => {
 
   const getData = async () => {
     try {
+      let token = localStorage.myToken;
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4NDA3NzYsImV4cCI6MTY4MDAxMzU3Nn0.56saSlvuT3VdmYAW9SlqfS5J2hgIi5HmQMGbH2EUXRU",
+            authorization: token,
           },
         }
       );

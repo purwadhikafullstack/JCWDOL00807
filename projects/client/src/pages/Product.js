@@ -47,13 +47,13 @@ const ProductCRUD = () => {
   const [rows, setRows] = useState(0);
 
   const getProductbyQuery = async () => {
+    let token = localStorage.my_Token;
     const response = await axios.get(
       `
     ${process.env.REACT_APP_API_BASE_URL}/product_search?search_query=${keyword}&page=${page}&limit=${limit}`,
       {
         headers: {
-          authorization:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830",
+          authorization: token,
         },
       }
     );
@@ -65,12 +65,12 @@ const ProductCRUD = () => {
   };
   const getProductList = async () => {
     try {
+      let token = localStorage.my_Token;
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830",
+            authorization: token,
           },
         }
       );
@@ -82,12 +82,12 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
+      let token = localStorage.my_Token;
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2Nzk4Mzc5MjAsImV4cCI6MTY4MDAxMDcyMH0.qweQtJuBQ65AyNw2iwWQgamWIwxetcbtCzP_VPHT830",
+            authorization: token,
           },
         }
       );

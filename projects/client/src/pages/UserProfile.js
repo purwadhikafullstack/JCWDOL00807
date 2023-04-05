@@ -16,7 +16,6 @@ import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
 import SidebarUser from "../components/SidebarUser";
-import { keepLogin } from "../redux/action/user";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
@@ -25,8 +24,6 @@ const UserProfile = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(keepLogin());
-
     if (user.message) {
       setMessage(user.message);
     }

@@ -78,12 +78,12 @@ const EditProduct = () => {
 
   const getData = async () => {
     try {
+      let token = localStorage.my_Token;
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+            authorization: token,
           },
         }
       );
@@ -104,8 +104,7 @@ const EditProduct = () => {
         `,
         {
           headers: {
-            authorization:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjIsIm5hbWUiOiJhYmR1bCIsImVtYWlsIjoiYWJkdWxAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJpYXQiOjE2NzkzOTUzNTksImV4cCI6MTY3OTU2ODE1OX0.FTfWFlNR3AeztIEFhYPUelSRZF5Aw4AHAxe6J0lJyFE",
+            authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbnNfaWQiOjEsIm5hbWUiOiJhZ3VzIiwiZW1haWwiOiJhZ3VzQG1haWwuY29tIiwicm9sZSI6ImFkbWluIGJyYW5jaCIsImlzQWN0aXZlIjp0cnVlLCJicmFuY2hfc3RvcmVzX2lkIjoxLCJpYXQiOjE2ODA1MjU2MzEsImV4cCI6MTY4MDY5ODQzMX0.T_ALDuUPoVHOKhsQMoYveeREhWTEuc5u9fTT7vk7It8`,
           },
         }
       );

@@ -20,17 +20,14 @@ import UpdateUserAddress from "../components/UpdateUserAddress";
 import SidebarUser from "../components/SidebarUser";
 
 const UserAddress = () => {
-  let userAddress = useSelector((state) => state.address.userAddress);
-
+  let userAddress = useSelector((state) => state.address);
   const [message, setMessage] = useState("");
   const [dataAddress, setDataAddress] = useState([]);
 
   useEffect(() => {
-    if (userAddress.message) {
-      setMessage(userAddress.message);
-    }
-    if (userAddress.data) {
-      setDataAddress(userAddress?.data);
+    if (userAddress?.userAddress?.data) {
+      setDataAddress(userAddress?.userAddress?.data);
+      setMessage(UserAddress?.UserAddress?.message);
     } else {
       setMessage("");
     }

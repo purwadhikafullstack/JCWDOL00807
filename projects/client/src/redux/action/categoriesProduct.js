@@ -54,7 +54,6 @@ export const createCategory = (categoryName) => {
       );
       dispatch(findAllCategory());
       console.log(response.data.message);
-      alert("sukses nihh");
       dispatch(categorySlice.actions.createCategorySuccess(response.data));
     } catch (error) {
       console.log(error);

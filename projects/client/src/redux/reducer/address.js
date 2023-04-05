@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userAddress: {},
   errorMessage: null,
-  loading: null,
+  loading: true,
 };
 
 export const addressSlice = createSlice({
@@ -18,7 +18,7 @@ export const addressSlice = createSlice({
 
     failed: (state, action) => {
       state.errorMessage = action.payload;
-      state.loading = null;
+      state.loading = false;
     },
     stateError: (state, action) => {
       state.userAddress = action.payload;
@@ -27,6 +27,10 @@ export const addressSlice = createSlice({
     getAllAddress: (state, action) => {
       state.userAddress = action.payload;
       state.errorMessage = null;
+      state.loading = false;
+    },
+    loadingAddress: (state, action) => {
+      state.loading = true;
     },
     editAddressSuccess: (state, action) => {
       state.userAddress = action.payload;
