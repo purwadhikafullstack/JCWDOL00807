@@ -86,7 +86,7 @@ function App() {
   
   return (
     <div>
-      <Routes>
+      {/* <Routes>
         <Route path="/authentication/:token" element={<Verification />} />
         <Route path="/accounts/address" element={<UsersAddress />} />
         <Route path="/register" element={<Register />} />
@@ -141,8 +141,8 @@ function App() {
         <Route path="/admin/manage-voucher" element={<VoucherList />} />
         <Route path="/admin/order-list" element={<OrderList />} />
         <Route path="/admin/detail-order-list" element={<DetailOrderList />} />
+      </Routes> */}
         <Router />
-      </Routes>
     </div>
   );
 }

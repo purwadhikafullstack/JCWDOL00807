@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "ROBIMETAL42279",
-    "database": "online_groceries2",
-    "host": "127.0.0.1",
+    "username": "jcwdol0807",
+    "password": "jcwdol0807123",
+    "database": "jcwdol0807",
+    "host": "purwadhikabootcamp.com",
     "dialect": "mysql",
     "define": {
       "freezeTableName": true
