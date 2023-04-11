@@ -2,6 +2,8 @@ const express = require("express");
 const Router = express.Router();
 const { tokenVerify } = require("../middleware/verifyToken");
 const uploadImages = require("../middleware/upload");
+const { usersController, userProductController } = require("../controllers");
+const { transactionController } = require("../controllers");
 
 // Import All Controller
 const { usersController, userProductController } = require("../controllers");
@@ -36,6 +38,17 @@ Router.get(
   "/check-authorization-login-register",
   tokenVerify,
   usersController.userAuthorizationLoginRegisters
+);
+
+Router.get(
+  "/order_search",
+  tokenVerify,
+  transactionController.getOrderListUserByQuery
+);
+Router.get(
+  "/detailorder_search/:idtrx",
+  tokenVerify,
+  transactionController.getDetailOrderUserByQuery
 );
 
 module.exports = Router;

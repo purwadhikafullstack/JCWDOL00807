@@ -1,10 +1,12 @@
 import { Avatar, Button, Tooltip } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   let user = useSelector((state) => state.auth);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
 

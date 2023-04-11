@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
@@ -18,13 +18,11 @@ import {
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
+import SidebarUser from "../components/SidebarUser";
 
-// debugger
-const DetailOrderListByQuery = () => {
+const UserDetailOrderListByQuery = () => {
   const navigate = useNavigate();
-debugger
-  let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_detailorder_search" : "admin/detailorder_search";
+  const { id } = useParams();
 
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
@@ -45,7 +43,7 @@ debugger
       let inputAsc = asc.current.value;
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/${urlOrder}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
+      ${process.env.REACT_APP_API_BASE_URL}/user/detailorder_search/${id}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
       `,
         {
           headers: {
@@ -54,7 +52,7 @@ debugger
         }
       );
       setDataDetailOrder(response?.data?.data?.result);
-      setBranch(response?.data?.data?.branchName);
+      setBranch(`transaction ${id}`);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
@@ -90,9 +88,8 @@ debugger
   }
   return (
     <>
-      <SidebarAdmin />
-      <div className="p-4 sm:ml-64">
         <Navbar />
+      <div className="p-4 sm:ml-0">
         <form className="m-5 justify-start hidden" onSubmit={searchData}>
           <label
             for="default-search"
@@ -162,7 +159,6 @@ debugger
 
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
-            <SidebarAdmin />
             <Table variant="striped">
               <TableCaption
                 placement="top"
@@ -258,7 +254,7 @@ debugger
         <div className="flex justify-center mt-10 mb-10">
           <div>
             <p>
-              Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
+              Total Rows : {rows}    Page : {rows ? page + 1 : 0} of {pages}
             </p>
             <p className="flex justify-center text-red-500">{msg}</p>
           </div>
@@ -287,4 +283,4 @@ debugger
     </>
   );
 };
-export default DetailOrderListByQuery;
+export default UserDetailOrderListByQuery;

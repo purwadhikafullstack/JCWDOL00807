@@ -71,6 +71,7 @@ module.exports = {
       res.status(200).send({
         isSuccess: true,
         name: findUser.dataValues.name,
+        role: "user",
         image: image,
         token: token,
       });

@@ -29,6 +29,8 @@ const AdminLogin = () => {
   let regxEmail = /\S+@\S+\.\S+/;
   const [icon, setIcon] = useState("ic:outline-remove-red-eye");
 
+  let my_token = localStorage.getItem("my_Token");
+
   const handleVisible = () => {
     let password = document.getElementById("myInput");
     if (password.type === "password") {
@@ -66,31 +68,30 @@ const AdminLogin = () => {
   // Navigate halaman berdasarkan ROLE
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (admin?.admin?.message) {
-      console.log("hello");
+    if (admin?.admin?.isSuccess) {
       localStorage.setItem("my_Token", admin?.admin?.token);
+      localStorage.setItem("my_Role", admin?.admin?.role);
       if (admin.admin.role === "admin branch") {
         navigate("/admin/home");
       } else if (admin.admin.role === "super admin") {
-        navigate("/admin/home");
+        navigate("/admin/management");
       } else {
         setMessage("anda bukan admin");
       }
-      // navigate("/");
     }
 
     if (admin.errorMessage) {
       setMessage(admin.errorMessage);
     }
     // console.log(admin.admin.token)
-  }, [admin]);
+  }, [admin, navigate]);
 
   // console.log(admin.admin.message)
   // console.log(admin.admin.token)
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <section className="flex justify-center min-h-screen w-full m-0 p-0 items-center border">
         <div className=" relative h-96 w-[full] md:w-[500px]  flex-col justify-center items-center ">
           {message ? (

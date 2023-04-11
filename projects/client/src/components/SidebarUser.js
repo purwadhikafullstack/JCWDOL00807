@@ -15,11 +15,18 @@ import { useState } from "react";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 import { keepLogin } from "../redux/action/user";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const SidebarUser = () => {
   const dispatch = useDispatch();
   let user = useSelector((state) => state.auth.user);
+
+  const handleLogout = () => {
+    localStorage.removeItem("my_Token");
+    localStorage.removeItem("my_Role");
+
+    // window.location.href = 'login';
+  };
 
   const [messageDelete, setMessageDelete] = useState("");
 
@@ -108,6 +115,11 @@ const SidebarUser = () => {
               <Text pt="2" fontSize="sm">
                 History Order
               </Text>
+              <Link to="/accounts/order-list">
+                <Button variant="link" pt="2" fontSize="sm">
+                  Order List
+                </Button>
+              </Link>
             </Box>
           </Box>
           <Box className="flex flex-row gap-3 ">
@@ -116,6 +128,14 @@ const SidebarUser = () => {
               Referal Code
             </Text>
           </Box>
+          <Link to={"/login"}>
+            <button
+              className="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => handleLogout()}
+            >
+              Logout
+            </button>
+          </Link>
         </CardBody>
       </Card>
 

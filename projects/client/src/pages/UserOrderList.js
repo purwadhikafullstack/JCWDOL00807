@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
-import SidebarAdmin from "../components/SidebarAdmin";
 import {
   Select,
   Table,
@@ -21,11 +20,8 @@ import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
 
-const OrderListByQuery = () => {
+const UserOrderListByQuery = () => {
   const navigate = useNavigate();
-
-  let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_order_search" : "admin/order_search";
 
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
@@ -49,6 +45,8 @@ const OrderListByQuery = () => {
   let sort = useRef();
   let asc = useRef();
 
+
+
   const getOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
@@ -59,7 +57,7 @@ const OrderListByQuery = () => {
       console.log(status);
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/${urlOrder}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}
+      ${process.env.REACT_APP_API_BASE_URL}/user/order_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}
       `,
         {
           headers: {
@@ -68,7 +66,7 @@ const OrderListByQuery = () => {
         }
       );
       setDataOrder(response?.data?.data?.result);
-      setBranch(currentRole == "super admin" ? "All" : response?.data?.data?.result[0].branch_store);
+      setBranch(response?.data?.data?.result[0].name);
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
@@ -108,14 +106,16 @@ const OrderListByQuery = () => {
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getOrderList()
-  }
+    getOrderList();
+  };
 
+  const handleDetailButton = (idtrx) => {
+    navigate(`/accounts/detail-order-list/${idtrx}`)
+  };
   return (
     <>
-      <SidebarAdmin />
-      <div className="p-4 sm:ml-64">
         <Navbar />
+      <div className="p-4 sm:ml-0">
         <form className="m-5 flex justify-start" onSubmit={searchData}>
           <label
             for="default-search"
@@ -145,7 +145,7 @@ const OrderListByQuery = () => {
               type="search"
               id="default-search"
               className=" mt-5 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search Username or Invoice Number"
+              placeholder="Search Invoice Number"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               style={{ width: "30em" }}
@@ -224,7 +224,6 @@ const OrderListByQuery = () => {
               <Thead className=" text-center">
                 <Tr>
                   <Th>Transaction Id</Th>
-                  <Th>Username</Th>
                   <Th>Invoice Number</Th>
                   <Th>Date</Th>
                   <Th>Total Price</Th>
@@ -232,6 +231,7 @@ const OrderListByQuery = () => {
                   <Th>Payment Proof</Th>
                   <Th>Expired Date</Th>
                   <Th>UpdatedAt</Th>
+                  <Th>Action</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -239,7 +239,6 @@ const OrderListByQuery = () => {
                   return (
                     <Tr className=" text-center " key={value.id}>
                       <Td>{value.id}</Td>
-                      <Td>{value.name}</Td>
                       <Td>{value.invoice_no}</Td>
                       <Td>{value.Date}</Td>
                       <Td>
@@ -289,6 +288,11 @@ const OrderListByQuery = () => {
                       </Td>
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
+                      <Td>
+                        <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleDetailButton(value.id)}>
+                          <span>See Detail</span>
+                        </button>
+                      </Td>
                     </Tr>
                   );
                 })}
@@ -299,7 +303,7 @@ const OrderListByQuery = () => {
         <div className="flex justify-center mt-10 mb-10">
           <div>
             <p>
-              Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
+              Total Rows : {rows}  Page : {rows ? page + 1 : 0} of {pages}
             </p>
             <p className="flex justify-center text-red-500">{msg}</p>
           </div>
@@ -328,4 +332,4 @@ const OrderListByQuery = () => {
     </>
   );
 };
-export default OrderListByQuery;
+export default UserOrderListByQuery;
