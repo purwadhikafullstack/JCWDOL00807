@@ -16,7 +16,6 @@ const Navbar = () => {
   let user = useSelector((state) => state.auth);
   const token = localStorage.getItem("my_Token");
 
-// debugger
   const handleLogout = () => {
     localStorage.removeItem("my_Token");
     localStorage.removeItem("my_Role");

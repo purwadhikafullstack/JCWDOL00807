@@ -1,5 +1,4 @@
 
-
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { keepLogin } from "./redux/action/user";
@@ -60,15 +59,8 @@ function App() {
   }, [dispatch]);
   
   return (
-    <div>
-        {/* <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/accounts/reset-password/:token"
-          element={<ResetPassword />}
-          /> */}
-        <Router />
-          {/* </Routes> */}
+    <div>    
+        <Router />      
     </div>
   );
 }

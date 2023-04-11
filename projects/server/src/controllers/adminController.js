@@ -432,6 +432,69 @@ group by a.id;
     }
   },
 
+  managementAdmin: async (req, res) => {
+    try {
+      let { role, _page, _limit, _search } = req.query;
+      const page = parseInt(_page)
+      const limit = parseInt(_limit);
+      const offset = getOffset(page, limit);
+
+      const findAdmin = await admin.findAll({
+        where: {
+          role: {
+            [Op.eq]: role
+          },
+          name: {
+            [Op.like]: `%${_search}%`
+          },
+          email: {
+            [Op.like]: `%${_search}%`
+          }
+        },
+        include: [{
+          model: branch_stores,
+          attributes: ['name']
+        }],
+        offset,
+        limit,
+        order: [
+          ['createdAt', 'DESC']
+        ]
+      });
+
+      const adminBranch = await admin.findAll({
+        where: {
+          role: {
+            [Op.eq]: role,
+          },
+          name: {
+            [Op.like]: `%${_search}%`
+          },
+          email: {
+            [Op.like]: `%${_search}%`
+          }
+        }
+      })
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "getData Admin Success",
+        data: {
+          totalRecord: adminBranch.length,
+          totalReturn: findAdmin.length,
+          searchText: _search,
+          contents: findAdmin
+        }
+      });
+      // console.log(findAdmin.dataValues)
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+
   getAdminByEmail: async (email) => {
     try {
       const findAdmin = await admin.findOne({
