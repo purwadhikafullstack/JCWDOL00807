@@ -62,4 +62,16 @@ Router.get(
   tokenVerify,
   transactionController.getDetailOrderByQuery
 );
+
+Router.get(
+  "/super_order_search",
+  tokenVerify,
+  transactionController.getSuperOrderListByQuery
+);
+Router.get(
+  "/super_detailorder_search",
+  tokenVerify,
+  transactionController.getSuperDetailOrderByQuery
+);
+
 module.exports = Router;

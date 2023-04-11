@@ -8,13 +8,15 @@ import {
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
   let user = useSelector((state) => state.auth);
   const token = localStorage.getItem("my_Token");
 
-
+// debugger
   const handleLogout = () => {
     localStorage.removeItem("my_Token");
     localStorage.removeItem("my_Role");
@@ -37,7 +39,7 @@ const Navbar = () => {
           </InputGroup>
           {user?.user?.name ? (
             <div className="flex flex-row justify-between gap-10 items-center">
-              <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
+              <Icon className=" text-4xl " icon="ic:round-shopping-cart" onClick={() => navigate('/accounts/profile')} />
               <div className=" flex flex-col justify-center items-center ">
                 <Tooltip label={user?.user?.name} fontSize="xs">
                   <Avatar src={user?.user?.image} size="sm" />

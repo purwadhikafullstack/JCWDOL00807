@@ -1,5 +1,6 @@
 // import sequelize
 const { sequelize } = require("./../models");
+const { Op } = require("sequelize");
 
 const fs = require("fs").promises;
 const { createToken } = require("./../lib/jwt");
