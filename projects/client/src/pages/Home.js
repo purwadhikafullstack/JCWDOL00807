@@ -5,6 +5,7 @@ import CardProduct from "../components/CardProduct";
 import { Button } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import MainBanner from "../components/MainBanner";
 import Banner from "../components/Banner";
 import Carousel from "nuka-carousel";
 import ramadhanSales from "../asset/banner/ramadhan-sales.png";
@@ -46,7 +47,7 @@ const Home = () => {
           autoplayInterval={5000}
           speed={2000}
         >
-          <Banner
+          <MainBanner
             title={"Goku"}
             title2={
               "Shop for all you need everyday and more from the comfort of your home."
@@ -56,16 +57,8 @@ const Home = () => {
             }
             button={"Shop now"}
           />
-          <img
-            className=" w-full h-[300px] object-cover"
-            src={shipping}
-            alt=""
-          />
-          <img
-            className=" w-full h-[300px] object-cover"
-            src={ramadhanSales}
-            alt=""
-          />
+          <Banner images={shipping} title="shipping" />
+          <Banner images={ramadhanSales} title="ramadhanSale" />
         </Carousel>
 
         {/* <div className="flex gap-1  border p-1 rounded-md w-fit ">
@@ -76,20 +69,20 @@ const Home = () => {
           <h1 className=" font-bold ">Store Location : {branch}</h1>
         </div> */}
 
-        <div>
+        <div className=" mx-3 md:mx-2">
           <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
             Categories
           </h1>
-          <div className=" flex justify-between items-center container px-10 py-5 shadow shadow-slate-200 rounded-lg   ">
+          <div className=" flex  overflow-x-auto w-[full] gap-10 shadow shadow-slate-200 p-6 rounded-lg md: justify-between    ">
             {category.map((val, idx) => (
               <Link key={idx} to={`/category-${val.toLowerCase()}`}>
-                <div>{val}</div>
+                <div className=" min-w-fit ">{val}</div>
               </Link>
             ))}
           </div>
         </div>
-        <div>
-          <div className=" flex justify-between">
+        <div className="mx-3 md:mx-2">
+          <div className=" flex justify-between  ">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               Promotion
             </h1>
@@ -109,7 +102,7 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="flex overflow-x-auto w-[full] gap-5 ">
+          <div className="flex overflow-x-auto w-[full] gap-5 border-x-2 rounded-lg  ">
             {promotion.map((val, idx) => (
               <Link to={`/product/${val.id}`}>
                 <CardProduct
@@ -127,7 +120,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div>
+        <div className="mx-3 md:mx-2">
           <div className=" flex justify-between">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">Latest</h1>
             <Link to={`/latest`}>
@@ -146,7 +139,7 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="flex  overflow-x-auto w-[full] gap-5 ">
+          <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {latest.map((val, idx) => (
               <Link key={idx} to={`/product/${val.id}`}>
                 <CardProduct
@@ -163,7 +156,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div>
+        <div className="mx-3 md:mx-2">
           <div className=" flex justify-between">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               All Product
@@ -184,7 +177,7 @@ const Home = () => {
             </Link>
           </div>
 
-          <div className="flex  overflow-x-auto w-[full] gap-5 ">
+          <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {allProduct.map((val, idx) => (
               <Link key={idx} to={`/product/${val.id}`}>
                 <CardProduct
@@ -201,10 +194,10 @@ const Home = () => {
             ))}
           </div>
         </div>
-        <div>
+        <div className="mx-3 md:mx-2">
           <div className=" flex justify-between">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
-              Best Selling Product
+              Product Best Seller
             </h1>
             <Link to={`/bestSeller`}>
               <Button
@@ -221,7 +214,7 @@ const Home = () => {
               </Button>
             </Link>
           </div>
-          <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  ">
+          <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  border-x-2 rounded-lg ">
             {bestSeller.map((val, idx) => (
               <Link key={idx} to={`/product/${val.id}`}>
                 <CardProduct

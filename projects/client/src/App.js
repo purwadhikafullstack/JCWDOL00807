@@ -15,7 +15,6 @@ import { keepLoginAdmin } from "./redux/action/admin";
 import AdminHome from "./pages/Admin-Home";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect, useState } from "react";
-import { findAllCategory } from "./redux/action/categoriesProduct";
 import ProductCRUD from "./pages/Product";
 import CreateProduct from "./pages/CreateProduct";
 import EditProduct from "./pages/EditProduct";
@@ -77,7 +76,6 @@ function App() {
     dispatch(keepLogin());
     // dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
-    // dispatch(findAllCategory());
     dispatch(userProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);

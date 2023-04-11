@@ -24,6 +24,7 @@ import AlertSuccess from "../components/AlertSuccess";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { findAllCategory } from "../redux/action/categoriesProduct";
 
 const CategoryProduct = () => {
   const navigate = useNavigate();
@@ -34,6 +35,10 @@ const CategoryProduct = () => {
 
   let category = useSelector((state) => state.category.category);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(findAllCategory());
+  }, [dispatch]);
 
   useEffect(() => {
     let token = localStorage.my_Token;

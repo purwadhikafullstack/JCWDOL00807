@@ -60,9 +60,8 @@ const Login = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (user.user.token) {
+    if (user?.user?.token) {
       setMessage("");
-
       localStorage.setItem("my_Token", user.user.token);
       navigate("/");
     }
@@ -70,7 +69,7 @@ const Login = () => {
     if (user.errorMessage) {
       setMessage(user.errorMessage);
     }
-  });
+  }, [user]);
 
   return (
     <>

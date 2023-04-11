@@ -6,12 +6,14 @@ import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   let email = useRef();
   let [message, setMessage] = useState("");
   let [messageSuccess, setMessageSuccess] = useState("");
   let [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
@@ -37,6 +39,11 @@ const ForgotPassword = () => {
       setLoading(false);
       console.log(error);
     }
+  };
+
+  const handleClose = () => {
+    setMessageSuccess("");
+    navigate("/");
   };
 
   return (
@@ -88,7 +95,10 @@ const ForgotPassword = () => {
           </p>
         </div>
         {messageSuccess ? (
-          <BackdropResetPassword message={messageSuccess} />
+          <BackdropResetPassword
+            message={messageSuccess}
+            handleClose={handleClose}
+          />
         ) : null}
       </section>
       <Footer />

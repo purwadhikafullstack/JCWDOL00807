@@ -47,6 +47,8 @@ const {
   adminRouter,
   categoriesProductRouter,
   discountRouter,
+  cartRouter,
+  userTransactionRouter,
 } = require("./routes");
 
 app.use("/api/user", usersRouter);
@@ -56,6 +58,8 @@ app.use("/api/geo-location", geoLocationRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/categories", categoriesProductRouter);
 app.use("/api/discount", discountRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/transaction", userTransactionRouter);
 
 //# add Router
 
