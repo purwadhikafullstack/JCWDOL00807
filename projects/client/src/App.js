@@ -1,4 +1,3 @@
-
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { keepLogin } from "./redux/action/user";
@@ -7,7 +6,7 @@ import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect, useState } from "react";
 import { userProductList } from "./redux/action/userProduct";
 import { findAllCategory } from "./redux/action/categoriesProduct";
-import ResetPassword from "./pages/ResetPassword"; 
+import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
 import Router from "./routes";
 
@@ -44,26 +43,24 @@ function App() {
       }
     }
   };
-  
+
   useEffect(() => {
     geolocation();
   }, [address]);
-  
+
   useEffect(() => {
     dispatch(keepLogin());
     // dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
-    // dispatch(findAllCategory());
     dispatch(userProductList());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
-  
+
   return (
-    <div>    
-        <Router />      
+    <div>
+      <Router />
     </div>
   );
 }
 
 export default App;
-

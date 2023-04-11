@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -11,11 +11,18 @@ import {
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
+import BackdropResetPassword from "../components/BackdropResetPassword";
+import { useNavigate } from "react-router-dom";
+import CardProduct from "../components/CardProduct";
+import { Divider } from "@chakra-ui/react";
 
 const ProductDetail = () => {
   const api = process.env.REACT_APP_API_BASE_URL;
   const { id } = useParams();
   const [dataProduct, setDataProduct] = useState({});
+  const [productRecomendation, setProductRecomendation] = useState([]);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -23,28 +30,88 @@ const ProductDetail = () => {
         const getProductDetail = await axios.get(
           `${api}/user/product-detail/${id}`
         );
-        console.log(getProductDetail.data.data);
-        setDataProduct(getProductDetail.data.data);
+        console.log(getProductDetail.data.data.product);
+        setDataProduct(getProductDetail.data.data.product);
+        setProductRecomendation(
+          getProductDetail.data.data.productRecomendation
+        );
       } catch (error) {
         console.log(error);
       }
     }
     fetchData();
-  }, []);
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    try {
+      const token = localStorage.my_Token;
+      if (!token) {
+        setMessage(
+          "Unauthorization, please register or login for continue  add product to cart"
+        );
+      } else {
+        const addToCard = await axios.post(
+          `${api}/cart/add-to-cart`,
+          {},
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        console.log(addToCard);
+      }
+    } catch (error) {
+      setMessage(
+        "Unauthorization, please register or login for continue  add product to cart"
+      );
+    }
+  };
+
+  const handleClose = () => {
+    setMessage("");
+    navigate("/login");
+  };
+
+  const handleAddToTransaction = async () => {
+    try {
+      const token = localStorage.my_Token;
+      if (!token) {
+        setMessage(
+          "Unauthorization, please register or login for continue  add product to cart"
+        );
+      } else {
+        const addToTransaction = await axios.post(
+          `${api}/transaction/add-to-transaction`,
+          {},
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        console.log(addToTransaction);
+      }
+    } catch (error) {
+      console.log(error);
+      setMessage(
+        "Unauthorization, please register or login for continue  add product to cart"
+      );
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <section className="text-gray-700 body-font overflow-hidden bg-white">
-        <div className="container px-5 py-24 mx-auto">
-          <div className="flex justify-center gap-10 ">
+      <section className="text-gray-700 body-font overflow-hidden bg-white container mx-auto">
+        <div className="px-5 py-5 md:py-24">
+          <div className="md:flex justify-between flex-wrap  ">
             <img
-              className=" h-[400px]  object-cover object-center rounded border border-gray-200"
+              className=" h-full md:h-[400px] object-cover object-center rounded border border-gray-200"
               src={dataProduct?.images}
               alt={dataProduct?.name}
             />
-
-            <div className="lg:w-1/2 w-full lg:pl-10 lg:pr-10  lg:py-6 mt-6 lg:mt-0 shadow shadow-slate-200 rounded-md ">
+            <div className="lg:w-1/2 w-full lg:pl-10 lg:pr-10  lg:py-6 mt-6 lg:mt-0 shadow shadow-slate-200 rounded-md p-6 md:0  ">
               {dataProduct?.discount_type === "Discount Bogo" &&
               dataProduct?.status === 1 ? (
                 <Button
@@ -131,14 +198,42 @@ const ProductDetail = () => {
               ) : null}
 
               <div className=" flex gap-3 mt-4 justify-end  ">
-                <Button>Add to cart</Button>
-                <Button>Buy Now</Button>
+                <Button onClick={handleAddToCart}>Add to cart</Button>
+                <Button onClick={handleAddToTransaction}>Buy Now</Button>
               </div>
             </div>
           </div>
         </div>
-        <Footer />
+        <div className=" md:flex items-center mb-0 md:mb-10 mt-5 md:mt-0  p-5 gap-2  ">
+          <h1 className=" text-md md:text-lg  title-font text-gray-500 tracking-widest min-w-fit ">
+            Product Recomendation
+          </h1>
+          <Divider />
+        </div>
+
+        <div className="  flex overflow-x-auto w-[full] gap-5 mb-10 mx-5  ">
+          {productRecomendation.map((val, idx) => (
+            <Link to={`/product/${val.id}`}>
+              <CardProduct
+                key={idx}
+                discountPersentage={val.cut_percentage}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+              />
+            </Link>
+          ))}
+        </div>
       </section>
+
+      <Footer />
+      {message ? (
+        <BackdropResetPassword message={message} handleClose={handleClose} />
+      ) : null}
     </>
   );
 };

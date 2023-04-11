@@ -638,4 +638,58 @@ module.exports = {
       });
     }
   },
+  userAuthorization: async (req, res) => {
+    try {
+      const id = req.dataToken.id;
+      if (!id)
+        throw {
+          message: "Unauthorization, please register or login ",
+        };
+
+      const userExist = await users.findOne({
+        where: { id },
+      });
+
+      if (userExist === null)
+        throw {
+          message: "Unauthorization, please register or login ",
+        };
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "Access approve",
+      });
+    } catch (error) {
+      res.status(404).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  userAuthorizationLoginRegisters: async (req, res) => {
+    try {
+      const id = req.dataToken.id;
+      console.log(!id);
+      if (!id) {
+        res.status(200).send({
+          isSuccess: true,
+          message: "Access approve",
+        });
+      } else {
+        const userExist = await users.findOne({
+          where: { id },
+        });
+
+        if (userExist)
+          throw {
+            message: "Unauthorization, your already login or register ",
+          };
+      }
+    } catch (error) {
+      res.status(404).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
 };

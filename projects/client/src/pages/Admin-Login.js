@@ -22,14 +22,14 @@ const AdminLogin = () => {
   // const role = useSelector((state) => state.user.role);
   const dispatch = useDispatch();
   let admin = useSelector((state) => state.admin);
-  console.log(admin)
-  console.log(admin.admin.role)
+  console.log(admin);
+  console.log(admin.admin.role);
   let [message, setMessage] = useState("");
   const navigate = useNavigate();
   let regxEmail = /\S+@\S+\.\S+/;
   const [icon, setIcon] = useState("ic:outline-remove-red-eye");
 
-  let my_token = localStorage.getItem('my_Token');
+  let my_token = localStorage.getItem("my_Token");
 
   const handleVisible = () => {
     let password = document.getElementById("myInput");
@@ -58,7 +58,7 @@ const AdminLogin = () => {
             email: inputEmail,
             password: inputPassword,
           })
-          )
+        );
       }
     } catch (error) {
       console.log(error);
@@ -71,21 +71,20 @@ const AdminLogin = () => {
     if (admin?.admin?.isSuccess) {
       localStorage.setItem("my_Token", admin?.admin?.token);
       localStorage.setItem("my_Role", admin?.admin?.role);
-      if(admin.admin.role === 'admin branch'){
-        navigate('/admin/home')
-      } else if (admin.admin.role === 'super admin'){
-        navigate('/admin/management')
+      if (admin.admin.role === "admin branch") {
+        navigate("/admin/home");
+      } else if (admin.admin.role === "super admin") {
+        navigate("/admin/management");
       } else {
-        setMessage("anda bukan admin")
+        setMessage("anda bukan admin");
       }
     }
 
     if (admin.errorMessage) {
       setMessage(admin.errorMessage);
-  }
-  // console.log(admin.admin.token)
-    
-  },[ admin, navigate]);
+    }
+    // console.log(admin.admin.token)
+  }, [admin, navigate]);
 
   // console.log(admin.admin.message)
   // console.log(admin.admin.token)
@@ -117,13 +116,13 @@ const AdminLogin = () => {
             p="5"
             ref={email}
           />
-        <div className=" flex justify-start mt-6">
-          <Link to="/accounts/reset-password">
-            <div className=" text-sm text-[#69cb44] font-semibold">
-              Forgot Password
-            </div>
-          </Link>
-        </div>
+          <div className=" flex justify-start mt-6">
+            <Link to="/accounts/reset-password">
+              <div className=" text-sm text-[#69cb44] font-semibold">
+                Forgot Password
+              </div>
+            </Link>
+          </div>
 
           <InputGroup
             size="md"

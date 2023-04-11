@@ -49,9 +49,7 @@ export default function BackdropResetPassword({
             {handleConfirm ? (
               <Button onClick={handleConfirm}>sure</Button>
             ) : (
-              <Link to="/">
-                <Button onClick={onClose}>close</Button>
-              </Link>
+              <Button onClick={handleClose}>close</Button>
             )}
           </ModalFooter>
         </ModalContent>

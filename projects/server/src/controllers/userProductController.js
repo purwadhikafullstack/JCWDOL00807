@@ -558,6 +558,7 @@ module.exports = {
         attributes: [
           [Sequelize.literal("branch_store.name"), "branch"],
           [Sequelize.literal("product_category.name"), "category"],
+          "branch_stores_id",
           "id",
           "name",
           "images",
@@ -616,10 +617,74 @@ module.exports = {
         }
       });
 
+      const productRecomendation = await item_products.findAll({
+        attributes: [
+          [Sequelize.literal("branch_store.name"), "branch"],
+          [Sequelize.literal("product_category.name"), "category"],
+          "id",
+          "name",
+          "images",
+          "description",
+          "weight",
+          "stock",
+          "price",
+          [Sequelize.literal("discount.cut_nominal"), "cut_nominal"],
+          [
+            sequelize.literal(
+              "CONCAT(ROUND((discount.cut_percentage * 100),0),'%')"
+            ),
+            "cut_percentage",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE NULL END"
+            ),
+            "price_after_discount",
+          ],
+          [
+            sequelize.literal(
+              "CASE WHEN discount.status = 1 THEN ROUND(item_products.price - (CASE WHEN discount.cut_percentage THEN item_products.price * discount.cut_percentage ELSE COALESCE(discount.cut_nominal,0) END),0) ELSE item_products.price END"
+            ),
+            "price_after_discount_notNull",
+          ],
+          [Sequelize.literal("discount.status"), "status"],
+          [Sequelize.literal("discount.discount_type"), "discount_type"],
+          "createdAt",
+          "vouchers_id",
+        ],
+        include: [
+          {
+            model: discounts,
+            as: "discount",
+            attributes: [],
+          },
+          {
+            model: product_categories,
+            as: "product_category",
+            attributes: [],
+            where: { name: product[0].dataValues.category },
+          },
+          {
+            model: branch_stores,
+            as: "branch_store",
+            attributes: [],
+          },
+        ],
+        where: { branch_stores_id: product[0].dataValues.branch_stores_id },
+      });
+
+      productRecomendation.map((val) => {
+        if (!val.images) {
+          return null;
+        } else {
+          return (val.dataValues.images = generateUrlAdmin(val.images));
+        }
+      });
+
       res.status(200).send({
         isSuccess: true,
         message: "get product detail success",
-        data: product[0],
+        data: { product: product[0], productRecomendation },
       });
     } catch (error) {
       res.status(500).send({

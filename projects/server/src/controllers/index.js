@@ -8,7 +8,9 @@ const productController = require("./productController");
 const discountController = require("./discountController");
 const userProductController = require("./userProductController");
 const transactionController = require("./transactionController");
-const orderListController = require("./orderListController")
+const cartController = require("./cartController");
+const userTransactionController = require("./userTransactionController");
+const orderListController = require("./orderListController");
 
 module.exports = {
   usersController,
@@ -21,5 +23,7 @@ module.exports = {
   discountController,
   userProductController,
   transactionController,
-  orderListController
+  cartController,
+  userTransactionController,
+  orderListController,
 };
