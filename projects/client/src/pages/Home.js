@@ -104,19 +104,18 @@ const Home = () => {
 
           <div className="flex overflow-x-auto w-[full] gap-5 border-x-2 rounded-lg  ">
             {promotion.map((val, idx) => (
-              <Link to={`/product/${val.id}`}>
-                <CardProduct
-                  key={idx}
-                  discountPersentage={val.cut_percentage}
-                  image={val.images}
-                  name={val.name}
-                  description={val.description}
-                  price={val.price}
-                  priceAfterDiscount={val.price_after_discount}
-                  discount_type={val.discount_type}
-                  status={val.status}
-                />
-              </Link>
+              <CardProduct
+                key={idx}
+                productid={val.id}
+                discountPersentage={val.cut_percentage}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+              />
             ))}
           </div>
         </div>
@@ -141,18 +140,17 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {latest.map((val, idx) => (
-              <Link key={idx} to={`/product/${val.id}`}>
-                <CardProduct
-                  discountPersentage={val.cut_percentage}
-                  image={val.images}
-                  name={val.name}
-                  description={val.description}
-                  price={val.price}
-                  priceAfterDiscount={val.price_after_discount}
-                  discount_type={val.discount_type}
-                  status={val.status}
-                />
-              </Link>
+              <CardProduct
+                discountPersentage={val.cut_percentage}
+                productid={val.id}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+              />
             ))}
           </div>
         </div>
@@ -179,18 +177,17 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {allProduct.map((val, idx) => (
-              <Link key={idx} to={`/product/${val.id}`}>
-                <CardProduct
-                  discountPersentage={val.cut_percentage}
-                  image={val.images}
-                  name={val.name}
-                  description={val.description}
-                  price={val.price}
-                  priceAfterDiscount={val.price_after_discount}
-                  discount_type={val.discount_type}
-                  status={val.status}
-                />
-              </Link>
+              <CardProduct
+                productid={val.id}
+                discountPersentage={val.cut_percentage}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+              />
             ))}
           </div>
         </div>
@@ -216,18 +213,17 @@ const Home = () => {
           </div>
           <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  border-x-2 rounded-lg ">
             {bestSeller.map((val, idx) => (
-              <Link key={idx} to={`/product/${val.id}`}>
-                <CardProduct
-                  discountPersentage={val.cut_percentage}
-                  image={val.images}
-                  name={val.name}
-                  description={val.description}
-                  price={val.price}
-                  priceAfterDiscount={val.price_after_discount}
-                  discount_type={val.discount_type}
-                  status={val.status}
-                />
-              </Link>
+              <CardProduct
+                productid={val.id}
+                discountPersentage={val.cut_percentage}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+              />
             ))}
           </div>
         </div>

@@ -1,6 +1,11 @@
 import { Button, ButtonGroup, Divider, Heading, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector} from "react-redux";
+import { addToCart, cartList } from "../redux/action/carts";
+import { useEffect } from "react";
 
 const CardProduct = ({
+  productid,
   discountPersentage,
   image,
   name,
@@ -10,6 +15,16 @@ const CardProduct = ({
   discount_type,
   status,
 }) => {
+  let dispatch = useDispatch();
+  let userProduct = useSelector((state) => state.userProduct.userProduct);
+  const branch_id = userProduct?.data?.branch_id
+
+  const handleAddToCart = async () => {
+    await dispatch(addToCart(productid, 1, branch_id));
+    await dispatch(cartList(branch_id));
+  }
+
+
   return (
     <div className="flex flex-col  w-[170px] h-[370px]  md:w-[300px] md:h-[480px] shadow  rounded-lg border-y border-slate-200">
       {discount_type === "Discount Tanpa Ketentuan (Persentase)" &&
@@ -45,18 +60,22 @@ const CardProduct = ({
         <div className=" mt-8 md:mt-10"></div>
       )}
       {image ? (
-        <img
-          className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
-          src={image}
-          alt={image}
-        />
+        <Link to={`/product/${productid}`}>
+          <img
+            className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
+            src={image}
+            alt={image}
+          />
+        </Link>
       ) : (
         <div className=" h-[100px] md:h-[430px]"></div>
       )}
 
       <div className="px-4 py-2 bg-white  w-[170px] h-[200px] md:w-[300px] md:h-[300px] mt-5 pl-2 md:pl-7 ">
         <Heading size={["xs", "sm"]} h={["40px", "35px"]} mb="3">
-          {name}
+        <Link to={`/product/${productid}`}>
+        {name}
+        </Link>
         </Heading>
         <Text className="  text-[10px] md:h-[40px] md:w-[250px] mb-3 md:text-sm text-gray-600 ">
           {description}
@@ -119,6 +138,7 @@ const CardProduct = ({
             color="gray.600"
             fontWeight="semibold"
             size={["xs", "sm"]}
+            onClick={() => handleAddToCart()}
           >
             Add to cart
           </Button>

@@ -13,16 +13,22 @@ import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart, cartList } from "../redux/action/carts";
+
 import CardProduct from "../components/CardProduct";
 import { Divider } from "@chakra-ui/react";
 
+
 const ProductDetail = () => {
+  const dispatch = useDispatch()
   const api = process.env.REACT_APP_API_BASE_URL;
   const { id } = useParams();
   const [dataProduct, setDataProduct] = useState({});
   const [productRecomendation, setProductRecomendation] = useState([]);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [qty, setQty] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -49,17 +55,11 @@ const ProductDetail = () => {
         setMessage(
           "Unauthorization, please register or login for continue  add product to cart"
         );
+      } else if (qty < 1){
+        alert("Quantity product was zero")
       } else {
-        const addToCard = await axios.post(
-          `${api}/cart/add-to-cart`,
-          {},
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        console.log(addToCard);
+        await dispatch(addToCart(id, qty));
+        await dispatch(cartList());
       }
     } catch (error) {
       setMessage(
@@ -99,6 +99,10 @@ const ProductDetail = () => {
       );
     }
   };
+
+  const handleQty = (e) => {
+    setQty(e)
+  }
 
   return (
     <>
@@ -156,6 +160,7 @@ const ProductDetail = () => {
                     maxW={20}
                     defaultValue={0}
                     max={dataProduct?.stock}
+                    onChange={(e) => handleQty(e)}
                   >
                     <NumberInputField />
                     <NumberInputStepper>
@@ -213,9 +218,9 @@ const ProductDetail = () => {
 
         <div className="  flex overflow-x-auto w-[full] gap-5 mb-10 mx-5  ">
           {productRecomendation.map((val, idx) => (
-            <Link to={`/product/${val.id}`}>
               <CardProduct
                 key={idx}
+                productid={val.id}
                 discountPersentage={val.cut_percentage}
                 image={val.images}
                 name={val.name}
@@ -225,7 +230,6 @@ const ProductDetail = () => {
                 discount_type={val.discount_type}
                 status={val.status}
               />
-            </Link>
           ))}
         </div>
       </section>

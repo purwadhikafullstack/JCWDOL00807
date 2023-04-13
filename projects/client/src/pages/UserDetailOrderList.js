@@ -170,8 +170,9 @@ const UserDetailOrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id</Th>
-                  <Th>Transaction Id</Th>
+                  {/* <Th>Id</Th> */}
+                  {/* <Th>Transaction Id</Th> */}
+                  <Th>No</Th>
                   <Th>Product Name</Th>
                   <Th>Quantity</Th>
                   <Th>Price per item</Th>
@@ -188,8 +189,9 @@ const UserDetailOrderListByQuery = () => {
                 {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
-                      <Td>{value.transactions_id}</Td>
+                      {/* <Td>{value.id}</Td> */}
+                      {/* <Td>{value.transactions_id}</Td> */}
+                      <Td>{index + 1}</Td>
                       <Td>{value.product_name}</Td>
                       <Td>{value.qty}</Td>
                       <Td>
