@@ -21,10 +21,10 @@ const CartList = () => {
   const { carts, count, cart } = useSelector((state) => state.carts);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
   const branch_id = userProduct?.data?.branch_id
-  //   const [product, setProduct] = useState({ product_id: "", qty: "" });
   let grandtotal = 0;
 
-  const [quantity, setQuantity] = useState(1);
+  const min = 1;
+  const max = 100;
 
   const handleClose = () => {
     setMessage("");
@@ -32,35 +32,25 @@ const CartList = () => {
   };
 
   const handleUpdateQty = (product_id, qty) => {
-    dispatch(updateCartQty(product_id, qty, branch_id));
-    setQuantity(qty);
+    const value = Math.max(min, Math.min(max, Number(qty)));
+    dispatch(updateCartQty(product_id, value, branch_id));
   };
 
   const handleDelete = (product_id) => {
     dispatch(deleteCartQty(product_id, branch_id));
-    console.log(product_id);
   };
 
-  const handleQuantityChange = (event, item) => {
-    const qty = parseInt(event.target.value);
-    setQuantity(qty);
-    dispatch(updateCartQty(item.item_products_id, qty, branch_id));
+  const handleQuantityChange = (event, product_id) => {
+    const value = Math.max(min, Math.min(max, Number(event.target.value)));
+    dispatch(updateCartQty(product_id, value, branch_id));
   };
 
-  //   const handleQuantityBlur = (event, item) => {
-  //     const qty = parseInt(event.target.value);
-  //     setQuantity(1);
-  //     dispatch(updateCartQty(item.item_products_id, qty));
-  //   };
-
-  const handleQuantityBlur = (event, item) => {
-    const qty = parseInt(event.target.value);
-    if (!isNaN(qty)) {
-      setQuantity(qty);
-      dispatch(updateCartQty(item.item_products_id, qty, branch_id));
+  const handleQuantityBlur = (event, product_id) => {
+    const value = Math.max(min, Math.min(max, Number(event.target.value)));
+    if (!isNaN(value)) {
+      dispatch(updateCartQty(product_id, value, branch_id));
     } else {
-      setQuantity(1);
-      dispatch(updateCartQty(item.item_products_id, 1, branch_id));
+      dispatch(updateCartQty(product_id, 1, branch_id));
     }
   };
 
@@ -133,9 +123,9 @@ const CartList = () => {
                     <input
                       className="mx-2 border text-center w-8"
                       type="text"
-                      value={quantity}
-                      onChange={(event) => handleQuantityChange(event, val)}
-                      onBlur={(event) => handleQuantityBlur(event, val)}
+                      value={val.qty}
+                      onChange={(event) => handleQuantityChange(event, val.item_products_id)}
+                      onBlur={(event) => handleQuantityBlur(event, val.item_products_id)}
                     />
                     <button
                       className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
