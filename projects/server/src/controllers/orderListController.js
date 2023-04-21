@@ -22,7 +22,6 @@ module.exports = {
       const page = parseInt(_page);
       const limit = parseInt(_limit);
       const offset = getOffset(page, limit);
-
       const findOrderList = await transactions.findAll({
         where: {
           status: {

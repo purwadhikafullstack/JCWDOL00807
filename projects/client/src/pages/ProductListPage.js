@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Select,
   Box,
-  Text,
-  FormLabel,
+  Hide,
   Checkbox,
   InputGroup,
   Input,
@@ -198,16 +197,19 @@ const ProductList = () => {
         <div className=" flex justify-between flex-wrap ">
           <div className="bg-white border-gray-200  mt-6 md:mt-0 ">
             <div>
-              <Button
-                size="md"
-                p="2"
-                ml="3"
-                variant="outline"
-                onClick={handleMenuToggle}
-              >
-                <Icon icon="clarity:filter-line" />
-                Filter
-              </Button>
+              <Hide above="md">
+                <Button
+                  size="md"
+                  p="2"
+                  ml="3"
+                  variant="outline"
+                  onClick={handleMenuToggle}
+                >
+                  <Icon icon="clarity:filter-line" />
+                  Filter
+                </Button>
+              </Hide>
+
               <div
                 className={`${
                   isMenuOpen ? "" : "hidden"

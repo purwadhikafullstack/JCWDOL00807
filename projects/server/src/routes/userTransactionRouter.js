@@ -9,5 +9,15 @@ Router.post(
   tokenVerify,
   userTransactionController.userTransaction
 );
+Router.patch(
+  "/cancel-order-by-user",
+  tokenVerify,
+  userTransactionController.CancelOrderByUser
+);
+Router.patch(
+  "/cancel-order-by-sistem",
+  tokenVerify,
+  userTransactionController.cancelOrderBySistem
+);
 
 module.exports = Router;

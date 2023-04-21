@@ -509,7 +509,6 @@ module.exports = {
     }
   },
 
-
   // get detail order list for super admin
   getSuperDetailOrderByQuery: async (req, res) => {
     try {
@@ -638,11 +637,9 @@ module.exports = {
   // get order list user
   getOrderListUserByQuery: async (req, res) => {
     try {
-      const {
-        id
-      } = req.dataToken;
+      const { id } = req.dataToken;
 
-      console.log('dataToken');
+      console.log("dataToken");
       console.log(req.dataToken);
 
       const status = req.query.status || null;
@@ -796,11 +793,9 @@ module.exports = {
   // get detail orderlist user by transaction id
   getDetailOrderUserByQuery: async (req, res) => {
     try {
-      const {
-        id
-      } = req.dataToken;
+      const { id } = req.dataToken;
 
-      const idtrx = req.params.idtrx
+      const idtrx = req.params.idtrx;
       console.log(`iduser: ${id}`);
       console.log(`idtrx: ${req.params.idtrx}`);
 
@@ -850,7 +845,7 @@ module.exports = {
           replacements: {
             search: "%" + search + "%",
             id,
-            idtrx
+            idtrx,
           },
           type: sequelize.QueryTypes.SELECT,
         }
@@ -859,7 +854,7 @@ module.exports = {
       // console.log(totalPage);
       let result = await sequelize.query(
         `
-        SELECT td.id,td.transactions_id,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
+        SELECT td.id,td.transactions_id,t.status,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id

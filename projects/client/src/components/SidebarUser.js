@@ -15,18 +15,11 @@ import { useState } from "react";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 import { keepLogin } from "../redux/action/user";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SidebarUser = () => {
   const dispatch = useDispatch();
   let user = useSelector((state) => state.auth.user);
-
-  const handleLogout = () => {
-    localStorage.removeItem("my_Token");
-    localStorage.removeItem("my_Role");
-
-    // window.location.href = 'login';
-  };
 
   const [messageDelete, setMessageDelete] = useState("");
 
@@ -60,7 +53,7 @@ const SidebarUser = () => {
 
   return (
     <section>
-      <Card className="  flex flex-col justify-center w-[full] md:w-[300px] h-[800px] fixed pt-10 items-center ">
+      <Card className="  flex flex-col justify-center w-screen md:w-[300px] min-h-fit  md:h-[800px]  pt-10 items-center ">
         <CardHeader className="flex flex-col items-center gap-5">
           {user?.image ? (
             <Tooltip label="Delete Profile" size="xs">
@@ -79,7 +72,7 @@ const SidebarUser = () => {
           </Text>
         </CardHeader>
 
-        <CardBody className=" flex flex-col gap-14 h-screen">
+        <CardBody className=" flex flex-col gap-14 w-full md:h-screen">
           <Box className="flex flex-row gap-3 ">
             <Icon className=" text-2xl " icon="line-md:account-small" />
             <Box className=" flex flex-col">
@@ -128,14 +121,6 @@ const SidebarUser = () => {
               Referal Code
             </Text>
           </Box>
-          <Link to={"/login"}>
-            <button
-              className="mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              onClick={() => handleLogout()}
-            >
-              Logout
-            </button>
-          </Link>
         </CardBody>
       </Card>
 

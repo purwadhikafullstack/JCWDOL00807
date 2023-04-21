@@ -2,11 +2,10 @@ const express = require("express");
 const Router = express.Router();
 const { tokenVerify } = require("../middleware/verifyToken");
 const uploadImages = require("../middleware/upload");
-const { usersController, userProductController } = require("../controllers");
-const { transactionController } = require("../controllers");
 
 // Import All Controller
 const { usersController, userProductController } = require("../controllers");
+const { transactionController } = require("../controllers");
 
 Router.get("/login", usersController.login);
 Router.get("/keep-login", tokenVerify, usersController.keepLogin);
@@ -29,17 +28,6 @@ Router.get(
 Router.get("/list-product", userProductController.listProduct);
 Router.get("/product-filter", userProductController.productFilterQuery);
 Router.get("/product-detail/:id", userProductController.productDetail);
-Router.get(
-  "/check-authorization",
-  tokenVerify,
-  usersController.userAuthorization
-);
-Router.get(
-  "/check-authorization-login-register",
-  tokenVerify,
-  usersController.userAuthorizationLoginRegisters
-);
-
 Router.get(
   "/order_search",
   tokenVerify,
