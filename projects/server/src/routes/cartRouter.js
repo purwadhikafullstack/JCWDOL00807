@@ -4,6 +4,10 @@ const { tokenVerify } = require("../middleware/verifyToken");
 
 const { cartController } = require("../controllers");
 
-Router.post("/add-to-cart", tokenVerify, cartController.cart);
+Router.get("/list/:brid", tokenVerify, cartController.cart);
+Router.post("/add-to-cart", tokenVerify, cartController.addToCart);
+Router.patch("/updateQty", tokenVerify, cartController.cartUpdateQty)
+Router.delete("/deleteQty", tokenVerify, cartController.cartDeleteQty)
+
 
 module.exports = Router;

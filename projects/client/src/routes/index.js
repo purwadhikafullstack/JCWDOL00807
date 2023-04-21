@@ -33,6 +33,10 @@ import ProductDetail from "../pages/ProductDetail";
 import DetailOrderListByQuery from "../pages/DetailOrderList";
 import UserDetailOrderListByQuery from "../pages/UserDetailOrderList";
 import UserOrderListByQuery from "../pages/UserOrderList";
+import CartList from "../pages/CartList";
+import Shipping from "../pages/shipping";
+import PaymentSuccess from "../pages/PaymentSuccess";
+import UploadPaymentProof from "../pages/UploadPaymentProof";
 
 // debugger
 export default function Router() {
@@ -312,7 +316,24 @@ export default function Router() {
         },
       ],
     },
-
+    {
+      path: "shopping-cart",
+      element: (
+        <AuthGuard>
+          <CartList />
+        </AuthGuard>
+      ),
+    },
+    {
+      path: "shipping",
+      element: (
+        <AuthGuard>
+          <Shipping />
+        </AuthGuard>
+      ),
+    },
+    { path: "payment-success", element: <PaymentSuccess /> },
+    { path: "upload/payment-proof", element: <UploadPaymentProof /> },
     { path: "404", element: <PageNotFound /> },
     { path: "/authentication/:token", element: <Verification /> },
     { path: "*", element: <PageNotFound /> },
