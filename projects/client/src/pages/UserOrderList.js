@@ -128,6 +128,10 @@ const UserOrderListByQuery = () => {
   const handleDetailButton = (idtrx) => {
     navigate(`/accounts/detail-order-list/${idtrx}`);
   };
+
+  const handleUploadPayment = (idtrx) => {
+    navigate(`/upload/payment-proof?id=${idtrx}`);
+  }
   return (
     <>
       <Navbar />
@@ -178,7 +182,7 @@ const UserOrderListByQuery = () => {
               Status- Filter
             </h3>
 
-            {dataStatus?.map((value, index) => {
+            {dataStatus?.map((value, index, idx) => {
               return (
                 <>
                   <Stack direction={["column", "row"]}>
@@ -239,7 +243,7 @@ const UserOrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Transaction Id</Th>
+                  <Th>No</Th>
                   <Th>Invoice Number</Th>
                   <Th>Date</Th>
                   <Th>Total Price</Th>
@@ -251,10 +255,10 @@ const UserOrderListByQuery = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {dataOrder?.map((value, index) => {
+                {dataOrder?.map((value, index, idx) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.invoice_no}</Td>
                       <Td>{value.Date}</Td>
                       <Td>
@@ -311,6 +315,11 @@ const UserOrderListByQuery = () => {
                         >
                           <span>See Detail</span>
                         </button>
+                        {!value.payment_proof && (
+                          <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleUploadPayment(value.id)}>
+                            <span>Upload Payment Proof</span>
+                          </button>
+                        )}
                       </Td>
                     </Tr>
                   );

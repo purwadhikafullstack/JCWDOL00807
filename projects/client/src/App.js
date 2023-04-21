@@ -4,11 +4,16 @@ import { keepLoginAdmin } from "./redux/action/admin";
 import { findAllAddress } from "./redux/action/userAddress";
 import { useEffect } from "react";
 import { userProductList } from "./redux/action/userProduct";
+import { cartList } from "./redux/action/carts";
+import { getOrigin } from "./redux/action/rajaongkir";
 import Router from "./routes";
 
 function App() {
   const dispatch = useDispatch();
   let address = useSelector((state) => state.address);
+  let userProduct = useSelector((state) => state.userProduct.userProduct);
+  const branch_id = userProduct?.data?.branch_id;
+  const branch_name = userProduct?.data?.branch;
 
   const geolocation = () => {
     if (!address.loading) {
@@ -50,8 +55,15 @@ function App() {
     // dispatch(keepLoginAdmin());
     dispatch(findAllAddress());
     dispatch(userProductList());
+    // dispatch(cartList(branch_id));
+    // dispatch(getOrigin(branch_name));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(cartList(branch_id));
+    dispatch(getOrigin(branch_name));
+  }, [dispatch, branch_id]);
 
   return (
     <div>

@@ -17,10 +17,13 @@ import { keepLogin } from "../redux/action/user";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("my_Token");
+
   let user = useSelector((state) => state.auth);
   console.log(user);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
-  let navigate = useNavigate();
+  let count = useSelector((state) => state.carts.count);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -85,10 +88,17 @@ const Navbar = () => {
                     <h1 className=" font-bold ">{userProduct?.data?.branch}</h1>
                   </li>
                   <li>
-                    <Icon
-                      className=" text-4xl "
-                      icon="ic:round-shopping-cart"
-                    />
+                    <div className="cart-icon">
+                      <Link to={"/shopping-cart"}>
+                        <Icon
+                          className=" text-4xl "
+                          icon="ic:round-shopping-cart"
+                        />
+                        {token && (
+                          <span className="cart-quantity">{count}</span>
+                        )}
+                      </Link>
+                    </div>
                   </li>
                   <li className=" flex flex-col justify-center items-center ">
                     <Menu>
