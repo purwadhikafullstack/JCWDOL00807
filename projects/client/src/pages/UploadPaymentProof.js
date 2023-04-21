@@ -1,0 +1,148 @@
+import React from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState, useRef } from "react";
+import Navbar from "../components/Navbar2";
+import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { uploadPaymentProof } from "../redux/action/order";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Input,
+  Image,
+  Select,
+  Textarea,
+  Button,
+} from "@chakra-ui/react";
+
+const UploadPaymentProof = () => {
+  let image = useRef();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const id = params.get("id");
+  const order = useSelector((state) => state.orders.order);
+
+  console.log(id);
+  console.log(order);
+
+  const [addFile, setAddFile] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onBtnAddFile = (e) => {
+    if (e.target.files[0]) {
+      setAddFile(e.target.files[0]);
+      let preview = document.getElementById("imgprev");
+      preview.src = URL.createObjectURL(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = () => {
+    try {
+      const id_transaction = order.id || id ;
+      setLoading(true);
+      if (addFile == "") {
+        return setMessage("Please input payment proof file ");
+      }
+      let formData = new FormData();
+      if (addFile) {
+        formData.append("images", addFile);
+      }
+      if (!id_transaction) {
+        return setMessage("No transaction");
+      } else {
+        formData.append("id_transaction", id_transaction);
+      }
+      console.log(formData);
+      debugger;
+      dispatch(uploadPaymentProof({ formData }));
+      navigate("/payment-success");
+    } catch (error) {
+      setLoading(false);
+      setMessage(error.response.data.message);
+      console.log(error);
+    }
+  };
+
+  return (
+    <>
+      <Navbar />
+      <div className="flex items-center justify-center p-12">
+        <div className="mx-auto w-full max-w-[550px] bg-white">
+          <div className="mb-5">
+            <label
+              for="email"
+              className="mb-3 block text-base font-medium text-[#07074D]"
+            >
+              Order sudah berhasil di buat, silahkan lakukan pembayaran ke nomor
+              rekening di bawah ini serta upload bukti pembayarannya:
+            </label>
+            <h5 className="text-base font-medium">
+              BCA: A/N ONLINE GROCERY ( 08291882990 )
+            </h5>
+            <h5 className="text-base font-medium">
+              BRI: A/N ONLINE GROCERY ( 08291882990 )
+            </h5>
+            <h5 className="text-base font-medium">
+              MANDIRI: A/N ONLINE GROCERY ( 08291882990 )
+            </h5>
+          </div>
+
+          {message && (
+            <div>
+              <Alert status="error" mb="6" mt="2">
+                <AlertIcon />
+                <AlertTitle>{message}</AlertTitle>
+              </Alert>
+            </div>
+          )}
+
+          <div className="mb-6 pt-4">
+            <label className="mb-5 block text-xl font-semibold text-[#07074D]">
+              Upload File
+            </label>
+
+            <div className="mb-8">
+              <Input
+                type="file"
+                ref={image}
+                name="image"
+                id="image"
+                accept="image/png,image/jpg"
+                onChange={onBtnAddFile}
+              />
+              <Image m="0 auto" id="imgprev" w="full" />
+              <p
+                class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+                id="file_input_help"
+              >
+                PNG OR JPG(MAX. 1MB)
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <button
+              className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
+              onClick={handleSubmit}
+            >
+              Upload Payment Proof
+            </button>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+export default UploadPaymentProof;

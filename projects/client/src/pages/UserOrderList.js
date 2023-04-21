@@ -112,6 +112,10 @@ const UserOrderListByQuery = () => {
   const handleDetailButton = (idtrx) => {
     navigate(`/accounts/detail-order-list/${idtrx}`)
   };
+
+  const handleUploadPayment = (idtrx) => {
+    navigate(`/upload/payment-proof?id=${idtrx}`);
+  }
   return (
     <>
         <Navbar />
@@ -292,6 +296,11 @@ const UserOrderListByQuery = () => {
                         <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleDetailButton(value.id)}>
                           <span>See Detail</span>
                         </button>
+                        {!value.payment_proof && (
+                          <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleUploadPayment(value.id)}>
+                            <span>Upload Payment Proof</span>
+                          </button>
+                        )}
                       </Td>
                     </Tr>
                   );

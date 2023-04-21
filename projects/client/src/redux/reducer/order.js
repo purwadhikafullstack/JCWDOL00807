@@ -34,6 +34,14 @@ export const orderSlice = createSlice({
       state.orders = action.payload;
       state.isLoading = false;
     },
+    createOrderSuccess: (state, action) => {
+      state.order = action.payload
+      state.isLoading = false
+    },
+    uploadPaymentProofSuccess: (state, action) => {
+      state.order = action.payload
+      state.isLoading = false
+    }
   },
 });
 

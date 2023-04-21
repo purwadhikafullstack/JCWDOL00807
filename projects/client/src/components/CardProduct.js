@@ -1,8 +1,9 @@
 import { Button, ButtonGroup, Divider, Heading, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector} from "react-redux";
-import { addToCart, cartList } from "../redux/action/carts";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CardProduct = ({
   productid,
@@ -14,16 +15,47 @@ const CardProduct = ({
   priceAfterDiscount,
   discount_type,
   status,
+  weight
 }) => {
   let dispatch = useDispatch();
+  const navigate = useNavigate();
   let userProduct = useSelector((state) => state.userProduct.userProduct);
-  const branch_id = userProduct?.data?.branch_id
+  const branch_id = userProduct?.data?.branch_id;
+  const branch_name = userProduct?.data?.branch;
+  let grandtotal = 0;
 
   const handleAddToCart = async () => {
     await dispatch(addToCart(productid, 1, branch_id));
     await dispatch(cartList(branch_id));
-  }
+  };
 
+  const handleBuyNow = () => {
+    grandtotal = grandtotal + parseInt(priceAfterDiscount);
+    const checkout = {
+      detailOrder: [
+        {
+          product_name: name,
+          qty: 1,
+          discount_type: null,
+          voucher_type: null,
+          price_per_item: priceAfterDiscount,
+          weight,
+        },
+      ],
+      products_id: [
+        {
+          product_id: productid,
+        },
+      ],
+      grandtotal,
+      isFromCart: false,
+      branch_name,
+      branch_id,
+    };
+    console.log(checkout);
+    dispatch(saveCartToCheckout(checkout));
+    navigate("/shipping");
+  };
 
   return (
     <div className="flex flex-col  w-[170px] h-[370px]  md:w-[300px] md:h-[480px] shadow  rounded-lg border-y border-slate-200">
@@ -73,9 +105,7 @@ const CardProduct = ({
 
       <div className="px-4 py-2 bg-white  w-[170px] h-[200px] md:w-[300px] md:h-[300px] mt-5 pl-2 md:pl-7 ">
         <Heading size={["xs", "sm"]} h={["40px", "35px"]} mb="3">
-        <Link to={`/product/${productid}`}>
-        {name}
-        </Link>
+          <Link to={`/product/${productid}`}>{name}</Link>
         </Heading>
         <Text className="  text-[10px] md:h-[40px] md:w-[250px] mb-3 md:text-sm text-gray-600 ">
           {description}
@@ -130,6 +160,7 @@ const CardProduct = ({
             rounded="md"
             bgColor="#DEF5E5"
             size={["xs", "sm"]}
+            onClick={() => handleBuyNow()}
           >
             Buy now
           </Button>

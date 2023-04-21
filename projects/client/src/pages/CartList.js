@@ -12,6 +12,7 @@ import {
   cartList,
   updateCartQty,
   deleteCartQty,
+  saveCartToCheckout,
 } from "../redux/action/carts";
 
 const CartList = () => {
@@ -22,6 +23,7 @@ const CartList = () => {
   let userProduct = useSelector((state) => state.userProduct.userProduct);
   const branch_id = userProduct?.data?.branch_id
   let grandtotal = 0;
+  let totalweight = 0;
 
   const min = 1;
   const max = 100;
@@ -54,6 +56,33 @@ const CartList = () => {
     }
   };
 
+  const handleCheckout = () => {
+    const checkout = {
+        detailOrder: carts.map(cart => {
+            return {
+                product_name: cart.product_name,
+                qty: cart.qty,
+                discount_type: null,
+                voucher_type: null,
+                price_per_item: cart.price,
+                weight: cart.product_weight,
+            }
+        }),
+        products_id: carts.map(cart => {
+            return {
+                product_id: cart.item_products_id,
+            }
+        }),
+        count,
+        isFromCart: true,
+        grandtotal,
+        totalweight
+    }
+    console.log(checkout);
+    dispatch(saveCartToCheckout(checkout));
+    navigate("/shipping")
+  }
+
   return (
     <>
       <Navbar />
@@ -83,8 +112,10 @@ const CartList = () => {
                 "http://localhost:8000/" +
                 val.product_image.replace("Admin/", "");
               const total = parseInt(val.price) * parseInt(val.qty);
-
               grandtotal = grandtotal + total;
+              const weightInGram = parseInt(val.product_weight) * 1000;
+              totalweight = totalweight + weightInGram;
+
               return (
                 <div className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5">
                   <div className="flex w-2/5">
@@ -140,7 +171,7 @@ const CartList = () => {
             })}
 
             <a
-              href="#"
+              href="/"
               className="flex font-semibold text-indigo-600 text-sm mt-10"
             >
               <svg
@@ -163,14 +194,14 @@ const CartList = () => {
               </span>
               <span className="font-semibold text-sm"> Rp. {grandtotal}</span>
             </div>
-            <div>
+            {/* <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
                 Shipping
               </label>
               <select className="block p-2 text-gray-600 w-full text-sm">
                 <option>Standard shipping - $10.00</option>
               </select>
-            </div>
+            </div> */}
             <div className="py-10">
               <label
                 for="promo"
@@ -193,7 +224,7 @@ const CartList = () => {
                 <span>Total cost</span>
                 <span> Rp. {grandtotal}</span>
               </div>
-              <button className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">
+              <button onClick={() => handleCheckout()} className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">
                 Checkout
               </button>
             </div>

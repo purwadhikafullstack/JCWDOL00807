@@ -108,3 +108,9 @@ export const deleteCartQty = (product_id, branch_id) => {
     }
   };
 };
+
+export const saveCartToCheckout = (checkout) => {
+  return (dispatch) => {
+    dispatch(cartSlice.actions.savetoCheckout(checkout));
+  }
+}

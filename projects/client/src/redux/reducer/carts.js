@@ -4,6 +4,7 @@ const initialState = {
   carts: [],
   count: 0,
   cart: {},
+  checkout: {},
   errorMessage: null,
   loading: null,
 };
@@ -40,12 +41,17 @@ export const cartSlice = createSlice({
       state.count = updatedCarts.length;
       state.loading = false;
     },
+    savetoCheckout: (state, action) => {
+      state.checkout = action.payload
+      state.loading = false
+    },
     failed: (state, action) => {
       state.errorMessage = action.payload;
       state.loading = null;
     },
+
   },
 });
 
-export const { listSuccess, addToCartSuccess, updateQtySuccess, deleteQtySuccess, failed } = cartSlice.actions;
+export const { listSuccess, addToCartSuccess, updateQtySuccess, deleteQtySuccess, savetoCheckout, failed } = cartSlice.actions;
 export default cartSlice.reducer;

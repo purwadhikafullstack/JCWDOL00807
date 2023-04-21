@@ -115,6 +115,8 @@ const Home = () => {
                 priceAfterDiscount={val.price_after_discount}
                 discount_type={val.discount_type}
                 status={val.status}
+                weight={val.weight}
+
               />
             ))}
           </div>
@@ -150,6 +152,7 @@ const Home = () => {
                 priceAfterDiscount={val.price_after_discount}
                 discount_type={val.discount_type}
                 status={val.status}
+                weight={val.weight}
               />
             ))}
           </div>
@@ -187,6 +190,7 @@ const Home = () => {
                 priceAfterDiscount={val.price_after_discount}
                 discount_type={val.discount_type}
                 status={val.status}
+                weight={val.weight}
               />
             ))}
           </div>
@@ -223,6 +227,7 @@ const Home = () => {
                 priceAfterDiscount={val.price_after_discount}
                 discount_type={val.discount_type}
                 status={val.status}
+                weight={val.weight}
               />
             ))}
           </div>

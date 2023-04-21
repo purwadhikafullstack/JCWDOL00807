@@ -13,8 +13,8 @@ import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart, cartList } from "../redux/action/carts";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
 
 import CardProduct from "../components/CardProduct";
 import { Divider } from "@chakra-ui/react";
@@ -29,6 +29,14 @@ const ProductDetail = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [qty, setQty] = useState(0);
+  const userProduct = useSelector((state) => state.userProduct.userProduct);
+  const branch_id = userProduct?.data?.branch_id;
+  const branch_name = userProduct?.data?.branch;
+  let grandtotal = 0;
+
+
+  console.log(dataProduct);
+  console.log(dataProduct.stock)
 
   useEffect(() => {
     async function fetchData() {
@@ -57,6 +65,8 @@ const ProductDetail = () => {
         );
       } else if (qty < 1){
         alert("Quantity product was zero")
+      } else if (qty > dataProduct.stock) {
+        alert("Sorry your quantity more then stock")
       } else {
         await dispatch(addToCart(id, qty));
         await dispatch(cartList());
@@ -80,17 +90,32 @@ const ProductDetail = () => {
         setMessage(
           "Unauthorization, please register or login for continue  add product to cart"
         );
+      } else if (qty < 1) {
+        alert("Quantity product was zero")
+      } else if (qty > dataProduct.stock) {
+        alert("Sorry your quantity more then stock")
       } else {
-        const addToTransaction = await axios.post(
-          `${api}/transaction/add-to-transaction`,
-          {},
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
-        console.log(addToTransaction);
+        grandtotal = grandtotal + parseInt(dataProduct.price_after_discount);
+        const checkout = {
+          detailOrder : [{
+            product_name: dataProduct.name,
+            qty,
+            discount_type: null,
+            voucher_type: null,
+            price_per_item: dataProduct.price_after_discount,
+            weight: dataProduct.weight,
+          }],
+          products_id: [{
+            product_id: dataProduct.id
+          }],
+          grandtotal,
+          isFromCart: false,
+          branch_name,
+          branch_id
+        }
+        console.log(checkout);
+        dispatch(saveCartToCheckout(checkout));
+        navigate("/shipping");
       }
     } catch (error) {
       console.log(error);
@@ -229,6 +254,7 @@ const ProductDetail = () => {
                 priceAfterDiscount={val.price_after_discount}
                 discount_type={val.discount_type}
                 status={val.status}
+                weight={val.weight}
               />
           ))}
         </div>

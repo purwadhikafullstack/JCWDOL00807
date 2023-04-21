@@ -50,7 +50,7 @@ module.exports = {
 
       let cartList = await sequelize.query(
         `
-        SELECT c.*, u.name as user_name, bs.name as branch_stores_name, ip.name as product_name, ip.images as product_image, ip.stock as product_stock, ip.price 
+        SELECT c.*, u.name as user_name, bs.name as branch_stores_name, ip.name as product_name, ip.images as product_image, ip.stock as product_stock, ip.price, ip.weight as product_weight
         FROM carts c
         LEFT JOIN users u ON c.users_id = u.id
         LEFT JOIN branch_stores bs ON c.branch_stores_id = bs.id
@@ -341,70 +341,4 @@ module.exports = {
       });
     }
   },
-  
-
-
-  // cartDeleteQty: async (req, res) => {
-  //   const t = await sequelize.transaction();
-  //   try {
-  //     const userid = req.dataToken.id;
-  //     const { product_id, qty } = req.body;
-  //     console.log(`product_id ${product_id}`);
-  //     if (!userid)
-  //       throw {
-  //         message:
-  //           "Unauthorization, please register or login for continue see your cart",
-  //       };
-  //     const userExist = await users.findOne({
-  //       where: { id: userid },
-  //     });
-
-  //     if (userExist === null)
-  //       throw {
-  //         message:
-  //           "Unauthorization, please register or login for continue see your cart",
-  //       };
-
-  //     const cartBy = await carts.findOne({
-  //       where: {
-  //         users_id: {
-  //           [Op.eq]: userid,
-  //         },
-  //         item_products_id: {
-  //           [Op.eq]: product_id,
-  //         },
-  //       },
-  //     });
-
-  //     if (!cartBy)
-  //       throw {
-  //         message: "Product is not found in your cart",
-  //       };
-
-  //     await carts.destroy({
-  //       where: {
-  //         users_id: {
-  //           [Op.eq]: userid,
-  //         },
-  //         item_products_id: {
-  //           [Op.eq]: product_id,
-  //         },
-  //       },
-  //       transaction: t,
-  //     });
-
-  //     await t.commit();
-  //     res.status(200).send({
-  //       isSuccess: true,
-  //       message: "Delete item from cart is success",
-  //       data: cartBy,
-  //     });
-  //   } catch (error) {
-  //     await t.rollback();
-  //     res.status(404).send({
-  //       isSuccess: false,
-  //       message: error.message,
-  //     });
-  //   }
-  // },
 };
