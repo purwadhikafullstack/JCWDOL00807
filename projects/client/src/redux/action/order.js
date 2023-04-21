@@ -21,7 +21,7 @@ export const listOrder = (page, limit, searchText) => {
         }
       );
       // debugger;
-      // console.log(response.data.data);
+      console.log(response);
       dispatch(orderSlice.actions.updatePageLimit({ page, limit }));
       dispatch(orderSlice.actions.listOrdersSuccess(response.data.data));
     } catch (error) {

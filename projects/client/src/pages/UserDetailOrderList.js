@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
+import CancellationReasons from "../components/CancellationReasons";
 import {
   Select,
   Table,
@@ -19,6 +20,7 @@ import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
 import SidebarUser from "../components/SidebarUser";
+import BackdropResetPassword from "../components/BackdropResetPassword";
 
 const UserDetailOrderListByQuery = () => {
   const navigate = useNavigate();
@@ -33,6 +35,8 @@ const UserDetailOrderListByQuery = () => {
   const [rows, setRows] = useState(0);
   const [query, setQuery] = useState("");
   const [msg, setMsg] = useState("");
+  const [messageCancel, setMessageCancel] = useState("");
+  const [cancelErrorMessage, setCancelErrorMessage] = useState("");
   let sort = useRef();
   let asc = useRef();
 
@@ -51,6 +55,7 @@ const UserDetailOrderListByQuery = () => {
           },
         }
       );
+      console.log(response);
       setDataDetailOrder(response?.data?.data?.result);
       setBranch(`transaction ${id}`);
       setPage(response?.data?.data?.page);
@@ -84,11 +89,39 @@ const UserDetailOrderListByQuery = () => {
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getDetailOrderList()
-  }
+    getDetailOrderList();
+  };
+
+  const handleReasonCancellation = async (reason, onClose) => {
+    try {
+      const token = localStorage.my_Token;
+      console.log(token);
+      const cancelOrder = await axios.patch(
+        ` ${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-user?transactionId=${dataDetailOrder[0]?.transactions_id}&cancellation_reasons=${reason}`,
+        {},
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      onClose();
+      setMessageCancel(cancelOrder.data.message);
+    } catch (error) {
+      console.log(error.response.data.message);
+      setCancelErrorMessage(error.response.data.message);
+    }
+  };
+
+  const handleClose = () => {
+    setMessageCancel("");
+    navigate("/accounts/order-list");
+  };
+
   return (
     <>
-        <Navbar />
+      <Navbar />
       <div className="p-4 sm:ml-0">
         <form className="m-5 justify-start hidden" onSubmit={searchData}>
           <label
@@ -168,6 +201,14 @@ const UserDetailOrderListByQuery = () => {
               >
                 Detail Order List Table - {branch}
               </TableCaption>
+              <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
+                <CancellationReasons
+                  status={dataDetailOrder[0]?.status}
+                  handleSubmit={handleReasonCancellation}
+                  errorMessage={cancelErrorMessage}
+                />
+              </TableCaption>
+
               <Thead className=" text-center">
                 <Tr>
                   {/* <Th>Id</Th> */}
@@ -256,7 +297,7 @@ const UserDetailOrderListByQuery = () => {
         <div className="flex justify-center mt-10 mb-10">
           <div>
             <p>
-              Total Rows : {rows}    Page : {rows ? page + 1 : 0} of {pages}
+              Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
             </p>
             <p className="flex justify-center text-red-500">{msg}</p>
           </div>
@@ -280,6 +321,13 @@ const UserDetailOrderListByQuery = () => {
             />
           </nav>
         </div>
+        {messageCancel ? (
+          <BackdropResetPassword
+            message={messageCancel}
+            handleClose={handleClose}
+          />
+        ) : null}
+
         <Footer />
       </div>
     </>
