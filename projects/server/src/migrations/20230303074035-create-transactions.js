@@ -24,6 +24,9 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
       },
+      cancellation_reasons: {
+        type: Sequelize.STRING,
+      },
       payment_proof: {
         type: Sequelize.STRING,
       },

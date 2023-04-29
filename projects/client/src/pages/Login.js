@@ -66,11 +66,10 @@ const Login = () => {
       localStorage.setItem("my_Role", user.user.role);
       navigate("/");
     }
-
     if (user.errorMessage) {
       setMessage(user.errorMessage);
     }
-  }, [user]);
+  });
 
   return (
     <>

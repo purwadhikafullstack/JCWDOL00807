@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: "Waiting For Payment",
       },
+      cancellation_reasons: DataTypes.STRING,
       payment_proof: DataTypes.STRING,
       expired_date: DataTypes.DATE,
     },

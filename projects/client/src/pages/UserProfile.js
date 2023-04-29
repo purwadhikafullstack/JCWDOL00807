@@ -9,9 +9,9 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
@@ -19,9 +19,7 @@ import SidebarUser from "../components/SidebarUser";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
-  // console.log(user);
   const [message, setMessage] = useState("");
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user.message) {
@@ -37,13 +35,10 @@ const UserProfile = () => {
     <>
       <Navbar />
       <section
-        className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
-      items-center  px-5 md:px-0  mt-10 mb-10 "
+        className=" flex justify-center container mx-auto gap-5  min-h-screen
+      items-center  px-0  mt-0 md:mt-10 mb-10"
       >
-        <Card
-          textColor="#234E52"
-          className="w-[full] md:w-[full] px-5 md:px-0  "
-        >
+        <Card textColor="#234E52" className="w-[full] md:w-[full] md:px-0  ">
           {message ? (
             <CardHeader textAlign="center">
               <AlertSuccess title={message} handleClick={handleClick} />
@@ -53,26 +48,26 @@ const UserProfile = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
-              height="160px"
+              height={["fit-content", "160px"]}
               variant="subtle"
-              bgColor="#DEF5E5"
+              bgColor={["white", "#DEF5E5"]}
               rounded="4px"
               textColor="#234E52"
             >
-              <Heading size="md" mt="45px" textAlign="center">
+              <Heading size="md" mt={["10", "45px"]} textAlign="center">
                 My Profile
               </Heading>
             </CardHeader>
           )}
-          <div className=" md:flex justify-start  md:px-5 items-center flex flex-row ">
+          <div className=" flex justify-start  md:px-5 items-center  flex-wrap  ">
             <SidebarUser />
             <CardBody>
               <Stack
                 divider={<StackDivider />}
                 spacing="4"
-                className=" p-0 md:p-20 shadow shadow-slate-200 rounded-lg h-[800px] flex flex-col justify-center  "
+                className=" p-3 md:p-20 shadow shadow-slate-200 rounded-lg min-h-fit md:h-[800px] flex flex-col justify-center "
               >
-                <Box className="flex  items-center justify-start gap-20 ">
+                <Box className="flex items-center justify-start gap-20 ">
                   <Text w="28" size="xs">
                     Name{" "}
                   </Text>

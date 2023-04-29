@@ -29,17 +29,6 @@ Router.get("/list-product", userProductController.listProduct);
 Router.get("/product-filter", userProductController.productFilterQuery);
 Router.get("/product-detail/:id", userProductController.productDetail);
 Router.get(
-  "/check-authorization",
-  tokenVerify,
-  usersController.userAuthorization
-);
-Router.get(
-  "/check-authorization-login-register",
-  tokenVerify,
-  usersController.userAuthorizationLoginRegisters
-);
-
-Router.get(
   "/order_search",
   tokenVerify,
   transactionController.getOrderListUserByQuery

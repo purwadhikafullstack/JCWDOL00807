@@ -45,8 +45,6 @@ const UserOrderListByQuery = () => {
   let sort = useRef();
   let asc = useRef();
 
-
-
   const getOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
@@ -101,8 +99,26 @@ const UserOrderListByQuery = () => {
     getOrderList();
   };
 
+  // hit api untuk mengubah order cancel otomatis
+
+  const cancelOrderBySistem = async () => {
+    try {
+      const token = localStorage.my_Token;
+      let response = await axios.patch(
+        `${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-sistem`,
+        {},
+        {
+          headers: { Authorization: token },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getOrderList();
+    cancelOrderBySistem();
   }, [page, keyword]);
 
   const handleAscSort = () => {
@@ -110,11 +126,15 @@ const UserOrderListByQuery = () => {
   };
 
   const handleDetailButton = (idtrx) => {
-    navigate(`/accounts/detail-order-list/${idtrx}`)
+    navigate(`/accounts/detail-order-list/${idtrx}`);
   };
+
+  const handleUploadPayment = (idtrx) => {
+    navigate(`/upload/payment-proof?id=${idtrx}`);
+  }
   return (
     <>
-        <Navbar />
+      <Navbar />
       <div className="p-4 sm:ml-0">
         <form className="m-5 flex justify-start" onSubmit={searchData}>
           <label
@@ -162,7 +182,7 @@ const UserOrderListByQuery = () => {
               Status- Filter
             </h3>
 
-            {dataStatus?.map((value, index) => {
+            {dataStatus?.map((value, index, idx) => {
               return (
                 <>
                   <Stack direction={["column", "row"]}>
@@ -223,7 +243,7 @@ const UserOrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Transaction Id</Th>
+                  <Th>No</Th>
                   <Th>Invoice Number</Th>
                   <Th>Date</Th>
                   <Th>Total Price</Th>
@@ -235,10 +255,10 @@ const UserOrderListByQuery = () => {
                 </Tr>
               </Thead>
               <Tbody>
-                {dataOrder?.map((value, index) => {
+                {dataOrder?.map((value, index, idx) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.invoice_no}</Td>
                       <Td>{value.Date}</Td>
                       <Td>
@@ -289,9 +309,17 @@ const UserOrderListByQuery = () => {
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
                       <Td>
-                        <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleDetailButton(value.id)}>
+                        <button
+                          className="text-lg text-blue-600 button flex items-center ml-2 hover:underline"
+                          onClick={() => handleDetailButton(value.id)}
+                        >
                           <span>See Detail</span>
                         </button>
+                        {!value.payment_proof && (
+                          <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleUploadPayment(value.id)}>
+                            <span>Upload Payment Proof</span>
+                          </button>
+                        )}
                       </Td>
                     </Tr>
                   );
@@ -303,7 +331,7 @@ const UserOrderListByQuery = () => {
         <div className="flex justify-center mt-10 mb-10">
           <div>
             <p>
-              Total Rows : {rows}  Page : {rows ? page + 1 : 0} of {pages}
+              Total Rows : {rows} Page : {rows ? page + 1 : 0} of {pages}
             </p>
             <p className="flex justify-center text-red-500">{msg}</p>
           </div>

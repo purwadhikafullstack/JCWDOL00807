@@ -49,7 +49,6 @@ const {
   discountRouter,
   cartRouter,
   userTransactionRouter,
-  orderListRouter,
 } = require("./routes");
 
 app.use("/api/user", usersRouter);
@@ -61,7 +60,6 @@ app.use("/api/categories", categoriesProductRouter);
 app.use("/api/discount", discountRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/transaction", userTransactionRouter);
-app.use("/api/order", orderListRouter);
 
 //# add Router
 
