@@ -2,11 +2,10 @@ const express = require("express");
 const Router = express.Router();
 const { tokenVerify } = require("../middleware/verifyToken");
 const uploadImages = require("../middleware/upload");
-const { usersController, userProductController } = require("../controllers");
-const { transactionController } = require("../controllers");
 
 // Import All Controller
 const { usersController, userProductController } = require("../controllers");
+const { transactionController } = require("../controllers");
 
 Router.get("/login", usersController.login);
 Router.get("/keep-login", tokenVerify, usersController.keepLogin);

@@ -391,7 +391,6 @@ const EditDiscount = () => {
                         <Input
                           type="datetime-local"
                           size="md"
-                          placeholder="Select Date and Time"
                           value={fieldStart}
                           ref={start}
                           onChange={handleInputChangeStart}
@@ -414,7 +413,6 @@ const EditDiscount = () => {
                         <Input
                           type="datetime-local"
                           size="md"
-                          placeholder="Select Date and Time"
                           value={fieldEnd}
                           ref={end}
                           onChange={handleInputChangeEnd}
