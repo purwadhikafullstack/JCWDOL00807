@@ -7,7 +7,16 @@ import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getProvince, getCity, getCost } from "../redux/action/rajaongkir";
+import CurrencyFormat from "react-currency-format";
+
+import {
+  getProvince,
+  getCity,
+  getCost,
+  getCityByAddress,
+  costToDefault,
+  citiesToDefault,
+} from "../redux/action/rajaongkir";
 import { createOrder } from "../redux/action/order";
 import { cartList } from "../redux/action/carts";
 
@@ -16,62 +25,79 @@ const Shipping = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const { checkout } = useSelector((state) => state.carts);
-  const { provinces, cities, costs, origin } = useSelector((state) => state.rajaongkir);
+  let { cities, costs, origin } = useSelector((state) => state.rajaongkir);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
+  const userAddress = useSelector((state) => state.address.userAddress);
   const branch_id = userProduct?.data?.branch_id;
   const branch_name = userProduct?.data?.branch;
 
-  const [ city, setCity ] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedExpedisi, setSelectedExpedisi] = useState('');
   const [grandtotal, setGrandtotal] = useState(checkout.grandtotal);
+  const [ongkir, setOngkir] = useState(0);
+
+  // console.log(cities);
 
   const handleClose = () => {
     setMessage("");
   };
 
-  useEffect(() => {
-    dispatch(getProvince())
-    dispatch(getCity())
-  }, [dispatch]);
-
-  const handleProvinceChange = (value) => {
-    const filteredCities = cities.city.filter(x => x.province_id == value);
-    setCity(filteredCities)
-  }
+  const handleUserAddress = (value) => {
+    if (value == "0") {
+      dispatch(citiesToDefault());
+    } else {
+      const filteredAddress = userAddress.data.filter((x) => x.id == value);
+      dispatch(getCityByAddress(filteredAddress[0].city));
+    }
+  };
 
   const handleExpedisiChange = (value) => {
-    setSelectedExpedisi(value)
-    dispatch(getCost(origin.city_id, selectedCity, checkout.totalweight, value))
-  }
+    if (value == "0") {
+      dispatch(costToDefault());
+    } else {
+      dispatch(
+        getCost(origin.city_id, cities.city_id, checkout.totalweight, value)
+      );
+    }
+  };
 
   const handleCostChange = (value) => {
-    const filteredCost = costs.filter(x => x.service == value);
-    const ongkir = filteredCost[0].cost[0].value
-    const newGrandtotal = checkout.grandtotal + ongkir
-    setGrandtotal(newGrandtotal)
-  }
+    if (value == "0") {
+      setOngkir(0);
+      setGrandtotal(checkout.grandtotal);
+    } else {
+      const filteredCost = costs.filter((x) => x.service == value);
+      const ongkir = filteredCost[0].cost[0].value;
+      const newGrandtotal = checkout.grandtotal + ongkir;
+      setOngkir(ongkir);
+      setGrandtotal(newGrandtotal);
+    }
+  };
 
   const handleClickCreateOrder = async () => {
-    const dataInsert = {
-        detailOrder : checkout.detailOrder,
-        products_id: checkout.products_id,
-        isFromCart: checkout.isFromCart,
-        grandtotal,
-        branch_name,
-        branch_id
+    if (ongkir == 0) {
+      return setMessage("Silahkan pilih jasa ekspedisi terlebih dahulu.");
     }
+    const dataInsert = {
+      detailOrder: checkout.detailOrder,
+      products_id: checkout.products_id,
+      isFromCart: checkout.isFromCart,
+      grandtotal,
+      branch_name,
+      branch_id,
+    };
     const response = await dispatch(createOrder(dataInsert));
     const { status, data } = response;
     const { message } = data;
     if (status === 200) {
-        dispatch(cartList())
-        navigate('/upload/payment-proof');
+      dispatch(cartList());
+      navigate("/upload/payment-proof");
     } else {
-        setMessage(message)
+      setMessage(message);
     }
-  }
-
+  };
+  let total = 0
+  checkout?.detailOrder?.forEach((val, idx) => {
+    total += parseInt(val.price_per_item) * parseInt(val.qty);
+  });
 
   return (
     <>
@@ -93,8 +119,11 @@ const Shipping = () => {
               <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 ">
                 Price
               </h3>
+              <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 ">
+                Weight
+              </h3>
               <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5">
-                Total
+              Subtotal Product
               </h3>
             </div>
             {checkout?.detailOrder?.map((val, idx) => {
@@ -116,18 +145,29 @@ const Shipping = () => {
                       disabled
                     />
                   </div>
+                  <CurrencyFormat
+                    className="text-center w-1/5 font-semibold text-sm"
+                    value={val.price_per_item}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    prefix={"Rp. "}
+                  />
                   <span className="text-center w-1/5 font-semibold text-sm">
-                    Rp. {val.price_per_item}
+                    {val.weight} Kg
                   </span>
-                  <span className="text-center w-1/5 font-semibold text-sm">
-                    Rp. {total}
-                  </span>
+                  <CurrencyFormat
+                    className="text-center w-1/5 font-semibold text-sm"
+                    value={total}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    prefix={"Rp. "}
+                  />
                 </div>
               );
             })}
 
             <a
-              href="#"
+              href="shopping-cart"
               className="flex font-semibold text-indigo-600 text-sm mt-10"
             >
               <svg
@@ -148,51 +188,107 @@ const Shipping = () => {
               <span className="font-semibold text-sm uppercase">
                 Items {checkout.count}
               </span>
-              <span className="font-semibold text-sm"> Rp. {grandtotal}</span>
+              <CurrencyFormat
+                className="font-semibold text-sm"
+                value={grandtotal}
+                displayType={"text"}
+                thousandSeparator={true}
+                prefix={"Rp. "}
+              />
             </div>
             <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
                 Select Destination
               </label>
-              <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => handleProvinceChange(e.target.value)}>
-                {provinces?.province?.map((val) => {
-                    return (
-                        <option value={val.province_id}>{val.province}</option>
-                    )
+              <select
+                className="block p-2 text-gray-600 w-full text-sm"
+                onChange={(e) => handleUserAddress(e.target.value)}
+              >
+                <option value="0">-- select destination --</option>
+                {userAddress?.data?.map((val) => {
+                  return (
+                    <option value={val.id}>
+                      {val.street_address}, {val.city}, {val.province},{" "}
+                      {val.country} - {val.postal_code}
+                    </option>
+                  );
                 })}
               </select>
-              <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => setSelectedCity(e.target.value)}>
+              {/* <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => setSelectedCity(e.target.value)}>
                 {city.map((val) => {
                     return (
                         <option value={val.city_id}>{val.city_name}</option>
                     )
                 })}
-              </select>
+              </select> */}
             </div>
 
             <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
                 Select Expedition
               </label>
-              <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => handleExpedisiChange(e.target.value)}>
+              <select
+                className="block p-2 text-gray-600 w-full text-sm"
+                onChange={(e) => handleExpedisiChange(e.target.value)}
+              >
+                <option value="0">-- select expedition --</option>
                 <option value="jne">JNE</option>
                 <option value="pos">POS</option>
                 <option value="tiki">TIKI</option>
               </select>
-              <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => handleCostChange(e.target.value)}>
+              <select
+                className="block p-2 text-gray-600 w-full text-sm"
+                onChange={(e) => handleCostChange(e.target.value)}
+              >
+                <option value="0">-- select jasa --</option>
                 {costs?.map((val) => {
-                    return (
-                        <option value={val.service}>{val.description} - {val.cost[0].value} (estimasi {val.cost[0].etd} hari)</option>
-                    )
+                  
+                const total = parseInt(val.price_per_item) * parseInt(val.qty);
+                
+                  return (
+                    <option value={val.service}>
+                      {val.description} - {val.cost[0].value} (estimasi{" "}
+                      {val.cost[0].etd} hari)
+                    </option>
+                  );
                 })}
               </select>
             </div>
             <div className="border-t mt-8">
               <div className="flex font-semibold justify-between py-6 text-sm uppercase">
-                <span>Total cost</span>
-                <span> Rp. {grandtotal}</span>
+                <span>Ongkir</span>
+                <CurrencyFormat
+                  className="text-sm"
+                  value={ongkir}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"Rp. "}
+                  />
               </div>
-              <button className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full" onClick={() => handleClickCreateOrder()}>
+              <div className="flex font-semibold justify-between py-1 text-sm uppercase">
+                <span>Total </span>
+                <CurrencyFormat
+                  className="text-sm"
+                  value={total}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"Rp. "}
+                />
+              </div>
+              <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+                <span>Total cost</span>
+                <CurrencyFormat
+                  className="font-semibold text-lg"
+                  value={grandtotal}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"Rp. "}
+                />
+              </div>
+              <button
+                className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full"
+                onClick={() => handleClickCreateOrder()}
+              >
                 Create Order
               </button>
             </div>

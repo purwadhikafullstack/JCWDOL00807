@@ -34,7 +34,7 @@ import DetailOrderListByQuery from "../pages/DetailOrderList";
 import UserDetailOrderListByQuery from "../pages/UserDetailOrderList";
 import UserOrderListByQuery from "../pages/UserOrderList";
 import CartList from "../pages/CartList";
-import Shipping from "../pages/shipping";
+import Shipping from "../pages/Shipping";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import UploadPaymentProof from "../pages/UploadPaymentProof";
 

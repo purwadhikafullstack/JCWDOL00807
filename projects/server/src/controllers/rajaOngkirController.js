@@ -1,5 +1,10 @@
 const axios = require("axios");
+const db = require("./../models/index");
+// const carts = db.carts;
+const { sequelize } = require("../models");
 
+
+debugger
 module.exports = {
   getProvince: async (req, res) => {
     try {
@@ -145,6 +150,108 @@ module.exports = {
       res.status(500).send({
         isSuccess: false,
         message: error.status,
+      });
+    }
+  },
+
+  getCityAddress: async (req, res) => {
+    try {
+      let key = process.env.KEY_RAJAONGKIR;
+
+      let { cityname } = req.query;
+
+      if (!cityname) throw { message: "city was empty" };
+
+      let response = await axios.get(
+        "https://api.rajaongkir.com/starter/city",
+        {
+          headers: {
+            key,
+          },
+        }
+      );
+
+      const { results } = response.data.rajaongkir
+      const origin = results.filter(x => x.city_name == cityname)
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get origin success",
+        data: origin[0],
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error,
+      });
+    }
+  },
+
+  getDestinationByAddress: async (req, res) => {
+    try {
+      const { users_id } = req.params;
+      const { origin, destination, weight, courier } = req.body;
+      
+      // Ambil data alamat tujuan pengiriman dengan kolom isDefault bernilai 1
+      const [rows, fields] = await sequelize.query(
+        "SELECT * FROM user_address WHERE users_id = ? AND isDefault = 1",
+        { 
+          replacements: [users_id],
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );      
+      
+
+      if (!rows[0]) {
+        throw { message: "No default address found" };
+      }
+
+      const { street_address, city, province, postal_code, country } = rows[0];
+      
+      // Panggil API untuk menghitung ongkos kirim
+      const response = await axios.post(
+        "https://api.rajaongkir.com/starter/cost",
+        {
+          origin,
+          destination,
+          weight,
+          courier,
+        },
+        // {
+        //   origin: "Jakarta", // ganti dengan origin yang sesuai
+        //   destination: city,
+        //   weight: 1000, // ganti dengan berat barang yang sesuai
+        //   courier: "jne", // ganti dengan kurir yang sesuai
+        // },
+        {
+          headers: {
+            key: process.env.KEY_RAJAONGKIR,
+            "content-type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get cost success",
+        data: {
+          rajaongkir: {
+            country: "Indonesia",
+            costs: response.data.rajaongkir.results[0].costs,
+            destination: {
+              street_address,
+              city,
+              province,
+              postal_code,
+              country,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
       });
     }
   },

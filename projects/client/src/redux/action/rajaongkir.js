@@ -92,3 +92,38 @@ export const getOrigin = (branch_name) => {
     }
   };
 };
+
+export const getCityByAddress = (cityName) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/raja-ongkir/getcity`,
+        {
+          params: {
+            cityname: cityName,
+          },
+        }
+      );
+      dispatch(rajaongkirSlice.actions.citiesSuccess(response.data.data));
+    } catch (error) {
+      console.log(error);
+      console.log(error.response.data.message);
+      // alert(error.response.data.message);
+      dispatch(rajaongkirSlice.actions.failed(error.response.data.message));
+    }
+  };
+};
+
+export const costToDefault = () => {
+  return (dispatch) => {
+    dispatch(rajaongkirSlice.actions.costsDefault());
+  }
+};
+
+export const citiesToDefault = () => {
+  return (dispatch) => {
+    dispatch(rajaongkirSlice.actions.citiesDefault());
+  }
+};
+
+

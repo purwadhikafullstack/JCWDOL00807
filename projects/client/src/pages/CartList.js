@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import CurrencyFormat from "react-currency-format";
 import {
   addToCart,
   cartList,
@@ -21,7 +22,7 @@ const CartList = () => {
   const [message, setMessage] = useState("");
   const { carts, count, cart } = useSelector((state) => state.carts);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
-  const branch_id = userProduct?.data?.branch_id
+  const branch_id = userProduct?.data?.branch_id;
   let grandtotal = 0;
   let totalweight = 0;
 
@@ -30,58 +31,74 @@ const CartList = () => {
 
   const handleClose = () => {
     setMessage("");
-    navigate("/login");
   };
 
-  const handleUpdateQty = (product_id, qty) => {
+  const handleUpdateQty = (product_id, qty, stock) => {
     const value = Math.max(min, Math.min(max, Number(qty)));
-    dispatch(updateCartQty(product_id, value, branch_id));
+    if (value > stock) {
+      setMessage("Out of stock");
+    } else {
+      dispatch(updateCartQty(product_id, value, branch_id));
+      dispatch(cartList(branch_id));
+    }
   };
 
   const handleDelete = (product_id) => {
     dispatch(deleteCartQty(product_id, branch_id));
+    dispatch(cartList(branch_id));
   };
 
-  const handleQuantityChange = (event, product_id) => {
+  const handleQuantityChange = (event, product_id, stock) => {
     const value = Math.max(min, Math.min(max, Number(event.target.value)));
-    dispatch(updateCartQty(product_id, value, branch_id));
-  };
-
-  const handleQuantityBlur = (event, product_id) => {
-    const value = Math.max(min, Math.min(max, Number(event.target.value)));
-    if (!isNaN(value)) {
-      dispatch(updateCartQty(product_id, value, branch_id));
+    if (value > stock) {
+      setMessage("Out of stock");
     } else {
-      dispatch(updateCartQty(product_id, 1, branch_id));
+      dispatch(updateCartQty(product_id, value, branch_id));
+      dispatch(cartList(branch_id));
+    }
+  };
+
+  const handleQuantityBlur = (event, product_id, stock) => {
+    const value = Math.max(min, Math.min(max, Number(event.target.value)));
+    if (value > stock) {
+      setMessage("Out of stock");
+    } else {
+      if (!isNaN(value)) {
+        dispatch(updateCartQty(product_id, value, branch_id));
+        dispatch(cartList(branch_id));
+      } else {
+        dispatch(updateCartQty(product_id, 1, branch_id));
+        dispatch(cartList(branch_id));
+      }
     }
   };
 
   const handleCheckout = () => {
     const checkout = {
-        detailOrder: carts.map(cart => {
-            return {
-                product_name: cart.product_name,
-                qty: cart.qty,
-                discount_type: null,
-                voucher_type: null,
-                price_per_item: cart.price,
-                weight: cart.product_weight,
-            }
-        }),
-        products_id: carts.map(cart => {
-            return {
-                product_id: cart.item_products_id,
-            }
-        }),
-        count,
-        isFromCart: true,
-        grandtotal,
-        totalweight
-    }
+      detailOrder: carts.map((cart) => {
+        return {
+          product_name: cart.product_name,
+          qty: cart.qty,
+          discount_type: null,
+          voucher_type: null,
+          price_per_item: cart.price,
+          weight: cart.product_weight,
+        };
+      }),
+      products_id: carts.map((cart) => {
+        return {
+          product_id: cart.item_products_id,
+        };
+      }),
+      count,
+      isFromCart: true,
+      grandtotal,
+      totalweight,
+    };
     console.log(checkout);
     dispatch(saveCartToCheckout(checkout));
-    navigate("/shipping")
-  }
+    navigate("/shipping");
+  };
 
   return (
     <>
@@ -139,7 +156,11 @@ const CartList = () => {
                     <button
                       className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
                       onClick={() =>
-                        handleUpdateQty(val.item_products_id, val.qty - 1)
+                        handleUpdateQty(
+                          val.item_products_id,
+                          val.qty - 1,
+                          val.product_stock
+                        )
                       }
                     >
                       -
@@ -148,24 +169,55 @@ const CartList = () => {
                       className="mx-2 border text-center w-8"
                       type="text"
                       value={val.qty}
-                      onChange={(event) => handleQuantityChange(event, val.item_products_id)}
-                      onBlur={(event) => handleQuantityBlur(event, val.item_products_id)}
+                      onChange={(event) =>
+                        handleQuantityChange(
+                          event,
+                          val.item_products_id,
+                          val.product_stock
+                        )
+                      }
+                      onBlur={(event) =>
+                        handleQuantityBlur(
+                          event,
+                          val.item_products_id,
+                          val.product_stock
+                        )
+                      }
                     />
                     <button
                       className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
                       onClick={() =>
-                        handleUpdateQty(val.item_products_id, val.qty + 1)
+                        handleUpdateQty(
+                          val.item_products_id,
+                          val.qty + 1,
+                          val.product_stock
+                        )
                       }
                     >
                       +
                     </button>
                   </div>
-                  <span className="text-center w-1/5 font-semibold text-sm">
+                  {/* <span className="text-center w-1/5 font-semibold text-sm">
                     Rp. {val.price}
                   </span>
                   <span className="text-center w-1/5 font-semibold text-sm">
                     Rp. {total}
-                  </span>
+                  </span> */}
+
+                  <CurrencyFormat
+                    className="text-center w-1/5 font-semibold text-sm"
+                    value={val.price}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    prefix={"Rp. "}
+                  />
+                  <CurrencyFormat
+                    className="text-center w-1/5 font-semibold text-sm"
+                    value={total}
+                    displayType={"text"}
+                    thousandSeparator={true}
+                    prefix={"Rp. "}
+                  />
                 </div>
               );
             })}
@@ -192,7 +244,14 @@ const CartList = () => {
               <span className="font-semibold text-sm uppercase">
                 Items {count}
               </span>
-              <span className="font-semibold text-sm"> Rp. {grandtotal}</span>
+              {/* <span className="font-semibold text-sm"> Rp. {grandtotal}</span> */}
+              <CurrencyFormat
+                className="font-semibold text-sm"
+                value={grandtotal}
+                displayType={"text"}
+                thousandSeparator={true}
+                prefix={"Rp. "}
+              />
             </div>
             {/* <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
@@ -222,9 +281,18 @@ const CartList = () => {
             <div className="border-t mt-8">
               <div className="flex font-semibold justify-between py-6 text-sm uppercase">
                 <span>Total cost</span>
-                <span> Rp. {grandtotal}</span>
+                <CurrencyFormat
+                  className="font-semibold text-sm"
+                  value={grandtotal}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={"Rp. "}
+                />
               </div>
-              <button onClick={() => handleCheckout()} className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full">
+              <button
+                onClick={() => handleCheckout()}
+                className="bg-indigo-500 font-semibold hover:bg-indigo-600 py-3 text-sm text-white uppercase w-full"
+              >
                 Checkout
               </button>
             </div>

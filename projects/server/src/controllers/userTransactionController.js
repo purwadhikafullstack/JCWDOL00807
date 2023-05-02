@@ -77,8 +77,10 @@ module.exports = {
         },
         { transaction: t }
       );
+
+      const transactions_id = insert.id
       const newMap = detailOrder.map((item) => {
-        return { ...item, transactions_id: insert.id };
+        return { ...item, transactions_id };
       });
       await transaction_detail.bulkCreate(newMap, { transaction: t });
 
@@ -86,7 +88,7 @@ module.exports = {
       for (let index = 0; index < newMap.length; index++) {
         await item_products.update(
           {
-            qty: sequelize.literal(`qty - ${newMap[index].qty}`), // <---- HERE
+            stock: sequelize.literal(`stock - ${newMap[index].qty}`),
           },
           {
             where: {
