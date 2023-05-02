@@ -552,7 +552,11 @@ module.exports = {
   },
   productDetail: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { name } = req.params;
+      const { branch_id } = req.query;
+
+      console.log(name);
+      console.log(branch_id);
 
       const product = await item_products.findAll({
         attributes: [
@@ -607,7 +611,7 @@ module.exports = {
             attributes: [],
           },
         ],
-        where: { id },
+        where: { [Op.and]: [{ name }, { branch_stores_id: branch_id }] },
       });
       product.map((val) => {
         if (!val.images) {
@@ -688,7 +692,7 @@ module.exports = {
       });
     } catch (error) {
       res.status(500).send({
-        isSuccess: true,
+        isSuccess: false,
         message: error.message,
       });
     }

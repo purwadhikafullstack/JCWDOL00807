@@ -44,12 +44,13 @@ const SidebarUser = () => {
           },
         }
       );
-
       dispatch(keepLogin());
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(user);
 
   return (
     <section>
@@ -117,9 +118,14 @@ const SidebarUser = () => {
           </Box>
           <Box className="flex flex-row gap-3 ">
             <Icon className=" text-2xl " icon="ri:hand-heart-line" />
-            <Text fontWeight="bold" size="sm">
-              Referal Code
-            </Text>
+            <div>
+              <Text fontWeight="bold" size="sm">
+                Referal Code
+              </Text>
+              <Text pt="2" fontSize="sm">
+                {user?.referral_code}
+              </Text>
+            </div>
           </Box>
         </CardBody>
       </Card>

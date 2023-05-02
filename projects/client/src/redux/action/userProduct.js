@@ -1,7 +1,5 @@
 import axios from "axios";
 import { userProductSlice } from "../reducer/productUser";
-import { useSelector, useDispatch } from "react-redux";
-
 export const findAll_productList_request = "findAll_productList_request";
 
 export const userProductList = (data) => {

@@ -20,7 +20,6 @@ export const cartList = (branch_id) => {
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      
       // alert(error.response.data.message);
       dispatch(cartSlice.actions.failed(error.response.data.message));
     }
@@ -35,9 +34,9 @@ export const addToCart = (product_id, qty, branch_id) => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_BASE_URL}/cart/add-to-cart`,
         {
-            product_id,
-            qty,
-            branch_id
+          product_id,
+          qty,
+          branch_id,
         },
         {
           headers: {
@@ -65,7 +64,7 @@ export const updateCartQty = (product_id, qty, branch_id) => {
         {
           product_id,
           qty,
-          branch_id
+          branch_id,
         },
         {
           headers: {
@@ -96,8 +95,8 @@ export const deleteCartQty = (product_id, branch_id) => {
           },
           data: {
             product_id,
-            branch_id
-          }
+            branch_id,
+          },
         }
       );
       dispatch(cartSlice.actions.deleteQtySuccess(response.data.data));
@@ -114,5 +113,5 @@ export const deleteCartQty = (product_id, branch_id) => {
 export const saveCartToCheckout = (checkout) => {
   return (dispatch) => {
     dispatch(cartSlice.actions.savetoCheckout(checkout));
-  }
-}
+  };
+};

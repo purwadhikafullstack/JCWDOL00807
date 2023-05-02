@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Icon } from "@iconify/react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
 import AlertSuccess from "../components/AlertSuccess";
 import { useState } from "react";

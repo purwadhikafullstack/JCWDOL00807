@@ -35,8 +35,8 @@ export const findAllAddress = () => {
       // loading jadikeun false
     } catch (error) {
       console.log(error);
-      console.log(error.response.data.message);
-      dispatch(addressSlice.actions.failed(error.response.data.message));
+      // console.log(error.response.data.message);
+      dispatch(addressSlice.actions.failed(error.response.data));
       // loading jadikeun false
     }
   };
@@ -59,7 +59,9 @@ export const createUserAddress = ({ formData }) => {
         }
       );
       dispatch(findAllAddress());
-      dispatch(addressSlice.actions.updateAddressSuccess(response.data));
+      dispatch(
+        addressSlice.actions.updateAddressSuccess(response.data.message)
+      );
 
       console.log(response.data);
     } catch (error) {
@@ -72,8 +74,6 @@ export const createUserAddress = ({ formData }) => {
 
 export const updateUserAddress = ({ formData }, { id_address }) => {
   return async (dispatch) => {
-    console.log(formData);
-    console.log(id_address);
     try {
       let token = localStorage.my_Token;
       const response = await axios.put(
@@ -86,8 +86,7 @@ export const updateUserAddress = ({ formData }, { id_address }) => {
         }
       );
       dispatch(findAllAddress());
-      dispatch(addressSlice.actions.editAddressSuccess(response.data));
-      console.log(response.data);
+      dispatch(addressSlice.actions.editAddressSuccess(response.data.message));
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
@@ -110,7 +109,7 @@ export const deleteUserAddress = ({ id_address }) => {
         }
       );
       dispatch(findAllAddress());
-      dispatch(addressSlice.actions.editAddressSuccess(response.data));
+      dispatch(addressSlice.actions.editAddressSuccess(response.data.message));
       console.log(response.data);
     } catch (error) {
       console.log(error);

@@ -11,23 +11,25 @@ import Router from "./routes";
 function App() {
   const dispatch = useDispatch();
   let address = useSelector((state) => state.address);
-  let userProduct = useSelector((state) => state.userProduct.userProduct);
-  const branch_id = userProduct?.data?.branch_id;
-  const branch_name = userProduct?.data?.branch;
+  let userProduct = useSelector((state) => state.userProduct);
+  let user = useSelector((state) => state.auth);
+  const branch_id = userProduct?.userProduct?.data?.branch_id;
+  const branch_name = userProduct?.userProduct?.data?.branch;
 
   const geolocation = () => {
     if (!address.loading) {
-      dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
-      if (address.userAddress.data) {
+      if (address?.userAddress?.data) {
         let lat = address.userAddress.data[0]?.latitude;
         let lng = address.userAddress.data[0]?.longitude;
         dispatch(userProductList({ lat: lat, lng: lng }));
-      } else {
+      } else if (!address.userAddress.data) {
+        dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
-              var latitude = position.coords.latitude;
-              var longitude = position.coords.longitude;
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+
               dispatch(userProductList({ lat: latitude, lng: longitude }));
             },
             function (error) {
@@ -46,23 +48,30 @@ function App() {
   };
 
   useEffect(() => {
-    geolocation();
+    const timeOut = setTimeout(() => {
+      geolocation();
+    }, 1000);
+    return () => {
+      clearTimeout(timeOut);
+    };
     // eslint-disable-next-line
-  }, [address]);
+  }, [address, user.addtional]);
 
   useEffect(() => {
     dispatch(keepLogin());
-    // dispatch(keepLoginAdmin());
-    dispatch(findAllAddress());
     dispatch(userProductList());
-    // dispatch(cartList(branch_id));
-    // dispatch(getOrigin(branch_name));
+    // dispatch(keepLoginAdmin())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(findAllAddress());
+  }, [dispatch, user.addtional]);
+
+  useEffect(() => {
     dispatch(cartList(branch_id));
     dispatch(getOrigin(branch_name));
+    // eslint-disable-next-line
   }, [dispatch, branch_id]);
 
   return (

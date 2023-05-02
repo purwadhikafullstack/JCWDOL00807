@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import {
@@ -131,7 +131,7 @@ const UserOrderListByQuery = () => {
 
   const handleUploadPayment = (idtrx) => {
     navigate(`/upload/payment-proof?id=${idtrx}`);
-  }
+  };
   return (
     <>
       <Navbar />
@@ -316,7 +316,10 @@ const UserOrderListByQuery = () => {
                           <span>See Detail</span>
                         </button>
                         {!value.payment_proof && (
-                          <button className="text-lg text-blue-600 button flex items-center ml-2 hover:underline" onClick={() => handleUploadPayment(value.id)}>
+                          <button
+                            className="text-lg text-blue-600 button flex items-center ml-2 hover:underline"
+                            onClick={() => handleUploadPayment(value.id)}
+                          >
                             <span>Upload Payment Proof</span>
                           </button>
                         )}

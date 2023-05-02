@@ -4,6 +4,7 @@ const initialState = {
   userAddress: {},
   errorMessage: null,
   loading: true,
+  messageSuccess: null,
 };
 
 export const addressSlice = createSlice({
@@ -11,8 +12,7 @@ export const addressSlice = createSlice({
   initialState,
   reducers: {
     updateAddressSuccess: (state, action) => {
-      state.userAddress = action.payload;
-      state.loading = null;
+      state.messageSuccess = action.payload;
       state.errorMessage = null;
     },
 
@@ -21,7 +21,7 @@ export const addressSlice = createSlice({
       state.loading = false;
     },
     stateError: (state, action) => {
-      state.userAddress = action.payload;
+      state.messageSuccess = null;
       state.errorMessage = null;
     },
     getAllAddress: (state, action) => {
@@ -33,16 +33,17 @@ export const addressSlice = createSlice({
       state.loading = true;
     },
     editAddressSuccess: (state, action) => {
-      state.userAddress = action.payload;
+      state.messageSuccess = action.payload;
       state.errorMessage = null;
     },
     removeAddressSuccess: (state, action) => {
-      state.userAddress = action.payload;
+      state.messageSuccess = action.payload;
       state.errorMessage = null;
     },
     findAll_address_request: (state, action) => {
       state.userAddress = action;
       state.loading = null;
+      state.errorMessage = null;
     },
   },
 });

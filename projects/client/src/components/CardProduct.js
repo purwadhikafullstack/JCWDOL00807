@@ -2,7 +2,6 @@ import { Button, ButtonGroup, Divider, Heading, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CardProduct = ({
@@ -15,7 +14,8 @@ const CardProduct = ({
   priceAfterDiscount,
   discount_type,
   status,
-  weight
+  weight,
+  stock,
 }) => {
   let dispatch = useDispatch();
   const navigate = useNavigate();
@@ -92,20 +92,33 @@ const CardProduct = ({
         <div className=" mt-8 md:mt-10"></div>
       )}
       {image ? (
-        <Link to={`/product/${productid}`}>
-          <img
-            className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
-            src={image}
-            alt={image}
-          />
-        </Link>
+        stock === 0 ? (
+          <Link to={`/product/${name}`}>
+            <img
+              className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
+              src={image}
+              alt={image}
+            />
+            <div className=" absolute  text-sm font-bold w-fit p-2 h-10 rounded-xl bg-black text-white  text-center translate-x-24 translate-y-[-100px]">
+              Out Of Stock
+            </div>
+          </Link>
+        ) : (
+          <Link to={`/product/${name}`}>
+            <img
+              className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
+              src={image}
+              alt={image}
+            />
+          </Link>
+        )
       ) : (
         <div className=" h-[100px] md:h-[430px]"></div>
       )}
 
       <div className="px-4 py-2 bg-white  w-[170px] h-[200px] md:w-[300px] md:h-[300px] mt-5 pl-2 md:pl-7 ">
         <Heading size={["xs", "sm"]} h={["40px", "35px"]} mb="3">
-          <Link to={`/product/${productid}`}>{name}</Link>
+          <Link to={`/product/${name}`}>{name}</Link>
         </Heading>
         <Text className="  text-[10px] md:h-[40px] md:w-[250px] mb-3 md:text-sm text-gray-600 ">
           {description}
@@ -161,6 +174,7 @@ const CardProduct = ({
             bgColor="#DEF5E5"
             size={["xs", "sm"]}
             onClick={() => handleBuyNow()}
+            isDisabled={stock === 0}
           >
             Buy now
           </Button>
@@ -170,6 +184,7 @@ const CardProduct = ({
             fontWeight="semibold"
             size={["xs", "sm"]}
             onClick={() => handleAddToCart()}
+            isDisabled={stock === 0}
           >
             Add to cart
           </Button>

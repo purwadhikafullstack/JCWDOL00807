@@ -15,9 +15,6 @@ const Navbar = () => {
     window.location.href = "login";
   };
 
-  // let link =
-  //   process.env.REACT_APP_API_BASE_URL.slice(0, 21) + user?.user?.image;
-
   return (
     <nav className="shadow shadow-slate-200 bg-[#e9ffe7]  sticky top-0 z-10">
       <div className="container mx-auto flex flex-row justify-between items-center h-28  ">
@@ -44,16 +41,7 @@ const Navbar = () => {
               <Button className="mr-4" onClick={() => handleLogout()}>
                 Logout
               </Button>
-            ) : (
-              <div className="flex flex-row justify-between gap-4 items-center">
-                <Link to={"/register"}>
-                  <Button>Register</Button>
-                </Link>
-                <Link to={"/login"}>
-                  <Button>Login</Button>
-                </Link>
-              </div>
-            )}
+            ) : null}
           </>
         )}
       </div>

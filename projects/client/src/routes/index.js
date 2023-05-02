@@ -349,7 +349,7 @@ export default function Router() {
     { path: "/authentication/:token", element: <Verification /> },
     { path: "*", element: <PageNotFound /> },
     { path: "/:name", element: <ProductList /> },
-    { path: "/product/:id", element: <ProductDetail /> },
+    { path: "/product/:name", element: <ProductDetail /> },
     { path: "/claimReferral/:token", element: <VoucherReferral /> },
   ]);
 }

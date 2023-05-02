@@ -21,7 +21,6 @@ const Home = () => {
   const [latest, setLatest] = useState([]);
   const [promotion, setPromotion] = useState([]);
   const [bestSeller, setBestSeller] = useState([]);
-  // const [branch, setBranch] = useState([]);
 
   useEffect(() => {
     dispatch(keepLogin());
@@ -31,8 +30,8 @@ const Home = () => {
       setLatest(userProduct?.userProduct?.data?.latest);
       setPromotion(userProduct?.userProduct?.data?.promotion);
       setBestSeller(userProduct?.userProduct?.data?.bestSeller);
-      // setBranch(userProduct?.userProduct?.data?.branch);
     }
+    // eslint-disable-next-line
   }, [userProduct]);
 
   return (
@@ -61,21 +60,16 @@ const Home = () => {
           <Banner images={ramadhanSales} title="ramadhanSale" />
         </Carousel>
 
-        {/* <div className="flex gap-1  border p-1 rounded-md w-fit ">
-          <Icon
-            className="text-lg"
-            icon="material-symbols:location-on-outline"
-          />
-          <h1 className=" font-bold ">Store Location : {branch}</h1>
-        </div> */}
-
         <div className=" mx-3 md:mx-2">
           <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
             Categories
           </h1>
           <div className=" flex  overflow-x-auto w-[full] gap-10 shadow shadow-slate-200 p-6 rounded-lg md: justify-between    ">
             {category.map((val, idx) => (
-              <Link key={idx} to={`/category-${val.toLowerCase()}`}>
+              <Link
+                key={idx.toLocaleString()}
+                to={`/category-${val.toLowerCase()}`}
+              >
                 <div className=" min-w-fit ">{val}</div>
               </Link>
             ))}
@@ -105,7 +99,7 @@ const Home = () => {
           <div className="flex overflow-x-auto w-[full] gap-5 border-x-2 rounded-lg  ">
             {promotion.map((val, idx) => (
               <CardProduct
-                key={idx}
+                key={idx.toLocaleString()}
                 productid={val.id}
                 discountPersentage={val.cut_percentage}
                 image={val.images}
@@ -116,7 +110,7 @@ const Home = () => {
                 discount_type={val.discount_type}
                 status={val.status}
                 weight={val.weight}
-
+                stock={val.stock}
               />
             ))}
           </div>
@@ -143,6 +137,7 @@ const Home = () => {
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {latest.map((val, idx) => (
               <CardProduct
+                key={idx.toLocaleString()}
                 discountPersentage={val.cut_percentage}
                 productid={val.id}
                 image={val.images}
@@ -153,6 +148,7 @@ const Home = () => {
                 discount_type={val.discount_type}
                 status={val.status}
                 weight={val.weight}
+                stock={val.stock}
               />
             ))}
           </div>
@@ -181,6 +177,7 @@ const Home = () => {
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {allProduct.map((val, idx) => (
               <CardProduct
+                key={idx.toLocaleString()}
                 productid={val.id}
                 discountPersentage={val.cut_percentage}
                 image={val.images}
@@ -191,6 +188,7 @@ const Home = () => {
                 discount_type={val.discount_type}
                 status={val.status}
                 weight={val.weight}
+                stock={val.stock}
               />
             ))}
           </div>
@@ -218,6 +216,7 @@ const Home = () => {
           <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  border-x-2 rounded-lg ">
             {bestSeller.map((val, idx) => (
               <CardProduct
+                key={idx.toLocaleString()}
                 productid={val.id}
                 discountPersentage={val.cut_percentage}
                 image={val.images}
@@ -228,6 +227,7 @@ const Home = () => {
                 discount_type={val.discount_type}
                 status={val.status}
                 weight={val.weight}
+                stock={val.stock}
               />
             ))}
           </div>
