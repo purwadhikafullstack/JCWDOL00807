@@ -27,7 +27,6 @@ import { updateUserAddress } from "../redux/action/userAddress";
 import { handleStateError } from "../redux/action/userAddress";
 import { deleteUserAddress } from "../redux/action/userAddress";
 import BackdropResetPassword from "./BackdropResetPassword";
-import { findAllAddress } from "../redux/action/userAddress";
 import { Icon } from "@iconify/react";
 
 const UpdateUserAddress = ({ id, data }) => {
@@ -49,10 +48,12 @@ const UpdateUserAddress = ({ id, data }) => {
   const [previousData, setPreviousData] = useState({});
   const [isPrimaryAddress, setIsPrimaryAddress] = useState(false);
   const [messageDelete, setMessageDelete] = useState("");
+  const [messageConfirmPrimaryAddress, setMessageConfirmPrimaryAddress] =
+    useState("");
 
   const onBtnOpen = () => {
-    console.log(id);
-    console.log(data);
+    // console.log(id);
+    // console.log(data);
     setPreviousData(data);
     setDataAddress({
       city: data.city,
@@ -108,7 +109,7 @@ const UpdateUserAddress = ({ id, data }) => {
       const response = await axios.get(
         `${api}/geo-location/coordinate?city=${dataSelected[1]}&province=${dataSelected[0]}&country=indonesia`
       );
-      console.log(response.data.message);
+      // console.log(response.data.message);
       const coordinat = response.data.data;
       setDataAddress({
         city: dataSelected[1],
@@ -166,8 +167,8 @@ const UpdateUserAddress = ({ id, data }) => {
             isDefault: isPrimaryAddress,
           };
           const id_address = id;
-          console.log(formData);
-          console.log(previousData);
+          // console.log(formData);
+          // console.log(previousData);
           dispatch(updateUserAddress({ formData }, { id_address }));
         } catch (error) {
           setMessage(error.response.data.message);
@@ -219,6 +220,17 @@ const UpdateUserAddress = ({ id, data }) => {
     setErrorPhone("");
     setMessage("");
     onClose();
+  };
+
+  const handleConfirmPrimaryAddress = () => {
+    setMessageConfirmPrimaryAddress(
+      `Are you sure want to proceed this action. Keep in mind that it will change both your shopping cart and shipping destination.`
+    );
+  };
+
+  const handleChangePrimaryAddress = () => {
+    setMessageConfirmPrimaryAddress("");
+    setIsPrimaryAddress(true);
   };
 
   return (
@@ -379,7 +391,8 @@ const UpdateUserAddress = ({ id, data }) => {
                     </FormLabel>
                     <Switch
                       colorScheme="whatsapp"
-                      onChange={() => setIsPrimaryAddress(!isPrimaryAddress)}
+                      onChange={handleConfirmPrimaryAddress}
+                      // onChange={() => setIsPrimaryAddress(!isPrimaryAddress)}
                     />
                   </FormControl>
                 </Box>
@@ -414,6 +427,13 @@ const UpdateUserAddress = ({ id, data }) => {
         <BackdropResetPassword
           message={messageDelete}
           handleConfirm={handleConfirm}
+          handleClose={handleClose}
+        />
+      ) : null}
+      {messageConfirmPrimaryAddress ? (
+        <BackdropResetPassword
+          message={messageConfirmPrimaryAddress}
+          handleConfirm={handleChangePrimaryAddress}
           handleClose={handleClose}
         />
       ) : null}

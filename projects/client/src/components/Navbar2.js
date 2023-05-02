@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { keepLogin } from "../redux/action/user";
 
@@ -21,11 +21,12 @@ const Navbar = () => {
   const token = localStorage.getItem("my_Token");
 
   let user = useSelector((state) => state.auth);
-  console.log(user);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
+  let address = useSelector((state) => state.address);
   let count = useSelector((state) => state.carts.count);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [branchStore, setBranchStore] = useState("");
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -34,9 +35,25 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("my_Token");
     localStorage.removeItem("my_Role");
-    dispatch(keepLogin());
+    window.location.reload();
     navigate("/");
   };
+
+  useEffect(() => {
+    if (!address.loading) {
+      if (address?.userAddress?.data) {
+        setBranchStore(userProduct?.data?.branch);
+      } else {
+        const timeOut = setTimeout(() => {
+          setBranchStore(userProduct?.data?.branch);
+        }, 500);
+        return () => {
+          clearTimeout(timeOut);
+        };
+      }
+    }
+    // eslint-disable-next-line
+  }, [userProduct]);
 
   return (
     <>
@@ -85,7 +102,7 @@ const Navbar = () => {
                       className="text-lg"
                       icon="material-symbols:location-on-outline"
                     />
-                    <h1 className=" font-bold ">{userProduct?.data?.branch}</h1>
+                    <h1 className=" font-bold ">{branchStore}</h1>
                   </li>
                   <li>
                     <div className="cart-icon">
@@ -102,15 +119,15 @@ const Navbar = () => {
                   </li>
                   <li className=" flex flex-col justify-center items-center ">
                     <Menu>
-                      <MenuButton>
-                        <Tooltip label={user?.user?.name} fontSize="xs">
+                      <Tooltip label={user?.user?.name} fontSize="xs">
+                        <MenuButton>
                           <Avatar src={user?.user?.image} size="sm" />
-                        </Tooltip>
-                      </MenuButton>
+                        </MenuButton>
+                      </Tooltip>
                       <MenuList>
-                        <MenuGroup title="Profile">
+                        <MenuGroup>
                           <Link to="/accounts/profile">
-                            <MenuItem>My Account</MenuItem>
+                            <MenuItem>My Profile</MenuItem>
                           </Link>
                           <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </MenuGroup>
@@ -126,7 +143,7 @@ const Navbar = () => {
                       className="text-lg"
                       icon="material-symbols:location-on-outline"
                     />
-                    <h1 className=" font-bold ">{userProduct?.data?.branch}</h1>
+                    <h1 className=" font-bold ">{branchStore}</h1>
                   </li>
                   <li>
                     <Link to={"/register"}>

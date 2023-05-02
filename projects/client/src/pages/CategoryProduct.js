@@ -85,11 +85,13 @@ const CategoryProduct = () => {
           <AlertSuccess title={messageSuccess} handleClick={handleClick} />
         ) : null}
 
+        <h1 className=" text-center font-extrabold text-lg p-10">
+          Table List Categories
+        </h1>
+
         <TableContainer>
           <SidebarAdmin />
-
           <Table variant="striped">
-            <TableCaption>Tabel List Categories</TableCaption>
             <Thead className=" text-center">
               <Tr>
                 <Th>Id Product</Th>

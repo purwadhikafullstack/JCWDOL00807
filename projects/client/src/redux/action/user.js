@@ -36,6 +36,7 @@ export const loginUser = ({ email, password }) => {
       const getUserLogin = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/user/login?email=${email}&password=${password}`
       );
+
       dispatch(authSlice.actions.loginSuccess(getUserLogin.data));
     } catch (error) {
       console.log(error);
@@ -46,14 +47,15 @@ export const loginUser = ({ email, password }) => {
 
 export const keepLogin = () => {
   return async (dispatch) => {
+    dispatch(authSlice.actions.getLoading(true));
     try {
       dispatch({ type: keep_login_request });
-      let getStorage = localStorage.my_Token;
-      let response = await axios.get(
+      const token = localStorage.my_Token;
+      const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/user/keep-login`,
         {
           headers: {
-            Authorization: `${getStorage}`,
+            Authorization: token,
           },
         }
       );

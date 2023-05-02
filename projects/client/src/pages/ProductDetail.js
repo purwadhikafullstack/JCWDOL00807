@@ -19,11 +19,10 @@ import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
 import CardProduct from "../components/CardProduct";
 import { Divider } from "@chakra-ui/react";
 
-
 const ProductDetail = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const api = process.env.REACT_APP_API_BASE_URL;
-  const { id } = useParams();
+  const { name } = useParams();
   const [dataProduct, setDataProduct] = useState({});
   const [productRecomendation, setProductRecomendation] = useState([]);
   const [message, setMessage] = useState("");
@@ -34,15 +33,11 @@ const ProductDetail = () => {
   const branch_name = userProduct?.data?.branch;
   let grandtotal = 0;
 
-
-  console.log(dataProduct);
-  console.log(dataProduct.stock)
-
   useEffect(() => {
     async function fetchData() {
       try {
         const getProductDetail = await axios.get(
-          `${api}/user/product-detail/${id}`
+          `${api}/user/product-detail/${name}?branch_id=${branch_id}`
         );
         console.log(getProductDetail.data.data.product);
         setDataProduct(getProductDetail.data.data.product);
@@ -54,7 +49,9 @@ const ProductDetail = () => {
       }
     }
     fetchData();
-  }, [id]);
+  }, [name]);
+
+  console.log(name);
 
   const handleAddToCart = async () => {
     try {
@@ -63,12 +60,12 @@ const ProductDetail = () => {
         setMessage(
           "Unauthorization, please register or login for continue  add product to cart"
         );
-      } else if (qty < 1){
-        alert("Quantity product was zero")
+      } else if (qty < 1) {
+        alert("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
-        alert("Sorry your quantity more then stock")
+        alert("Sorry your quantity more then stock");
       } else {
-        await dispatch(addToCart(id, qty));
+        await dispatch(addToCart(name, qty));
         await dispatch(cartList());
       }
     } catch (error) {
@@ -91,28 +88,32 @@ const ProductDetail = () => {
           "Unauthorization, please register or login for continue  add product to cart"
         );
       } else if (qty < 1) {
-        alert("Quantity product was zero")
+        alert("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
-        alert("Sorry your quantity more then stock")
+        alert("Sorry your quantity more then stock");
       } else {
         grandtotal = grandtotal + parseInt(dataProduct.price_after_discount);
         const checkout = {
-          detailOrder : [{
-            product_name: dataProduct.name,
-            qty,
-            discount_type: null,
-            voucher_type: null,
-            price_per_item: dataProduct.price_after_discount,
-            weight: dataProduct.weight,
-          }],
-          products_id: [{
-            product_id: dataProduct.id
-          }],
+          detailOrder: [
+            {
+              product_name: dataProduct.name,
+              qty,
+              discount_type: null,
+              voucher_type: null,
+              price_per_item: dataProduct.price_after_discount,
+              weight: dataProduct.weight,
+            },
+          ],
+          products_id: [
+            {
+              product_id: dataProduct.id,
+            },
+          ],
           grandtotal,
           isFromCart: false,
           branch_name,
-          branch_id
-        }
+          branch_id,
+        };
         console.log(checkout);
         dispatch(saveCartToCheckout(checkout));
         navigate("/shipping");
@@ -126,8 +127,8 @@ const ProductDetail = () => {
   };
 
   const handleQty = (e) => {
-    setQty(e)
-  }
+    setQty(e);
+  };
 
   return (
     <>
@@ -135,11 +136,25 @@ const ProductDetail = () => {
       <section className="text-gray-700 body-font overflow-hidden bg-white container mx-auto">
         <div className="px-5 py-5 md:py-24">
           <div className="md:flex justify-between flex-wrap  ">
-            <img
-              className=" h-full md:h-[400px] object-cover object-center rounded border border-gray-200"
-              src={dataProduct?.images}
-              alt={dataProduct?.name}
-            />
+            {dataProduct?.stock === 0 ? (
+              <>
+                <img
+                  className="h-full md:h-[400px] object-cover object-center rounded border border-gray-200"
+                  src={dataProduct?.images}
+                  alt={dataProduct?.name}
+                />
+                <div className=" absolute  text-lg font-bold w-fit p-2 h-10 rounded-xl bg-black text-white  text-center translate-x-32  translate-y-44 ">
+                  Out Of Stock
+                </div>
+              </>
+            ) : (
+              <img
+                className=" h-full md:h-[400px] object-cover object-center rounded border border-gray-200"
+                src={dataProduct?.images}
+                alt={dataProduct?.name}
+              />
+            )}
+
             <div className="lg:w-1/2 w-full lg:pl-10 lg:pr-10  lg:py-6 mt-6 lg:mt-0 shadow shadow-slate-200 rounded-md p-6 md:0  ">
               {dataProduct?.discount_type === "Discount Bogo" &&
               dataProduct?.status === 1 ? (
@@ -228,8 +243,18 @@ const ProductDetail = () => {
               ) : null}
 
               <div className=" flex gap-3 mt-4 justify-end  ">
-                <Button onClick={handleAddToCart}>Add to cart</Button>
-                <Button onClick={handleAddToTransaction}>Buy Now</Button>
+                <Button
+                  onClick={handleAddToCart}
+                  isDisabled={dataProduct?.stock === 0}
+                >
+                  Add to cart
+                </Button>
+                <Button
+                  onClick={handleAddToTransaction}
+                  isDisabled={dataProduct?.stock === 0}
+                >
+                  Buy Now
+                </Button>
               </div>
             </div>
           </div>
@@ -243,19 +268,20 @@ const ProductDetail = () => {
 
         <div className="  flex overflow-x-auto w-[full] gap-5 mb-10 mx-5  ">
           {productRecomendation.map((val, idx) => (
-              <CardProduct
-                key={idx}
-                productid={val.id}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-                status={val.status}
-                weight={val.weight}
-              />
+            <CardProduct
+              key={idx}
+              productid={val.id}
+              discountPersentage={val.cut_percentage}
+              image={val.images}
+              name={val.name}
+              description={val.description}
+              price={val.price}
+              priceAfterDiscount={val.price_after_discount}
+              discount_type={val.discount_type}
+              status={val.status}
+              weight={val.weight}
+              stock={val.stock}
+            />
           ))}
         </div>
       </section>
