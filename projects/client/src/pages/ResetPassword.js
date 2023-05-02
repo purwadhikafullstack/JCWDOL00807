@@ -14,8 +14,10 @@ import axios from "axios";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
+  const navigate = useNavigate();
   const password = useRef();
   const repeatPassword = useRef();
   const { token } = useParams();
@@ -79,6 +81,11 @@ const ResetPassword = () => {
       setMessage(error.response.data.message);
       console.log(error);
     }
+  };
+
+  const handleClose = () => {
+    setMessageSuccess("");
+    navigate("/");
   };
 
   return (
@@ -151,7 +158,10 @@ const ResetPassword = () => {
           </Button>
         </div>
         {messageSuccess ? (
-          <BackdropResetPassword message={messageSuccess} />
+          <BackdropResetPassword
+            message={messageSuccess}
+            handleClose={handleClose}
+          />
         ) : null}
       </section>
       <Footer />

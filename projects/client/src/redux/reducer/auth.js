@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: {},
   errorMessage: null,
-  loading: null,
+  loading: false,
+  addtional: null,
 };
 
 export const authSlice = createSlice({
@@ -17,20 +18,23 @@ export const authSlice = createSlice({
     },
     loginSuccess: (state, action) => {
       state.user = action.payload;
-      state.loading = null;
+      state.loading = false;
       state.errorMessage = null;
+      state.addtional = "login";
     },
     failed: (state, action) => {
       state.errorMessage = action.payload;
-      state.loading = null;
+      state.loading = false;
     },
     keep_login_request: (state, action) => {
       state.user = action;
-      state.loading = null;
+      state.loading = false;
     },
     keep_login_payload: (state, action) => {
       state.user = action.payload;
-      state.loading = null;
+      state.loading = false;
+      state.errorMessage = null;
+      state.addtional = "keepLogin";
     },
     updateProfileSuccess: (state, action) => {
       state.user = action.payload;
@@ -40,11 +44,15 @@ export const authSlice = createSlice({
     stateError: (state, action) => {
       state.user = action.payload;
       state.errorMessage = null;
+      state.loading = false;
     },
     updateAddressSuccess: (state, action) => {
       state.user = action.payload;
       state.loading = null;
       state.errorMessage = null;
+    },
+    getLoading: (state) => {
+      state.loading = true;
     },
   },
 });
@@ -54,5 +62,6 @@ export const {
   loginSuccess,
   updateProfileSuccess,
   updateAddressSuccess,
+  getLoading,
 } = authSlice.actions;
 export default authSlice.reducer;

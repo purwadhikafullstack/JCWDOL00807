@@ -137,8 +137,6 @@ module.exports = {
       var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
       const { id } = req.params;
       const users_id = req.dataToken.id;
-      console.log(users_id);
-      console.log(req.body);
       const {
         street_address,
         city,
@@ -217,11 +215,19 @@ module.exports = {
         );
       }
 
+      const dataToSend = await user_address.findAll(
+        {
+          where: { users_id },
+          order: [["isDefault", "DESC"]],
+        },
+        { transaction: t }
+      );
+
       await t.commit();
       res.status(200).send({
         isSuccess: true,
         message: "update address success",
-        // data: isDefaultExist,
+        data: [],
       });
     } catch (error) {
       await t.rollback();

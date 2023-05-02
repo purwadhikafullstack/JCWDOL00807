@@ -332,18 +332,19 @@ const ProductList = () => {
             ) : (
               <div className=" grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-5 md:p-2 ">
                 {listProduct.map((val, idx) => (
-                  <Link key={idx} to={`/product/${val.id}`}>
-                    <CardProduct
-                      discountPersentage={val.cut_percentage}
-                      image={val.images}
-                      name={val.name}
-                      description={val.description}
-                      price={val.price}
-                      priceAfterDiscount={val.price_after_discount}
-                      discount_type={val.discount_type}
-                      status={val.status}
-                    />
-                  </Link>
+                  <CardProduct
+                    key={idx.toLocaleString()}
+                    discountPersentage={val.cut_percentage}
+                    image={val.images}
+                    name={val.name}
+                    description={val.description}
+                    price={val.price}
+                    priceAfterDiscount={val.price_after_discount}
+                    discount_type={val.discount_type}
+                    status={val.status}
+                    stock={val.stock}
+                    productid={val.id}
+                  />
                 ))}
               </div>
             )}
