@@ -23,7 +23,7 @@ const branch_stores = db.branch_stores;
 
 const getOffset = (page = 1, limit = 10) => {
   return (page - 1) * limit;
-}
+};
 
 module.exports = {
   getDataDashboard: async (req, res) => {
@@ -79,7 +79,7 @@ limit 3
         );
         let totalStats = await sequelize.query(
           `
-            Select count(distinct t.users_id) as total_users , sum(t.total_price) as total_sales , count(DISTINCT t.id) as total_order , SUM(td.qty) as total_product_sold
+            Select count(distinct t.users_id) as total_users , count(DISTINCT t.id) as total_order , SUM(td.qty) as total_product_sold
     FROM transactions t
     JOIN transaction_details td ON td.transactions_id = t.id
     where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
@@ -89,6 +89,16 @@ limit 3
           }
         );
         // console.log(totalStats)
+        let totalSales = await sequelize.query(
+          `
+          SELECT sum(total_price) as total_sales
+FROM jcwdol0807.transactions
+where (status="Order Confirmed" or status="On Delivering" or status="Ongoing")
+          `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
         let dataChart = await sequelize.query(
           `
             SELECT DATE_FORMAT(t.createdAt, "%d %M %Y") as stat_day, SUM(td.qty) as total_product , SUM(t.total_price) as sales , COUNT(DISTINCT t.id) as total_order
@@ -104,6 +114,7 @@ limit 3
           }
         );
         dataToSend.totalStats = totalStats;
+        dataToSend.totalSales = totalSales;
         dataToSend.dataChart = dataChart;
         dataToSend.topProduct = topProduct;
         dataToSend.topBranch = topBranch;
@@ -158,6 +169,17 @@ group by a.id;
             type: sequelize.QueryTypes.SELECT,
           }
         );
+        let totalSales = await sequelize.query(
+          `
+          SELECT sum(total_price) as total_sales
+FROM jcwdol0807.transactions
+where branch_store= ? and (status="Order Confirmed" or status="On Delivering" or status="Ongoing") ;
+          `,
+          {
+            replacements: [branch],
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
         let dataChart = await sequelize.query(
           `
           SELECT * FROM(
@@ -194,6 +216,7 @@ group by a.id;
           }
         );
         dataToSend.topProduct = topProduct;
+        dataToSend.totalSales = totalSales;
         dataToSend.totalStats = totalStats;
         dataToSend.dataChart = dataChart;
         dataToSend.dataBranchTransaction = dataBranchTransaction;
@@ -372,31 +395,31 @@ group by a.id;
   managementAdmin: async (req, res) => {
     try {
       let { role, _page, _limit, _search } = req.query;
-      const page = parseInt(_page)
+      const page = parseInt(_page);
       const limit = parseInt(_limit);
       const offset = getOffset(page, limit);
 
       const findAdmin = await admin.findAll({
         where: {
           role: {
-            [Op.eq]: role
+            [Op.eq]: role,
           },
           name: {
-            [Op.like]: `%${_search}%`
+            [Op.like]: `%${_search}%`,
           },
           email: {
-            [Op.like]: `%${_search}%`
-          }
+            [Op.like]: `%${_search}%`,
+          },
         },
-        include: [{
-          model: branch_stores,
-          attributes: ['name']
-        }],
+        include: [
+          {
+            model: branch_stores,
+            attributes: ["name"],
+          },
+        ],
         offset,
         limit,
-        order: [
-          ['createdAt', 'DESC']
-        ]
+        order: [["createdAt", "DESC"]],
       });
 
       const adminBranch = await admin.findAll({
@@ -405,13 +428,13 @@ group by a.id;
             [Op.eq]: role,
           },
           name: {
-            [Op.like]: `%${_search}%`
+            [Op.like]: `%${_search}%`,
           },
           email: {
-            [Op.like]: `%${_search}%`
-          }
-        }
-      })
+            [Op.like]: `%${_search}%`,
+          },
+        },
+      });
 
       res.status(200).send({
         isSuccess: true,
@@ -420,8 +443,8 @@ group by a.id;
           totalRecord: adminBranch.length,
           totalReturn: findAdmin.length,
           searchText: _search,
-          contents: findAdmin
-        }
+          contents: findAdmin,
+        },
       });
       // console.log(findAdmin.dataValues)
     } catch (error) {
@@ -435,31 +458,31 @@ group by a.id;
   managementAdmin: async (req, res) => {
     try {
       let { role, _page, _limit, _search } = req.query;
-      const page = parseInt(_page)
+      const page = parseInt(_page);
       const limit = parseInt(_limit);
       const offset = getOffset(page, limit);
 
       const findAdmin = await admin.findAll({
         where: {
           role: {
-            [Op.eq]: role
+            [Op.eq]: role,
           },
           name: {
-            [Op.like]: `%${_search}%`
+            [Op.like]: `%${_search}%`,
           },
           email: {
-            [Op.like]: `%${_search}%`
-          }
+            [Op.like]: `%${_search}%`,
+          },
         },
-        include: [{
-          model: branch_stores,
-          attributes: ['name']
-        }],
+        include: [
+          {
+            model: branch_stores,
+            attributes: ["name"],
+          },
+        ],
         offset,
         limit,
-        order: [
-          ['createdAt', 'DESC']
-        ]
+        order: [["createdAt", "DESC"]],
       });
 
       const adminBranch = await admin.findAll({
@@ -468,13 +491,13 @@ group by a.id;
             [Op.eq]: role,
           },
           name: {
-            [Op.like]: `%${_search}%`
+            [Op.like]: `%${_search}%`,
           },
           email: {
-            [Op.like]: `%${_search}%`
-          }
-        }
-      })
+            [Op.like]: `%${_search}%`,
+          },
+        },
+      });
 
       res.status(200).send({
         isSuccess: true,
@@ -483,8 +506,8 @@ group by a.id;
           totalRecord: adminBranch.length,
           totalReturn: findAdmin.length,
           searchText: _search,
-          contents: findAdmin
-        }
+          contents: findAdmin,
+        },
       });
       // console.log(findAdmin.dataValues)
     } catch (error) {
@@ -498,17 +521,15 @@ group by a.id;
   getAdminByEmail: async (email) => {
     try {
       const findAdmin = await admin.findOne({
-        attributes: [
-          "name",
-        ],
+        attributes: ["name"],
         where: {
           email,
         },
       });
-      
-      return true
+
+      return true;
     } catch (error) {
-      return false
+      return false;
     }
   },
 
@@ -517,14 +538,15 @@ group by a.id;
     // const t = await sequelize.transaction();
     try {
       t = await sequelize.transaction();
-      let { name, role, password, isActive, email, branch_stores_id } = req.body;
+      let { name, role, password, isActive, email, branch_stores_id } =
+        req.body;
 
       console.log(req.body);
       const hashedPassword = await hashPassword(password);
 
       let checkEmail = await admin.findOne({
         where: { email },
-        transactions : t
+        transactions: t,
       });
 
       if (checkEmail) {
@@ -543,7 +565,7 @@ group by a.id;
           password: hashedPassword,
           isActive,
           email,
-          branch_stores_id
+          branch_stores_id,
         },
         { transaction: t }
       );
@@ -554,13 +576,15 @@ group by a.id;
         data: await admin.findOne({
           where: {
             email: {
-              [Op.eq]: email
+              [Op.eq]: email,
             },
           },
-          include: [{
-            model: branch_stores,
-            attributes: ['name']
-          }]
+          include: [
+            {
+              model: branch_stores,
+              attributes: ["name"],
+            },
+          ],
         }),
       });
     } catch (error) {
@@ -574,8 +598,8 @@ group by a.id;
 
   getBranchStore: async (req, res) => {
     try {
-      let branch_store = await branch_stores.findAll()
-      console.log(branch_store)
+      let branch_store = await branch_stores.findAll();
+      console.log(branch_store);
       res.status(200).send({
         isError: false,
         message: "Create branch_stores_id success",
@@ -593,9 +617,10 @@ group by a.id;
     let t;
     try {
       t = await sequelize.transaction();
-      let { name, role, password, isActive, email, branch_stores_id } = req.body;
+      let { name, role, password, isActive, email, branch_stores_id } =
+        req.body;
       let { id } = req.query;
-      console.log(id)
+      console.log(id);
 
       console.log(req.body);
 
@@ -603,7 +628,7 @@ group by a.id;
 
       let checkEmail = await admin.findOne({
         where: { email, id: { [Op.ne]: id } },
-        transactions: t
+        transactions: t,
       });
 
       if (checkEmail) {
@@ -622,11 +647,9 @@ group by a.id;
           password: hashedPassword,
           isActive,
           email,
-          branch_stores_id
+          branch_stores_id,
         },
-        { where: { id },
-        transaction: t
-       },
+        { where: { id }, transaction: t }
       );
       await t.commit();
       res.status(200).send({
@@ -635,13 +658,15 @@ group by a.id;
         data: await admin.findOne({
           where: {
             email: {
-              [Op.eq]: email
+              [Op.eq]: email,
             },
           },
-          include: [{
-            model: branch_stores,
-            attributes: ['name']
-          }]
+          include: [
+            {
+              model: branch_stores,
+              attributes: ["name"],
+            },
+          ],
         }),
       });
     } catch (error) {
@@ -662,7 +687,7 @@ group by a.id;
 
       console.log(id);
 
-      let getAdmin = await admin.findOne({where: {id}});
+      let getAdmin = await admin.findOne({ where: { id } });
 
       await admin.destroy(
         {
@@ -686,7 +711,437 @@ group by a.id;
       });
     }
   },
+  getDataSales: async (req, res) => {
+    try {
+      const { admins_id, email, role, isActive, branch_stores_id } =
+        req.dataToken;
+      console.log(req.dataToken);
+      let dataToSend = {};
+      console.log(admins_id, email, role);
+      if (isActive == false) {
+        res.status(404).send({
+          isError: true,
+          message: "Admin is not active, please contact to super admin",
+          data: null,
+        });
+        return;
+      }
+      if (role !== "super admin" && role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+        });
+        return;
+      }
+      if (branch_stores_id) {
+        const branchStore = await branch_stores.findOne({
+          where: { id: branch_stores_id },
+        });
+        const branchName = branchStore.dataValues.name;
+      }
+      const fromProduct = req.query.fromProduct;
+      const toProduct = req.query.toProduct;
+      const fromSales = req.query.fromSales;
+      const toSales = req.query.toSales;
+      const fromUsers = req.query.fromUsers;
+      const toUsers = req.query.toUsers;
+      const fromTrx = req.query.fromTrx;
+      const toTrx = req.query.toTrx;
 
+      const sortProduct = req.query.sortProduct;
+      console.log(sortProduct);
+      const sortSales = req.query.sortSales;
+      const sortUsers = req.query.sortUsers;
+      const sortTrx = req.query.sortTrx;
+      const ascProduct = req.query.ascProduct;
+      const ascSales = req.query.ascSales;
 
+      const ascTrx = req.query.ascTrx;
+      const ascUsers = req.query.ascUsers;
+      // Jakarta_Barat, Jakarta_Timur, Jakarta_Pusat
+      let sortPrt = "";
+      let sortSale = "";
+      let sortTrn = "";
+      let sortUser = "";
+      if (sortProduct == "date") {
+        sortPrt = "t.updatedAt " + ascProduct;
+      } else {
+        sortPrt = sortProduct + " " + ascProduct;
+      }
 
+      if (sortSales == "date") {
+        sortSale = "t.updatedAt " + ascSales;
+      } else {
+        sortSale = sortSales + " " + ascSales;
+      }
+      if (sortTrx == "date") {
+        sortTrn = "t.updatedAt " + ascTrx;
+      } else {
+        sortTrn = sortTrx + " " + ascTrx;
+      }
+      if (sortUsers == "date") {
+        sortUser = "t.updatedAt " + ascUsers;
+      } else {
+        sortUser = sortUsers + " " + ascUsers;
+      }
+      if (role == "super admin") {
+        let topProduct = await sequelize.query(
+          `
+          SELECT (td.product_name) , sum(td.qty) as qty ,t.branch_store
+from transactions t
+join transaction_details td on td.transactions_id = t.id
+where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+group by td.product_name
+order by sum(td.qty) 
+desc 
+limit 5
+          `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let topBranch = await sequelize.query(
+          `
+          SELECT  t.branch_store , SUM(t.total_price) as sales 
+          from transactions t
+          where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+          group by branch_store
+          order by sales
+          desc
+        `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let totalStats = await sequelize.query(
+          `
+            Select count(distinct t.users_id) as total_users , count(DISTINCT t.id) as total_order , SUM(td.qty) as total_product_sold
+    FROM transactions t
+    JOIN transaction_details td ON td.transactions_id = t.id
+    where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+            `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        // console.log(totalStats)
+        let totalSales = await sequelize.query(
+          `
+          SELECT sum(total_price) as total_sales
+FROM jcwdol0807.transactions
+where (status="Order Confirmed" or status="On Delivering" or status="Ongoing")
+          `,
+          {
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataChartProduct = await sequelize.query(
+          `
+            SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, coalesce(SUM(case when t.branch_store="Jakarta Pusat" then td.qty end),0) as Jakarta_Pusat, coalesce(SUM(case when t.branch_store="Jakarta Barat" then td.qty end),0) as Jakarta_Barat , coalesce(SUM(case when t.branch_store="Jakarta Timur" then td.qty end),0) as Jakarta_Timur
+            FROM transactions t
+            JOIN transaction_details td ON td.transactions_id = t.id
+            where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromProduct and :toProduct
+            Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortPrt};
+            `,
+          {
+            replacements: {
+              fromProduct,
+              toProduct,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataProduct = [
+          ["Date", "Jakarta Pusat", "Jakarta Barat", "Jakarta Timur"],
+        ];
+        dataChartProduct.map((value, index) => {
+          dataProduct.push([
+            value.stat_day,
+            parseInt(value.Jakarta_Pusat),
+            parseInt(value.Jakarta_Barat),
+            parseInt(value.Jakarta_Timur),
+          ]);
+        });
+
+        // console.log(dataProduct);
+        let dataChartSales = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, coalesce(SUM(case when t.branch_store="Jakarta Pusat" then t.total_price end),0) as Jakarta_Pusat, coalesce(SUM(case when t.branch_store="Jakarta Barat" then t.total_price end),0) as Jakarta_Barat , coalesce(SUM(case when t.branch_store="Jakarta Timur" then t.total_price end),0) as Jakarta_Timur
+          FROM transactions t
+          where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromSales and :toSales
+          Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortSale};
+            `,
+          {
+            replacements: {
+              fromSales,
+              toSales,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataSales = [
+          ["Date", "Jakarta Pusat", "Jakarta Barat", "Jakarta Timur"],
+        ];
+        console.log(dataSales.length);
+        dataChartSales.map((value, index) => {
+          dataSales.push([
+            value.stat_day,
+            parseInt(value.Jakarta_Pusat),
+            parseInt(value.Jakarta_Barat),
+            parseInt(value.Jakarta_Timur),
+          ]);
+        });
+
+        console.log(dataSales.length);
+        let dataChartTransaction = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, count(distinct case when t.branch_store="Jakarta Pusat" then t.id end) as Jakarta_Pusat ,count(distinct case when t.branch_store="Jakarta Barat" then t.id end) as Jakarta_Barat , count(distinct case when t.branch_store="Jakarta Timur" then t.id end) as Jakarta_Timur
+          FROM transactions t
+          where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromTrx and :toTrx
+          Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")	
+            order by ${sortTrn};
+            `,
+          {
+            replacements: {
+              fromTrx,
+              toTrx,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        let dataTrx = [
+          ["Date", "Jakarta Pusat", "Jakarta Barat", "Jakarta Timur"],
+        ];
+        dataChartTransaction.map((value, index) => {
+          dataTrx.push([
+            value.stat_day,
+            parseInt(value.Jakarta_Pusat),
+            parseInt(value.Jakarta_Barat),
+            parseInt(value.Jakarta_Timur),
+          ]);
+        });
+
+        // console.log(dataTrx);
+        let dataChartUsers = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, count(distinct case when t.branch_store="Jakarta Pusat" then t.users_id end) as Jakarta_Pusat ,count(distinct case when t.branch_store="Jakarta Barat" then t.users_id end) as Jakarta_Barat , count(distinct case when t.branch_store="Jakarta Timur" then t.users_id end) as Jakarta_Timur
+            FROM transactions t
+            where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromUsers and :toUsers
+            Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortUser};
+            `,
+          {
+            replacements: {
+              fromUsers,
+              toUsers,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        let dataUsers = [
+          ["Date", "Jakarta Pusat", "Jakarta Barat", "Jakarta Timur"],
+        ];
+        dataChartUsers.map((value, index) => {
+          dataUsers.push([
+            value.stat_day,
+            parseInt(value.Jakarta_Pusat),
+            parseInt(value.Jakarta_Barat),
+            parseInt(value.Jakarta_Timur),
+          ]);
+        });
+
+        // console.log(dataUsers);
+
+        dataToSend.totalStats = totalStats;
+        dataToSend.totalSales = totalSales;
+        dataToSend.dataProduct = dataProduct;
+        dataToSend.dataSales = dataSales;
+        dataToSend.dataTransaction = dataTrx;
+        dataToSend.dataUsers = dataUsers;
+        dataToSend.topProduct = topProduct;
+        dataToSend.topBranch = topBranch;
+        dataToSend.branchName = "Super Admin";
+        dataToSend.role = role;
+        res.status(200).send({
+          isError: false,
+          message: "Query Data is success",
+          data: dataToSend,
+        });
+      } else {
+        let branchName = await sequelize.query(
+          `
+          SELECT bs.name 
+FROM admins a
+LEFT JOIN branch_stores bs ON a.branch_stores_id = bs.id
+where a.id=?
+group by a.id;
+
+          `,
+          {
+            replacements: [admins_id],
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        let branch = branchName[0].name;
+        let topProduct = await sequelize.query(
+          `SELECT (td.product_name) , sum(td.qty) as qty
+        from transactions t
+        join transaction_details td on td.transactions_id = t.id
+        where t.branch_store = ? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing")
+        group by td.product_name
+        order by sum(td.qty)
+        desc
+        limit 5
+       `,
+          {
+            replacements: [branch],
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let totalStats = await sequelize.query(
+          `
+          Select count(distinct t.users_id) as total_users,count(DISTINCT t.id) as total_order , SUM(td.qty) as total_product_sold
+          FROM transactions t
+          JOIN transaction_details td ON td.transactions_id = t.id
+          where t.branch_store= ? and (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing");
+        `,
+          {
+            replacements: [branch],
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let totalSales = await sequelize.query(
+          `
+          SELECT sum(total_price) as total_sales
+FROM jcwdol0807.transactions
+where branch_store=? and (status="Order Confirmed" or status="On Delivering" or status="Ongoing")
+          `,
+          {
+            replacements: [branch],
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataChartProduct = await sequelize.query(
+          `
+            SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, coalesce(SUM(case when t.branch_store=:branch then td.qty end),0) as productSold
+            FROM transactions t
+            JOIN transaction_details td ON td.transactions_id = t.id
+            where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromProduct and :toProduct
+            Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortPrt};
+            `,
+          {
+            replacements: {
+              fromProduct,
+              toProduct,
+              branch,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataProduct = [["Date", branch]];
+        dataChartProduct.map((value, index) => {
+          dataProduct.push([value.stat_day, parseInt(value.productSold)]);
+        });
+
+        // console.log(dataProduct);
+        let dataChartSales = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, coalesce(SUM(case when t.branch_store=:branch then t.total_price end),0) as sales
+          FROM transactions t
+          where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromSales and :toSales
+          Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortSale};
+            `,
+          {
+            replacements: {
+              fromSales,
+              toSales,
+              branch,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+        let dataSales = [["Date", branch]];
+        dataChartSales.map((value, index) => {
+          dataSales.push([value.stat_day, parseInt(value.sales)]);
+        });
+        // console.log(dataSales);
+        let dataChartTransaction = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, count(distinct case when t.branch_store= :branch then t.id end) as transaction
+          FROM transactions t
+          where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromTrx and :toTrx
+          Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")	
+            order by ${sortTrn};
+            `,
+          {
+            replacements: {
+              fromTrx,
+              toTrx,
+              branch,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        let dataTrx = [["Date", branch]];
+        dataChartTransaction.map((value, index) => {
+          dataTrx.push([value.stat_day, parseInt(value.transaction)]);
+        });
+        // console.log(dataTrx);
+        let dataChartUsers = await sequelize.query(
+          `
+          SELECT DATE_FORMAT(t.updatedAt, "%d %M %Y") as stat_day, count(distinct case when t.branch_store=:branch then t.users_id end) as users
+            FROM transactions t
+            where (t.status="Order Confirmed" or t.status="On Delivering" or t.status="Ongoing") and t.updatedAt between :fromUsers and :toUsers
+            Group by DATE_FORMAT(t.updatedAt, "%d %M %Y")
+            order by ${sortUser};
+            `,
+          {
+            replacements: {
+              fromUsers,
+              toUsers,
+              branch,
+            },
+            type: sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        let dataUsers = [["Date", branch]];
+        dataChartUsers.map((value, index) => {
+          dataUsers.push([value.stat_day, parseInt(value.users)]);
+        });
+        dataToSend.topProduct = topProduct;
+        dataToSend.totalStats = totalStats;
+        dataToSend.totalSales = totalSales;
+        dataToSend.dataProduct = dataProduct;
+        dataToSend.dataSales = dataSales;
+        dataToSend.dataTransaction = dataTrx;
+        dataToSend.dataUsers = dataUsers;
+        dataToSend.branchName = branchName;
+        console.log(branchName);
+        dataToSend.role = role;
+        dataToSend.isActive = isActive;
+
+        res.status(200).send({
+          isError: false,
+          message: "Query Data is success",
+          data: dataToSend,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
 };

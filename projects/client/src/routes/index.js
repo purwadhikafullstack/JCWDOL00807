@@ -33,6 +33,7 @@ import ProductDetail from "../pages/ProductDetail";
 import DetailOrderListByQuery from "../pages/DetailOrderList";
 import UserDetailOrderListByQuery from "../pages/UserDetailOrderList";
 import UserOrderListByQuery from "../pages/UserOrderList";
+import AdminSales from "../pages/Admin-Sales";
 import CartList from "../pages/CartList";
 import Shipping from "../pages/shipping";
 import PaymentSuccess from "../pages/PaymentSuccess";
@@ -69,6 +70,16 @@ export default function Router() {
           ),
         },
         {
+          path: "sales",
+          element: (
+            <AuthGuard>
+              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+                <AdminSales />
+              </RoleBasedGuard>
+            </AuthGuard>
+          ),
+        },
+        {
           path: "management",
           element: (
             <AuthGuard>
@@ -82,7 +93,9 @@ export default function Router() {
           path: "categories",
           element: (
             <AuthGuard>
-              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+
+              <RoleBasedGuard accessibleRoles={["admin branch"]}>
+
                 <CategoryProduct />
               </RoleBasedGuard>
             </AuthGuard>

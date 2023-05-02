@@ -35,8 +35,10 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("my_Token");
     localStorage.removeItem("my_Role");
+
+    navigate("/login");
     window.location.reload();
-    navigate("/");
+
   };
 
   useEffect(() => {
