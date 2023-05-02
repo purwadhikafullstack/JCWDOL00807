@@ -93,7 +93,7 @@ export default function Router() {
           path: "categories",
           element: (
             <AuthGuard>
-              <RoleBasedGuard accessibleRoles={["super admin"]}>
+              <RoleBasedGuard accessibleRoles={["admin branch"]}>
                 <CategoryProduct />
               </RoleBasedGuard>
             </AuthGuard>
