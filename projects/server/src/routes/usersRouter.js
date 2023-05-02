@@ -39,4 +39,6 @@ Router.get(
   transactionController.getDetailOrderUserByQuery
 );
 
+Router.get("/user-address", tokenVerify, usersController.userAddresses)
+
 module.exports = Router;

@@ -56,17 +56,19 @@ const ProductDetail = () => {
   const handleAddToCart = async () => {
     try {
       const token = localStorage.my_Token;
+      // debugger
       if (!token) {
         setMessage(
           "Unauthorization, please register or login for continue  add product to cart"
         );
+
       } else if (qty < 1) {
         alert("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
         alert("Sorry your quantity more then stock");
       } else {
-        await dispatch(addToCart(name, qty));
-        await dispatch(cartList());
+        await dispatch(addToCart(branch_id, name, qty));
+        await dispatch(cartList(branch_id));
       }
     } catch (error) {
       setMessage(
@@ -77,7 +79,6 @@ const ProductDetail = () => {
 
   const handleClose = () => {
     setMessage("");
-    navigate("/login");
   };
 
   const handleAddToTransaction = async () => {
@@ -88,9 +89,9 @@ const ProductDetail = () => {
           "Unauthorization, please register or login for continue  add product to cart"
         );
       } else if (qty < 1) {
-        alert("Quantity product was zero");
+        setMessage("Quantity product was zero")
       } else if (qty > dataProduct.stock) {
-        alert("Sorry your quantity more then stock");
+        setMessage("Sorry your quantity more then stock")
       } else {
         grandtotal = grandtotal + parseInt(dataProduct.price_after_discount);
         const checkout = {

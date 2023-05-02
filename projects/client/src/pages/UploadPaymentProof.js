@@ -39,10 +39,19 @@ const UploadPaymentProof = () => {
   const [loading, setLoading] = useState(false);
 
   const onBtnAddFile = (e) => {
-    if (e.target.files[0]) {
-      setAddFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file.size <= 1000000) {
+      if (file) {
+        setAddFile(file);
+        let preview = document.getElementById("imgprev");
+        preview.src = URL.createObjectURL(file);
+        setMessage("");
+      }
+    } else {
+      setAddFile("")
       let preview = document.getElementById("imgprev");
-      preview.src = URL.createObjectURL(e.target.files[0]);
+      preview.src = "https://dummyimage.com/600x400/d1d1d1/000000&text=No+Image";
+      setMessage("Ukuran gambar lebih dari 1 Mb");
     }
   };
 

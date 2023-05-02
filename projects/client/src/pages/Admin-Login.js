@@ -116,13 +116,6 @@ const AdminLogin = () => {
             p="5"
             ref={email}
           />
-          <div className=" flex justify-start mt-6">
-            <Link to="/accounts/reset-password">
-              <div className=" text-sm text-[#69cb44] font-semibold">
-                Forgot Password
-              </div>
-            </Link>
-          </div>
 
           <InputGroup
             size="md"
@@ -154,12 +147,10 @@ const AdminLogin = () => {
             Log in
           </Button>
           <p className=" text-sm text-center mt-4 text-slate-500 ">
-            Don't have an account?{" "}
-            <Link to="/register">
+            Forgot Password?{" "}
               <span className="text-sm text-[#69cb44] font-semibold ">
-                Register
+                Please contact Super Admin
               </span>
-            </Link>
           </p>
         </div>
       </section>

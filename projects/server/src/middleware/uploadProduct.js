@@ -9,7 +9,7 @@ const uploadImages = (req, res, next) => {
     try {
       if (req.files.images) {
         if (err) throw err;
-        const ext = /\.(PNG|png|GIF|gif|JPG|jpg)/;
+        const ext = /\.(PNG|png|GIF|gif|JPG|jpg|jpeg)/;
 
         if (!req.files.images[0].originalname.match(ext)) {
           deleteFiles(req.files.images);

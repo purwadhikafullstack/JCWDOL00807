@@ -23,10 +23,21 @@ export const rajaongkirSlice = createSlice({
       state.loading = false;
     },
 
+    citiesDefault: (state, action) => {
+      state.cities = {};
+      state.loading = false;
+    },
+
     costsSuccess: (state, action) => {
       state.costs = action.payload.costs;
       state.loading = false;
     },
+
+    costsDefault: (state, action) => {
+      state.costs = [];
+      state.loading = false;
+    },
+
     originSuccess: (state, action) => {
         state.origin = action.payload;
         state.loading = false
