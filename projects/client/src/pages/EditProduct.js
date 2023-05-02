@@ -11,11 +11,11 @@ import {
   Image,
   Select,
   Textarea,
-  Button
+  Button,
 } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { editProduct } from "../redux/action/product";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Toaster from "react-hot-toast";
@@ -75,7 +75,6 @@ const EditProduct = () => {
 
   const getData = async () => {
     try {
-
       const token = localStorage.getItem("my_Token");
       let response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/admin/getData`,
@@ -358,7 +357,7 @@ const EditProduct = () => {
                         )}
                       </FormControl>
                     </div>
-                    <div className="md:col-span-1">
+                    {/* <div className="md:col-span-1">
                       <FormControl isInvalid={isErrorStock}>
                         <FormLabel>Stock (unit)</FormLabel>
                         <Input
@@ -375,7 +374,7 @@ const EditProduct = () => {
                           </FormErrorMessage>
                         )}
                       </FormControl>
-                    </div>
+                    </div> */}
                     <div className="md:col-span-3">
                       <FormControl isInvalid={isErrorPrice}>
                         <FormLabel>Price (Rp.)</FormLabel>
