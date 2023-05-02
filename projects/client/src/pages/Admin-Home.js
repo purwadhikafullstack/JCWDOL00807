@@ -26,6 +26,7 @@ const AdminHome = () => {
   const [adminRole, setAdminRole] = useState(null);
   const [dataBranchTransaction, setDataBranchTransaction] = useState(null);
   const [dataDone, setDataDone] = useState(false);
+  const [totalSales, setTotalSales] = useState([""]);
 
   const dailySaleChart = () => {
     const data = [
@@ -130,7 +131,6 @@ const AdminHome = () => {
       navigate("/admin/login");
     }
 
-
     let getDataDashboard = async () => {
       try {
         let response = await axios.get(
@@ -144,6 +144,7 @@ const AdminHome = () => {
         );
         await setDataChart(response?.data?.data?.dataChart);
         setTopBranch(response?.data?.data?.topBranch);
+        setTotalSales(response?.data?.data?.totalSales);
         setTopProduct(response?.data?.data?.topProduct);
         console.log(response?.data?.data?.totalStats[0]);
         setTotalStats(response?.data?.data?.totalStats[0]);
@@ -200,7 +201,7 @@ const AdminHome = () => {
             <div>
               <span className="block text-2xl font-bold">
                 <CurrencyFormat
-                  value={totalStats?.total_sales}
+                  value={totalSales[0].total_sales}
                   displayType={"text"}
                   thousandSeparator={"."}
                   decimalSeparator={","}
