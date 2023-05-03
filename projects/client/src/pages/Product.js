@@ -67,7 +67,6 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
-
       const token = localStorage.getItem("my_Token");
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,
@@ -137,7 +136,7 @@ const ProductCRUD = () => {
                 {dataProduct?.map((value, index) => {
                   return (
                     <Tr className=" text-center ">
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.name}</Td>
                       <Td>
                         <img

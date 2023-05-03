@@ -357,7 +357,7 @@ const EditProduct = () => {
                         )}
                       </FormControl>
                     </div>
-                    {/* <div className="md:col-span-1">
+                    <div className="md:col-span-1">
                       <FormControl isInvalid={isErrorStock}>
                         <FormLabel>Stock (unit)</FormLabel>
                         <Input
@@ -374,7 +374,7 @@ const EditProduct = () => {
                           </FormErrorMessage>
                         )}
                       </FormControl>
-                    </div> */}
+                    </div>
                     <div className="md:col-span-3">
                       <FormControl isInvalid={isErrorPrice}>
                         <FormLabel>Price (Rp.)</FormLabel>

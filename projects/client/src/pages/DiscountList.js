@@ -205,7 +205,7 @@ const DiscountListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id Discount</Th>
+                  <Th>No.</Th>
                   <Th>Discount Type</Th>
                   <Th>Description</Th>
                   <Th>Discount(Rp)</Th>
@@ -224,7 +224,7 @@ const DiscountListByQuery = () => {
                 {dataDiscount?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.discount_type}</Td>
                       <Td>{value.description}</Td>
                       {value.cut_nominal ? (

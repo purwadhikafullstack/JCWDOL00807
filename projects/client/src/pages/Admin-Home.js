@@ -454,7 +454,7 @@ const AdminHome = () => {
                                         className="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                                       />
 
-                                      <span>{value?.id}</span>
+                                      <span>{index + 1}</span>
                                     </div>
                                   </td>
                                   <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
