@@ -265,6 +265,13 @@ const OrderListByQuery = () => {
                               {value?.status}
                             </h2>
                           </div>
+                        ) : value?.status ===
+                          "Waiting For Order Confirmation" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
                         ) : value?.status === "Canceled" ? (
                           <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-red-500 bg-red-100/60 dark:bg-gray-800">
                             <h2 className="text-sm font-normal">
