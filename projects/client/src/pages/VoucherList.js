@@ -223,17 +223,23 @@ const DiscountListByQuery = () => {
                 {dataVoucher?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.voucher_type}</Td>
                       <Td>{value.description}</Td>
-                      <Td>
-                        <img
-                          src={value.image}
-                          alt="*"
-                          width="100"
-                          height="100"
-                        ></img>
-                      </Td>
+                      {value.image ? (
+                        <>
+                          <Td>
+                            <img
+                              src={value.image}
+                              alt="*"
+                              width="100"
+                              height="100"
+                            ></img>
+                          </Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
                       {value.cut_nominal ? (
                         <>
                           <Td>{value.cut_nominal}</Td>

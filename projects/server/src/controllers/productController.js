@@ -645,28 +645,15 @@ Group by i.id;
       );
 
       // Validasi Input
-      if (name) {
-        let checkName = await item_products.findOne({
-          where: { name },
-        });
-        console.log(checkName);
-        if (checkName) {
-          throw {
-            isError: true,
-            message: "Your name is already registered, please try another name",
-            data: null,
-          };
-        } else {
-          await item_products.update(
-            {
-              name,
-            },
-            { where: { id, branch_stores_id } },
-            { transactions: t }
-          );
-          dataToSend.name = name;
-        }
-      }
+
+      await item_products.update(
+        {
+          name,
+        },
+        { where: { id, branch_stores_id } },
+        { transactions: t }
+      );
+      dataToSend.name = name;
 
       if (description) {
         await item_products.update(

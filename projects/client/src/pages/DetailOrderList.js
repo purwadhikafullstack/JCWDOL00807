@@ -22,9 +22,12 @@ import ReactPaginate from "react-paginate";
 // debugger
 const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
-debugger
+  debugger;
   let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_detailorder_search" : "admin/detailorder_search";
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_detailorder_search"
+      : "admin/detailorder_search";
 
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
@@ -86,8 +89,8 @@ debugger
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getDetailOrderList()
-  }
+    getDetailOrderList();
+  };
   return (
     <>
       <SidebarAdmin />
@@ -174,7 +177,7 @@ debugger
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id</Th>
+                  <Th>No</Th>
                   <Th>Transaction Id</Th>
                   <Th>Product Name</Th>
                   <Th>Quantity</Th>
@@ -192,7 +195,7 @@ debugger
                 {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.transactions_id}</Td>
                       <Td>{value.product_name}</Td>
                       <Td>{value.qty}</Td>

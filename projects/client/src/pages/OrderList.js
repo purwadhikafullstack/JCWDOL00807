@@ -25,7 +25,10 @@ const OrderListByQuery = () => {
   const navigate = useNavigate();
 
   let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_order_search" : "admin/order_search";
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_order_search"
+      : "admin/order_search";
 
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
@@ -68,7 +71,11 @@ const OrderListByQuery = () => {
         }
       );
       setDataOrder(response?.data?.data?.result);
-      setBranch(currentRole == "super admin" ? "All" : response?.data?.data?.result[0].branch_store);
+      setBranch(
+        currentRole == "super admin"
+          ? "All"
+          : response?.data?.data?.result[0].branch_store
+      );
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
@@ -108,8 +115,8 @@ const OrderListByQuery = () => {
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getOrderList()
-  }
+    getOrderList();
+  };
 
   return (
     <>
@@ -223,7 +230,7 @@ const OrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Transaction Id</Th>
+                  <Th>No.</Th>
                   <Th>Username</Th>
                   <Th>Invoice Number</Th>
                   <Th>Date</Th>
@@ -238,7 +245,7 @@ const OrderListByQuery = () => {
                 {dataOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.name}</Td>
                       <Td>{value.invoice_no}</Td>
                       <Td>{value.Date}</Td>
@@ -253,6 +260,13 @@ const OrderListByQuery = () => {
                       </Td>
                       <Td>
                         {value?.status === "Waiting For Payment" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        ) : value?.status ===
+                          "Waiting For Order Confirmation" ? (
                           <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
                             <h2 className="text-sm font-normal">
                               {value?.status}
