@@ -27,7 +27,7 @@ const EditProduct = () => {
   let description = useRef();
   let category = useRef();
   let weight = useRef();
-  let stock = useRef();
+  // let stock = useRef();
   let price = useRef();
   let discountType = useRef();
   let voucherType = useRef();
@@ -109,7 +109,7 @@ const EditProduct = () => {
       setFieldDescription(response?.data?.data[0].description);
       setFieldCategory(response?.data?.data[0].categories);
       setFieldWeight(response?.data?.data[0].weight);
-      setFieldStock(response?.data?.data[0].stock);
+      // setFieldStock(response?.data?.data[0].stock);
       setFieldPrice(response?.data?.data[0].price);
       setFieldDiscountType(response?.data?.data[0].discountType);
       setFieldVoucherType(response?.data?.data[0].voucherType);
@@ -126,7 +126,7 @@ const EditProduct = () => {
       let inputDescription = description.current.value;
       let inputCategory = category.current.value;
       let inputWeight = weight.current.value;
-      let inputStock = stock.current.value;
+      // let inputStock = stock.current.value;
       let inputPrice = price.current.value;
       let inputDiscountType = discountType.current.value;
       let inputVoucherType = voucherType.current.value;
@@ -135,7 +135,7 @@ const EditProduct = () => {
         inputDescription,
         inputCategory,
         inputWeight,
-        inputStock,
+        // inputStock,
         inputPrice,
         inputDiscountType,
         inputVoucherType
@@ -147,8 +147,6 @@ const EditProduct = () => {
         setMessage(
           "Please input weight in positive integer / positive float number"
         );
-      } else if (inputStock < 1) {
-        setMessage("Please input stock in positive number");
       } else if (inputPrice < 1000) {
         setMessage("Please input price in positive number ");
       }
@@ -168,9 +166,9 @@ const EditProduct = () => {
       if (inputWeight) {
         formData.append("weight", inputWeight);
       }
-      if (inputStock) {
-        formData.append("stock", inputStock);
-      }
+      // if (inputStock) {
+      //   formData.append("stock", inputStock);
+      // }
       if (inputPrice) {
         formData.append("price", inputPrice);
       }
@@ -357,7 +355,7 @@ const EditProduct = () => {
                         )}
                       </FormControl>
                     </div>
-                    <div className="md:col-span-1">
+                    {/* <div className="md:col-span-1">
                       <FormControl isInvalid={isErrorStock}>
                         <FormLabel>Stock (unit)</FormLabel>
                         <Input
@@ -374,7 +372,7 @@ const EditProduct = () => {
                           </FormErrorMessage>
                         )}
                       </FormControl>
-                    </div>
+                    </div> */}
                     <div className="md:col-span-3">
                       <FormControl isInvalid={isErrorPrice}>
                         <FormLabel>Price (Rp.)</FormLabel>
