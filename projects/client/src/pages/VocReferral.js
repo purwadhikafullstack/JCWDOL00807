@@ -2,7 +2,7 @@ import { Button } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import voucher from "../supports/assets/voucher.png";
 const VoucherReferral = () => {

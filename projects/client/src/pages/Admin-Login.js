@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAdmin } from "../redux/action/admin";
 
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 
 const AdminLogin = () => {
   let email = useRef();
@@ -71,6 +71,8 @@ const AdminLogin = () => {
     if (admin?.admin?.isSuccess) {
       localStorage.setItem("my_Token", admin?.admin?.token);
       localStorage.setItem("my_Role", admin?.admin?.role);
+      localStorage.setItem("branchStoreAdmin", admin?.admin?.branchStores);
+      localStorage.setItem("adminName", admin?.admin?.name);
       if (admin.admin.role === "admin branch") {
         navigate("/admin/home");
       } else if (admin.admin.role === "super admin") {
@@ -148,9 +150,9 @@ const AdminLogin = () => {
           </Button>
           <p className=" text-sm text-center mt-4 text-slate-500 ">
             Forgot Password?{" "}
-              <span className="text-sm text-[#69cb44] font-semibold ">
-                Please contact Super Admin
-              </span>
+            <span className="text-sm text-[#69cb44] font-semibold ">
+              Please contact Super Admin
+            </span>
           </p>
         </div>
       </section>

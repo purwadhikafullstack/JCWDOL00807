@@ -39,7 +39,7 @@ Router.patch(
   tokenVerify,
   productController.deleteStock
 );
-Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
+// Router.get("/product-stock", tokenVerify, productController.getAllStockProduct);
 // Admin
 Router.get("/login", adminController.Login);
 Router.get("/keep-login-admin", tokenVerify, adminController.keepLoginAdmin);

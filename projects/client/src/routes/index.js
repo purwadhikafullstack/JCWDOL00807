@@ -20,7 +20,7 @@ import UsersAddress from "../pages/UsersAddress";
 import CategoryProduct from "../pages/CategoryProduct.js";
 import ProductCRUD from "../pages/Product";
 import ProductListByQuery from "../pages/ProductList";
-import ChangeUserPassword from "../pages/ChangeUserPassword";
+import UserChangePassword from "../pages/UserChangePassword";
 import VoucherReferral from "../pages/VocReferral";
 import CreateDiscount from "../pages/CreateDiscount";
 import EditDiscount from "../pages/EditDiscount";
@@ -28,8 +28,8 @@ import CreateVoucher from "../pages/CreateVoucher";
 import EditVoucher from "../pages/EditVoucher";
 import DiscountList from "../pages/DiscountList";
 import VoucherList from "../pages/VoucherList";
-import ProductList from "../pages/ProductListPage";
-import ProductDetail from "../pages/ProductDetail";
+import UserProductList from "../pages/UserProductList";
+import UserProductDetail from "../pages/UserProductDetail";
 import DetailOrderListByQuery from "../pages/DetailOrderList";
 import UserDetailOrderListByQuery from "../pages/UserDetailOrderList";
 import UserOrderListByQuery from "../pages/UserOrderList";
@@ -38,6 +38,7 @@ import CartList from "../pages/CartList";
 import Shipping from "../pages/Shippings";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import UploadPaymentProof from "../pages/UploadPaymentProof";
+import TokenGuard from "../guards/TokenGuard";
 
 // debugger
 export default function Router() {
@@ -241,10 +242,10 @@ export default function Router() {
       ),
     },
 
-    {
-      path: "/accounts/reset-password/:token",
-      element: <ResetPassword />,
-    },
+    // {
+    //   path: "/accounts/reset-password/:token",
+    //   element: <ResetPassword />,
+    // },
 
     {
       path: "accounts",
@@ -279,22 +280,20 @@ export default function Router() {
             </AuthGuard>
           ),
         },
-        // {
-        //   path: "reset-password/:token",
-        //   element: (
-        //     <AuthGuard>
-        //       <RoleBasedGuard accessibleRoles={["user"]}>
-        //         <ResetPassword />
-        //       </RoleBasedGuard>
-        //     </AuthGuard>
-        //   ),
-        // },
+        {
+          path: "reset-password/:token",
+          element: (
+            <TokenGuard>
+              <ResetPassword />
+            </TokenGuard>
+          ),
+        },
         {
           path: "change-password",
           element: (
             <AuthGuard>
               <RoleBasedGuard accessibleRoles={["user"]}>
-                <ChangeUserPassword />
+                <UserChangePassword />
               </RoleBasedGuard>
             </AuthGuard>
           ),
@@ -348,8 +347,8 @@ export default function Router() {
     { path: "404", element: <PageNotFound /> },
     { path: "/authentication/:token", element: <Verification /> },
     { path: "*", element: <PageNotFound /> },
-    { path: "/:name", element: <ProductList /> },
-    { path: "/product/:name", element: <ProductDetail /> },
+    { path: "/:name", element: <UserProductList /> },
+    { path: "/product/:name", element: <UserProductDetail /> },
     { path: "/claimReferral/:token", element: <VoucherReferral /> },
   ]);
 }

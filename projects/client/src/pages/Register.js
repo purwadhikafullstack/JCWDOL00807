@@ -12,7 +12,7 @@ import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/action/user";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser2";
 
 const Register = () => {
   const navigate = useNavigate();

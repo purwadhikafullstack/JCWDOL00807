@@ -1,6 +1,7 @@
 import axios from "axios";
 import { voucherSlice } from "../reducer/voucher";
 import { toast } from "react-hot-toast";
+import Swal from "sweetalert2";
 
 export const createVoucher = ({ formData }, { token }) => {
   return async (dispatch) => {
@@ -18,14 +19,20 @@ export const createVoucher = ({ formData }, { token }) => {
       dispatch(voucherSlice.actions.createVoucherSuccess(response.data));
 
       console.log(response.data);
-      toast(response.data.message);
-      alert("Create Voucher Success");
+      // toast(response.data.message);
+      // alert("Create Voucher Success");
+      Swal.fire("Good Job!", "Create Voucher Success", "success");
       window.location.reload();
     } catch (error) {
       console.log(error);
-      alert(error.message);
+      // alert(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       console.log(error.response.data.message);
-      toast(error.response.data.message);
+      // toast(error.response.data.message);
       dispatch(voucherSlice.actions.failed(error.response.data.message));
     }
   };
@@ -47,16 +54,22 @@ export const updateVoucher = ({ formData }, { id }, { token }) => {
         }
       );
       dispatch(voucherSlice.actions.updateVoucherSuccess(response.data));
-      toast(response.data.message);
+      // toast(response.data.message);
       console.log(response.data);
-      alert("Edit Voucher Success");
+      // alert("Edit Voucher Success");
+      Swal.fire("Good Job!", "Edit Voucher Success", "success");
 
       window.location.reload();
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.message);
-      toast(error.response.data.message);
+      // alert(error.message);
+      // toast(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(voucherSlice.actions.failed(error.response.data.message));
     }
   };

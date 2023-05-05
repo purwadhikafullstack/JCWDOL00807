@@ -2,12 +2,13 @@ import axios from "axios";
 import { cartSlice } from "../reducer/carts";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const cartList = (branch_id) => {
   return async (dispatch) => {
     try {
       let token = localStorage.my_Token;
-      console.log(localStorage.my_Token)
+      console.log(localStorage.my_Token);
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/cart/list/${branch_id}`,
         {
@@ -45,11 +46,18 @@ export const addToCart = (product_id, qty, branch_id) => {
         }
       );
       dispatch(cartSlice.actions.addToCartSuccess(response.data.data));
-      alert("Add to cart success");
+      // alert("Add to cart success");
+      Swal.fire("Good Job!", "Add item to cart success", "success");
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
+
+      // alert(error.response.data.message);
       dispatch(cartSlice.actions.failed(error.response.data.message));
     }
   };
@@ -73,11 +81,18 @@ export const updateCartQty = (product_id, qty, branch_id) => {
         }
       );
       dispatch(cartSlice.actions.updateQtySuccess(response.data.data));
-      toast.success("Update cart success");
+      // toast.success("Update cart success");
+      Swal.fire("Good Job!", "Update item to cart success", "success");
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      // alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
+
       dispatch(cartSlice.actions.failed(error.response.data.message));
     }
   };
@@ -100,11 +115,17 @@ export const deleteCartQty = (product_id, branch_id) => {
         }
       );
       dispatch(cartSlice.actions.deleteQtySuccess(response.data.data));
-      toast.success("Delete item from cart success");
+      // toast.success("Delete item from cart success");
+      Swal.fire("Good Job!", "Delete item from cart success", "success");
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      // alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(cartSlice.actions.failed(error.response.data.message));
     }
   };

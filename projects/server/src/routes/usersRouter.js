@@ -27,7 +27,7 @@ Router.get(
 );
 Router.get("/list-product", userProductController.listProduct);
 Router.get("/product-filter", userProductController.productFilterQuery);
-Router.get("/product-detail/:name", userProductController.productDetail);
+Router.get("/product-detail/:id", userProductController.productDetail);
 Router.get(
   "/order_search",
   tokenVerify,
@@ -39,6 +39,11 @@ Router.get(
   transactionController.getDetailOrderUserByQuery
 );
 
-Router.get("/user-address", tokenVerify, usersController.userAddresses)
+Router.get("/user-address", tokenVerify, usersController.userAddresses);
+Router.get(
+  "/check-expired-token",
+  tokenVerify,
+  usersController.checkExpiredToken
+);
 
 module.exports = Router;

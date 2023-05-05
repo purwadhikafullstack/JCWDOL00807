@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
-import SidebarAdmin from "../components/SidebarAdmin";
-import CancellationReasons from "../components/CancellationReasons";
+import CancelUserOrder from "../components/CancelUserOrder";
 import {
   Select,
   Table,
@@ -202,7 +201,7 @@ const UserDetailOrderListByQuery = () => {
                 Detail Order List Table - {branch}
               </TableCaption>
               <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
-                <CancellationReasons
+                <CancelUserOrder
                   status={dataDetailOrder[0]?.status}
                   handleSubmit={handleReasonCancellation}
                   errorMessage={cancelErrorMessage}

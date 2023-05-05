@@ -18,25 +18,34 @@ function App() {
 
   const geolocation = () => {
     if (!address.loading) {
-      if (address?.userAddress?.data) {
+      if (
+        address?.userAddress?.data &&
+        address?.userAddress?.data?.length >= 1
+      ) {
+        console.log("address utama");
         let lat = address.userAddress.data[0]?.latitude;
         let lng = address.userAddress.data[0]?.longitude;
         dispatch(userProductList({ lat: lat, lng: lng }));
-      } else if (!address.userAddress.data) {
+      } else if (
+        !address.userAddress.data ||
+        address?.userAddress?.data?.length === 0
+      ) {
+        console.log("branch pusat");
         dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
               const latitude = position.coords.latitude;
               const longitude = position.coords.longitude;
-
               dispatch(userProductList({ lat: latitude, lng: longitude }));
+              console.log("branch alamat terdekat");
             },
             function (error) {
               console.log("cannot access location because user deny");
               dispatch(
                 userProductList({ lat: "-6.18234", lng: "106.8428715" })
               );
+              console.log("jaja");
             }
           );
         } else {
@@ -60,7 +69,7 @@ function App() {
   useEffect(() => {
     dispatch(keepLogin());
     dispatch(userProductList());
-    // dispatch(keepLoginAdmin())
+    // dispatch(keepLoginAdmin());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 

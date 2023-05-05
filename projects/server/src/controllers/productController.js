@@ -1087,6 +1087,7 @@ LIMIT :limit OFFSET :offset
     try {
       const {
         admins_id: admin_id,
+        name,
         role,
         isActive,
         branch_stores_id,
@@ -1151,7 +1152,7 @@ LIMIT :limit OFFSET :offset
           message: `Can't update stock because it makes negative, current stock ${newData.dataValues.stock}`,
         };
 
-      const updateStock = await item_products.update(
+      await item_products.update(
         {
           stock: newData.dataValues.new_stock,
         },
@@ -1161,7 +1162,7 @@ LIMIT :limit OFFSET :offset
 
       await historyLog.create(
         {
-          admin_name: newData.dataValues.branch_store.dataValues.admins.name,
+          admin_name: name,
           branch_store: newData.dataValues.branch,
           product_name: newData.dataValues.name,
           qty: stock,
@@ -1192,6 +1193,7 @@ LIMIT :limit OFFSET :offset
         role,
         isActive,
         branch_stores_id,
+        name,
       } = req.dataToken;
       const { id } = req.params;
       const { description } = req.query;
@@ -1261,11 +1263,10 @@ LIMIT :limit OFFSET :offset
       let [dataWasDelete] = afterDelete;
       await historyLog.create(
         {
-          admin_name:
-            dataWasDelete.dataValues.branch_store.dataValues.admins.name,
+          admin_name: name,
           branch_store: dataWasDelete.dataValues.branch,
           product_name: dataWasDelete.dataValues.name,
-          qty: dataExist.dataValues.stock,
+          qty: `-${dataExist.dataValues.stock}`,
           description: `Delete : ${description}`,
         },
         { transaction: t }
@@ -1285,48 +1286,48 @@ LIMIT :limit OFFSET :offset
       });
     }
   },
-  getAllStockProduct: async (req, res) => {
-    const t = await sequelize.transaction();
-    try {
-      const { admins_id: admin_id, role, isActive } = req.dataToken;
-      if (role !== "admin branch" || isActive === false)
-        throw { message: "Unauthorization" };
+  // getAllStockProduct: async (req, res) => {
+  //   const t = await sequelize.transaction();
+  //   try {
+  //     const { admins_id: admin_id, role, isActive } = req.dataToken;
+  //     if (role !== "admin branch" || isActive === false)
+  //       throw { message: "Unauthorization" };
 
-      let branchId = await branch_stores.findOne({
-        attributes: [
-          ["id", "branch_id"],
-          "name",
-          [Sequelize.literal("admin.id"), "admins"],
-          [Sequelize.literal("admin.name"), "names"],
-        ],
-        include: [
-          {
-            model: admin,
-            attributes: [],
-            where: { id: admin_id },
-          },
-        ],
-      });
+  //     let branchId = await branch_stores.findOne({
+  //       attributes: [
+  //         ["id", "branch_id"],
+  //         "name",
+  //         [Sequelize.literal("admin.id"), "admins"],
+  //         [Sequelize.literal("admin.name"), "names"],
+  //       ],
+  //       include: [
+  //         {
+  //           model: admin,
+  //           attributes: [],
+  //           where: { id: admin_id },
+  //         },
+  //       ],
+  //     });
 
-      const branch_stores_id = branchId.dataValues.branch_id;
+  //     const branch_stores_id = branchId.dataValues.branch_id;
 
-      let getAllData = await item_products.findAll({
-        attributes: ["id", "name", "stock"],
-        where: { branch_stores_id },
-      });
+  //     let getAllData = await item_products.findAll({
+  //       attributes: ["id", "name", "stock"],
+  //       where: { branch_stores_id },
+  //     });
 
-      await t.commit();
-      res.status(201).send({
-        isSuccess: true,
-        data: getAllData,
-      });
-    } catch (error) {
-      await t.rollback();
+  //     await t.commit();
+  //     res.status(201).send({
+  //       isSuccess: true,
+  //       data: getAllData,
+  //     });
+  //   } catch (error) {
+  //     await t.rollback();
 
-      res.status(500).send({
-        isSuccess: false,
-        message: error.message,
-      });
-    }
-  },
+  //     res.status(500).send({
+  //       isSuccess: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // },
 };

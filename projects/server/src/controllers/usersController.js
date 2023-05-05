@@ -20,6 +20,7 @@ const { hashPassword, hashMatch } = require("./../lib/hash");
 
 // // import JWT
 const { createToken } = require("./../lib/jwt");
+const { createTokenHasExpired } = require("./../lib/jwt");
 
 //Import generateOTP and generate Referral code
 const { generateOTP } = require("./../lib/generateOTP");
@@ -139,44 +140,60 @@ module.exports = {
       const findUser = await users.findOne({
         where: { email },
       });
-      console.log(findUser === null);
-
-      let token = "";
-      let names = "";
+      console.log(findUser);
 
       if (findUser === null) {
-        token = null;
-        names = null;
-      } else {
-        token = createToken({ id: findUser?.dataValues?.id });
-        names = findUser.dataValues.name;
-      }
-
-      // //mengirimkan link password new password
-      let template = await fs.readFile(
-        "./template/resetPassword.html",
-        "utf-8"
-      );
-      let compiledTemplate = await handlebars.compile(template);
-      let newTemplate = compiledTemplate({
-        name: names,
-        token: token,
-        reactUrl: reactUrl,
-      });
-
-      let mail = {
-        from: `Admin-GoKu<berakinside1996@gmail.com>`,
-        to: `${email}`,
-        subject: "Reset Password",
-        html: newTemplate,
-      };
-
-      transporter.sendMail(mail, (err, resMail) => {
         res.status(201).send({
           isSuccess: true,
           message: `We send a link to your email, so you can get back your account`,
         });
-      });
+      } else {
+        const otp = generateOTP(4);
+
+        await users.update(
+          { otp },
+          {
+            where: { email },
+          }
+        );
+
+        let token = "";
+        let names = "";
+
+        if (findUser === null) {
+          token = null;
+          names = null;
+        } else {
+          token = createTokenHasExpired({ id: findUser?.dataValues?.id, otp });
+          names = findUser.dataValues.name;
+        }
+
+        // //mengirimkan link password new password
+        let template = await fs.readFile(
+          "./template/resetPassword.html",
+          "utf-8"
+        );
+        let compiledTemplate = await handlebars.compile(template);
+        let newTemplate = compiledTemplate({
+          name: names,
+          token: token,
+          reactUrl: reactUrl,
+        });
+
+        let mail = {
+          from: `Admin-GoKu<berakinside1996@gmail.com>`,
+          to: `${email}`,
+          subject: "Reset Password",
+          html: newTemplate,
+        };
+
+        transporter.sendMail(mail, (err, resMail) => {
+          res.status(201).send({
+            isSuccess: true,
+            message: `We send a link to your email, so you can get back your account`,
+          });
+        });
+      }
     } catch (error) {
       console.log(error);
       res.status(500).send({
@@ -461,6 +478,11 @@ module.exports = {
         throw {
           message: "Your date of birth is required. Please fill in the field.",
         };
+
+      if (!name)
+        throw {
+          message: "Your name is required. Please fill in the field.",
+        };
       let dataProfile = await users.findOne(
         { where: { id: id } },
         { transaction: t }
@@ -512,12 +534,14 @@ module.exports = {
         { attributes: { exclude: "password" }, where: { id } },
         { transaction: t }
       );
+
+      const newToken = createToken({ id });
       await t.commit();
       res.status(200).send({
         isSuccess: true,
         message:
           "Profile update complete. Thank you for keeping your information up to date!",
-        data: dataProfileUpdate,
+        data: { dataProfileUpdate, token: newToken },
       });
     } catch (error) {
       await t.rollback();
@@ -626,10 +650,13 @@ module.exports = {
         { transaction: t }
       );
 
+      const newToken = createToken({ id });
+
       await t.commit();
       res.status(201).send({
         isSuccess: true,
         message: "Your password has been updated",
+        data: newToken,
       });
     } catch (error) {
       await t.rollback();
@@ -660,15 +687,15 @@ module.exports = {
       const getAddress = await user_address.findAll({
         where: {
           user_id: {
-            [Op.eq]: userid
-          }
-        }
+            [Op.eq]: userid,
+          },
+        },
       });
 
       res.status(200).send({
         isSuccess: true,
         message: "User Address list",
-        data: getAddress
+        data: getAddress,
       });
     } catch (error) {
       res.status(404).send({
@@ -676,5 +703,27 @@ module.exports = {
         message: error.message,
       });
     }
-  }
+  },
+  checkExpiredToken: async (req, res) => {
+    try {
+      const id = req.dataToken.id;
+      const otp = req.dataToken.otp;
+
+      const existOtp = await users.findOne({
+        where: { [Op.and]: [{ otp }, { id }] },
+      });
+
+      if (!existOtp) throw { message: "Sorry link has been expired" };
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "Congratulation you can reset your password",
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
 };
