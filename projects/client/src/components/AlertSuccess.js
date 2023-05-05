@@ -26,7 +26,7 @@ const AlertSuccess = ({ title, body, handleClick }) => {
         onClick={(e) => handleClick("yuhu")}
       />
       <AlertIcon boxSize="40px" mr={0} mt={-6} />
-      <AlertTitle mt={4} mb={1} fontSize="lg">
+      <AlertTitle mt={4} mb={1} fontSize={["sm", "lg"]}>
         {title}
       </AlertTitle>
       <AlertDescription maxWidth="s">{body}</AlertDescription>

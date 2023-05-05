@@ -19,7 +19,7 @@ import {
 import React from "react";
 import { useState } from "react";
 
-const CancellationReasons = ({ status, handleSubmit, errorMessage }) => {
+const CancelUserOrder = ({ status, handleSubmit, errorMessage }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [reason, setReason] = useState("");
 
@@ -29,8 +29,7 @@ const CancellationReasons = ({ status, handleSubmit, errorMessage }) => {
 
   return (
     <>
-      {status !== "Waiting For Payment" &&
-      status !== "Waiting For Confirmation Payment" ? null : (
+      {status !== "Waiting For Payment" ? null : (
         <Button colorScheme="red" onClick={onOpen}>
           Cancel Order
         </Button>
@@ -102,4 +101,4 @@ const CancellationReasons = ({ status, handleSubmit, errorMessage }) => {
   );
 };
 
-export default CancellationReasons;
+export default CancelUserOrder;

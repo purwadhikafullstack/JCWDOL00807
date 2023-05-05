@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -67,7 +67,6 @@ const ProductCRUD = () => {
   };
   const handleConfirm = async (idProduct) => {
     try {
-
       const token = localStorage.getItem("my_Token");
       await axios.delete(
         `${process.env.REACT_APP_API_BASE_URL}/admin/product/${idProduct}`,

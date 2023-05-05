@@ -16,15 +16,16 @@ import {
 } from "@chakra-ui/react";
 
 import { Icon } from "@iconify/react";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import AlertSuccess from "../components/AlertSuccess";
 import { useState } from "react";
 import SidebarUser from "../components/SidebarUser";
 import axios from "axios";
 import BackdropResetPassword from "../components/BackdropResetPassword";
+import { useSelector } from "react-redux";
 
-const ChangeUserPassword = () => {
+const UserChangePassword = () => {
   const [message, setMessage] = useState("");
   const [icon, setIcon] = useState("ic:outline-remove-red-eye");
   const [icon2, setIcon2] = useState("ic:outline-remove-red-eye");
@@ -38,10 +39,13 @@ const ChangeUserPassword = () => {
   const [messageSuccess, setMessageSuccess] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState("");
   let api = process.env.REACT_APP_API_BASE_URL;
+  // let user = useSelector((state) => state.auth);
 
   const handleClick = () => {
     setMessage("");
   };
+
+  // console.log(user);
 
   const handleVisible = () => {
     let password = document.getElementById("myInput");
@@ -127,13 +131,17 @@ const ChangeUserPassword = () => {
   };
 
   const handleChangePassword = () => {
+    let regxPassword = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
     if (newPassword !== repeatPassword) {
       console.log(newPassword, repeatPassword);
       console.log(repeatPassword === newPassword);
       setErrRepeatPassword("Password and repeat password do not match");
     } else if (!newPassword || !repeatPassword) {
       setMessageError("Data Not Complete");
-    } else {
+    } else if (
+      regxPassword.test(repeatPassword) === true ||
+      regxPassword.test(repeatPassword) === true
+    ) {
       setMessageError("");
       setDeleteMessage("Are you sure want to change your password");
     }
@@ -159,6 +167,8 @@ const ChangeUserPassword = () => {
       setMessageError("");
       setMessage(changePassword.data.message);
       setMessageSuccess(false);
+      const newToken = changePassword.data.data;
+      localStorage.setItem("my_Token", newToken);
       // navigate("/accounts/profile");
     } catch (error) {
       setMessageError(error.response.data.message);
@@ -169,16 +179,14 @@ const ChangeUserPassword = () => {
     setDeleteMessage("");
   };
 
-  console.log(newPassword);
-
   return (
     <>
       <Navbar />
       <section
         className=" flex-row md:flex justify-center container mx-auto gap-5  min-h-screen
-      items-center  px-5 md:px-0 m-10 "
+      items-center  px-0  mt-0 md:mt-10 mb-10 "
       >
-        <Card textColor="#234E52" className="w-[full] md:w-[800px]   ">
+        <Card textColor="#234E52" className="w-[full] md:w-[800px]  md:px-0   ">
           {message ? (
             <CardHeader textAlign="center">
               <AlertSuccess title={message} handleClick={handleClick} />
@@ -188,20 +196,20 @@ const ChangeUserPassword = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
-              height="160px"
+              height={["fit-content", "160px"]}
               variant="subtle"
-              bgColor="#DEF5E5"
+              bgColor={["white", "#DEF5E5"]}
               rounded="4px"
               textColor="#234E52"
             >
-              <Heading size="md" mt="45px" textAlign="center">
+              <Heading size="md" mt={["10", "45px"]} textAlign="center">
                 Change My Password
               </Heading>
             </CardHeader>
           )}
-          <div className=" md:flex md:px-5 items-center flex flex-row  ">
+          <div className=" md:px-5 items-center flex flex-row flex-wrap  ">
             <SidebarUser />
-            <CardBody className=" p-0 md:p-20 mt-[-130px]    ">
+            <CardBody className=" p-0 md:p-20 md:mt-[-130px]    ">
               {messageError ? (
                 <div>
                   <Alert status="error" mt="16" mb="5" rounded="5">
@@ -333,4 +341,4 @@ const ChangeUserPassword = () => {
   );
 };
 
-export default ChangeUserPassword;
+export default UserChangePassword;

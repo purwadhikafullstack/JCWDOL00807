@@ -7,6 +7,11 @@ module.exports = {
       expiresIn: "48h",
     });
   },
+  createTokenHasExpired: (payload) => {
+    return jwt.sign(payload, passtoken, {
+      expiresIn: "1h",
+    });
+  },
   validateToken: (token) => {
     return jwt.verify(token, passtoken);
   },

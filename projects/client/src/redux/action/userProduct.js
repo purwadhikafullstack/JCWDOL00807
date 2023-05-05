@@ -1,10 +1,8 @@
 import axios from "axios";
 import { userProductSlice } from "../reducer/productUser";
-export const findAll_productList_request = "findAll_productList_request";
 
 export const userProductList = (data) => {
   return async (dispatch) => {
-    // dispatch({ type: findAll_category_request });
     dispatch(userProductSlice.actions.getLoading(true));
     try {
       const response = await axios.get(
@@ -17,5 +15,11 @@ export const userProductList = (data) => {
       dispatch(userProductSlice.actions.getLoading(true));
       dispatch(userProductSlice.actions.failed(error.response));
     }
+  };
+};
+
+export const userProductDetail = (id) => {
+  return async (dispatch) => {
+    dispatch(userProductSlice.actions.getProductDetail(id));
   };
 };

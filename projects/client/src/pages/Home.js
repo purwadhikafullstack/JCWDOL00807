@@ -1,5 +1,5 @@
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import { Icon } from "@iconify/react";
 import CardProduct from "../components/CardProduct";
 import { Button } from "@chakra-ui/react";
@@ -12,6 +12,7 @@ import ramadhanSales from "../asset/banner/ramadhan-sales.png";
 import shipping from "../asset/banner/shipping.png";
 import { Link } from "react-router-dom";
 import { keepLogin } from "../redux/action/user";
+import { userProductDetail } from "../redux/action/userProduct";
 
 const Home = () => {
   let userProduct = useSelector((state) => state.userProduct);
@@ -33,6 +34,10 @@ const Home = () => {
     }
     // eslint-disable-next-line
   }, [userProduct]);
+
+  const handleClickProduct = (e) => {
+    dispatch(userProductDetail(e));
+  };
 
   return (
     <section>
@@ -98,20 +103,24 @@ const Home = () => {
 
           <div className="flex overflow-x-auto w-[full] gap-5 border-x-2 rounded-lg  ">
             {promotion.map((val, idx) => (
-              <CardProduct
+              <div
                 key={idx.toLocaleString()}
-                productid={val.id}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-                status={val.status}
-                weight={val.weight}
-                stock={val.stock}
-              />
+                onClick={(e) => handleClickProduct(val.id)}
+              >
+                <CardProduct
+                  productid={val.id}
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                  weight={val.weight}
+                  stock={val.stock}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -136,20 +145,24 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {latest.map((val, idx) => (
-              <CardProduct
+              <div
                 key={idx.toLocaleString()}
-                discountPersentage={val.cut_percentage}
-                productid={val.id}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-                status={val.status}
-                weight={val.weight}
-                stock={val.stock}
-              />
+                onClick={(e) => handleClickProduct(val.id)}
+              >
+                <CardProduct
+                  discountPersentage={val.cut_percentage}
+                  productid={val.id}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                  weight={val.weight}
+                  stock={val.stock}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -176,20 +189,24 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {allProduct.map((val, idx) => (
-              <CardProduct
+              <div
                 key={idx.toLocaleString()}
-                productid={val.id}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-                status={val.status}
-                weight={val.weight}
-                stock={val.stock}
-              />
+                onClick={(e) => handleClickProduct(val.id)}
+              >
+                <CardProduct
+                  productid={val.id}
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                  weight={val.weight}
+                  stock={val.stock}
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -215,20 +232,24 @@ const Home = () => {
           </div>
           <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  border-x-2 rounded-lg ">
             {bestSeller.map((val, idx) => (
-              <CardProduct
+              <div
                 key={idx.toLocaleString()}
-                productid={val.id}
-                discountPersentage={val.cut_percentage}
-                image={val.images}
-                name={val.name}
-                description={val.description}
-                price={val.price}
-                priceAfterDiscount={val.price_after_discount}
-                discount_type={val.discount_type}
-                status={val.status}
-                weight={val.weight}
-                stock={val.stock}
-              />
+                onClick={(e) => handleClickProduct(val.id)}
+              >
+                <CardProduct
+                  productid={val.id}
+                  discountPersentage={val.cut_percentage}
+                  image={val.images}
+                  name={val.name}
+                  description={val.description}
+                  price={val.price}
+                  priceAfterDiscount={val.price_after_discount}
+                  discount_type={val.discount_type}
+                  status={val.status}
+                  weight={val.weight}
+                  stock={val.stock}
+                />
+              </div>
             ))}
           </div>
         </div>

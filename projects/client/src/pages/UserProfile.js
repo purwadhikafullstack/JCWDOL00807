@@ -9,13 +9,14 @@ import {
   StackDivider,
 } from "@chakra-ui/react";
 
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import { useSelector } from "react-redux";
 import UpdateUserProfile from "../components/UpdateUserProfile";
 import AlertSuccess from "../components/AlertSuccess";
 import { useEffect, useState } from "react";
 import SidebarUser from "../components/SidebarUser";
+import moment from "moment";
 
 const UserProfile = () => {
   let user = useSelector((state) => state.auth.user);
@@ -23,13 +24,18 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user.message) {
+      const newToken = user.data.token;
       setMessage(user.message);
+      localStorage.setItem("my_Token", newToken);
     }
   }, [user]);
 
   const handleClick = () => {
     setMessage("");
   };
+
+  const userBirthdate = user?.birthdate;
+  const date = moment(userBirthdate);
 
   return (
     <>
@@ -59,23 +65,25 @@ const UserProfile = () => {
               </Heading>
             </CardHeader>
           )}
-          <div className=" flex justify-start  md:px-5 items-center  flex-wrap  ">
+          <div className=" flex justify-start px-0 md:px-5 items-center flex-wrap  ">
             <SidebarUser />
             <CardBody>
               <Stack
-                divider={<StackDivider />}
+                divider={
+                  <StackDivider display={{ base: "none", md: "flex" }} />
+                }
                 spacing="4"
-                className=" p-3 md:p-20 shadow shadow-slate-200 rounded-lg min-h-fit md:h-[800px] flex flex-col justify-center "
+                className=" px-14 py-5  -m-5 md:m-0 md:p-20  md:rounded-lg min-h-fit md:h-[800px] flex flex-col gap-3 md:gap-0 justify-center "
               >
-                <Box className="flex items-center justify-start gap-20 ">
+                <Box className="grid grid-cols-2 ">
                   <Text w="28" size="xs">
                     Name{" "}
                   </Text>
-                  <Text className=" text-[10px] md:text-sm  ">
+                  <Text className=" text-[10px] md:text-sm capitalize ">
                     {user?.name}
                   </Text>
                 </Box>
-                <Box className="flex justify-start items-center gap-20 ">
+                <Box className="grid grid-cols-2 ">
                   <Text w="28" size="xs">
                     Phone Number
                   </Text>
@@ -83,35 +91,31 @@ const UserProfile = () => {
                     {user?.phone_number}
                   </Text>
                 </Box>
-                <Box className="flex justify-start  items-center gap-20 ">
+                <Box className="grid grid-cols-2 ">
                   <Text w="28" size="xs">
                     Birthdate
                   </Text>
                   {user?.birthdate ? (
                     <Text className=" text-[10px] md:text-sm  ">
-                      {user?.birthdate}
+                      {date.format("DD MMMM YYYY")}
                     </Text>
                   ) : (
-                    <Text className=" text-[10px] md:text-sm  text-red-600 font-semibold ">
-                      Update Birthdate
-                    </Text>
+                    <UpdateUserProfile tabel={true} />
                   )}
                 </Box>
-                <Box className="flex  items-center justify-start gap-20 ">
+                <Box className="grid grid-cols-2 ">
                   <Text w="28" size="xs">
                     Gender
                   </Text>
                   {user?.gender ? (
-                    <Text className=" text-[10px] md:text-sm  ">
+                    <Text className=" text-[10px] md:text-sm capitalize ">
                       {user?.gender}
                     </Text>
                   ) : (
-                    <Text className=" text-[10px] md:text-sm  text-red-600 font-semibold ">
-                      Update Gender
-                    </Text>
+                    <UpdateUserProfile tabel={true} />
                   )}
                 </Box>
-                <Box className="flex justify-start  items-center gap-20 ">
+                <Box className="grid grid-cols-2 ">
                   <Text w="28" size="xs">
                     Email
                   </Text>
@@ -119,7 +123,7 @@ const UserProfile = () => {
                     {user?.email}
                   </Text>
                 </Box>
-                <UpdateUserProfile />
+                <UpdateUserProfile tabel={false} />
               </Stack>
             </CardBody>
           </div>

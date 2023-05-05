@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -25,7 +25,10 @@ const OrderListByQuery = () => {
   const navigate = useNavigate();
 
   let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_order_search" : "admin/order_search";
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_order_search"
+      : "admin/order_search";
 
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
@@ -68,7 +71,11 @@ const OrderListByQuery = () => {
         }
       );
       setDataOrder(response?.data?.data?.result);
-      setBranch(currentRole == "super admin" ? "All" : response?.data?.data?.result[0].branch_store);
+      setBranch(
+        currentRole == "super admin"
+          ? "All"
+          : response?.data?.data?.result[0].branch_store
+      );
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
@@ -108,8 +115,8 @@ const OrderListByQuery = () => {
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getOrderList()
-  }
+    getOrderList();
+  };
 
   return (
     <>

@@ -9,17 +9,18 @@ import {
   NumberDecrementStepper,
   NumberIncrementStepper,
 } from "@chakra-ui/react";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
-
 import CardProduct from "../components/CardProduct";
 import { Divider } from "@chakra-ui/react";
+import { userProductDetail } from "../redux/action/userProduct";
+import Swal from "sweetalert2";
 
-const ProductDetail = () => {
+const UserProductDetail = () => {
   const dispatch = useDispatch();
   const api = process.env.REACT_APP_API_BASE_URL;
   const { name } = useParams();
@@ -28,30 +29,37 @@ const ProductDetail = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [qty, setQty] = useState(0);
-  const userProduct = useSelector((state) => state.userProduct.userProduct);
-  const branch_id = userProduct?.data?.branch_id;
-  const branch_name = userProduct?.data?.branch;
+  const userProduct = useSelector((state) => state.userProduct);
+  const branch_id = userProduct?.userProduct?.data?.branch_id;
+  const branch_name = userProduct?.userProduct?.data?.branch;
+  const productId = userProduct?.productId;
   let grandtotal = 0;
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const getProductDetail = await axios.get(
-          `${api}/user/product-detail/${name}?branch_id=${branch_id}`
-        );
-        console.log(getProductDetail.data.data.product);
-        setDataProduct(getProductDetail.data.data.product);
-        setProductRecomendation(
-          getProductDetail.data.data.productRecomendation
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [name]);
+  console.log(userProduct);
 
-  console.log(name);
+  useEffect(() => {
+    if (!userProduct.loading) {
+      async function fetchData() {
+        try {
+          const getProductDetail = await axios.get(
+            `${api}/user/product-detail/${productId}?branch_id=${branch_id}`
+          );
+          // console.log(getProductDetail.data.data.product);
+          setDataProduct(getProductDetail.data.data.product);
+          setProductRecomendation(
+            getProductDetail.data.data.productRecomendation
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      fetchData();
+    }
+  }, [name, userProduct]);
+
+  const handleClickProduct = (e) => {
+    dispatch(userProductDetail(e));
+  };
 
   const handleAddToCart = async () => {
     try {
@@ -61,11 +69,20 @@ const ProductDetail = () => {
         setMessage(
           "Unauthorization, please register or login for continue  add product to cart"
         );
-
       } else if (qty < 1) {
-        alert("Quantity product was zero");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: " Out of stock",
+        });
+        // alert("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
-        alert("Sorry your quantity more then stock");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Input exceed the stock",
+        });
+        // alert("Sorry your quantity more then stock");
       } else {
         await dispatch(addToCart(branch_id, name, qty));
         await dispatch(cartList(branch_id));
@@ -89,9 +106,9 @@ const ProductDetail = () => {
           "Unauthorization, please register or login for continue  add product to cart"
         );
       } else if (qty < 1) {
-        setMessage("Quantity product was zero")
+        setMessage("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
-        setMessage("Sorry your quantity more then stock")
+        setMessage("Sorry your quantity more then stock");
       } else {
         grandtotal = grandtotal + parseInt(dataProduct.price_after_discount);
         const checkout = {
@@ -269,20 +286,24 @@ const ProductDetail = () => {
 
         <div className="  flex overflow-x-auto w-[full] gap-5 mb-10 mx-5  ">
           {productRecomendation.map((val, idx) => (
-            <CardProduct
-              key={idx}
-              productid={val.id}
-              discountPersentage={val.cut_percentage}
-              image={val.images}
-              name={val.name}
-              description={val.description}
-              price={val.price}
-              priceAfterDiscount={val.price_after_discount}
-              discount_type={val.discount_type}
-              status={val.status}
-              weight={val.weight}
-              stock={val.stock}
-            />
+            <div
+              key={idx.toLocaleString()}
+              onClick={(e) => handleClickProduct(val.id)}
+            >
+              <CardProduct
+                productid={val.id}
+                discountPersentage={val.cut_percentage}
+                image={val.images}
+                name={val.name}
+                description={val.description}
+                price={val.price}
+                priceAfterDiscount={val.price_after_discount}
+                discount_type={val.discount_type}
+                status={val.status}
+                weight={val.weight}
+                stock={val.stock}
+              />
+            </div>
           ))}
         </div>
       </section>
@@ -295,4 +316,4 @@ const ProductDetail = () => {
   );
 };
 
-export default ProductDetail;
+export default UserProductDetail;

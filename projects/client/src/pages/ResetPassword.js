@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
 import axios from "axios";
 import BackdropResetPassword from "../components/BackdropResetPassword";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser2";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 

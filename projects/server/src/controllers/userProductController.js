@@ -552,11 +552,12 @@ module.exports = {
   },
   productDetail: async (req, res) => {
     try {
-      const { name } = req.params;
+      const { id } = req.params;
       const { branch_id } = req.query;
 
-      console.log(name);
+      console.log(req.query);
       console.log(branch_id);
+      console.log("hahah");
 
       const product = await item_products.findAll({
         attributes: [
@@ -611,8 +612,11 @@ module.exports = {
             attributes: [],
           },
         ],
-        where: { [Op.and]: [{ name }, { branch_stores_id: branch_id }] },
+
+        where: { [Op.and]: [{ id }, { branch_stores_id: branch_id }] },
       });
+
+      console.log(product);
       product.map((val) => {
         if (!val.images) {
           return null;

@@ -1,80 +1,122 @@
+import { Icon } from "@iconify/react";
+
+import bca from "../asset/logoFooter/bca.webp";
+import bni from "../asset/logoFooter/logobni.png";
+import mandiri from "../asset/logoFooter/mandirii.png";
+import appstore from "../asset/logoFooter/get-it-on-app-store.png";
+import googleplay from "../asset/logoFooter/googleplay.png";
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return (
     <footer>
-      <div className="p-10 bg-gray-200">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-            <div className="mb-5">
-              <h4 className="text-2xl pb-4">
-                <strong>GoKu</strong>
-              </h4>
-              <p className="text-gray-500 text-sm">
-                <p>
+      <div className=" bg-gray-200 py-10 px-3 md:px-1 lg:px-1 ">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5  ">
+            <div className=" flex flex-col justify-start gap-3 ">
+              <div>
+                <h1 className=" font-extrabold  mb-3 text-2xl text-center md:text-start ">
+                  GoKu
+                </h1>
+                <p className="text-gray-500 text-sm text-center md:text-justify ">
                   GoKu adalah Online Groceries yang menjual berbagai kebutuhan
                   maupun keperluan untuk sehari hari
                 </p>
-                <br></br>
-                Jl. Jenderal Sudirman No.x, Jakarta <br></br>
-                <strong>Whatsapp:</strong> 0812-3456-7899 <br></br>
-                <strong>Email:</strong> info@goku.com <br></br>
-              </p>
+              </div>
+              <div>
+                <h1 className=" font-bold mb-5 text-xl text-center md:text-start  ">
+                  Hubungi Kami
+                </h1>
+                <div className=" grid grid-row-3 ">
+                  <p className="text-gray-500 text-sm text-center md:text-justify ">
+                    <strong>Branch Store Pusat:</strong> Jl. Jenderal Sudirman
+                    No.111, Bendungan hilir, Tanah Abang, Jakarta Pusat, DKI
+                    Jakarta
+                  </p>
+                  <p className="text-gray-500 text-sm  text-center md:text-justify ">
+                    <strong>Whatsapp:</strong> 0812-3456-7899
+                  </p>
+                  <p className="text-gray-500 text-sm  text-center md:text-justify">
+                    <strong>Email:</strong> info@goku.com
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="mb-5">
-              <h4 className="pb-4">GoKu</h4>
-              <ul className="text-gray-500 text-sm">
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
-                    Cara Kerja GoKu
-                  </a>
-                </li>
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
-                    Referral
-                  </a>
-                </li>
-              </ul>
+
+            <div className=" flex flex-col ml-0 lg:ml-20 text-center  md:text-justify ">
+              <h1 className=" font-bold mb-5 text-xl  ">Metode Pembayaran</h1>
+              <div className=" flex justify-center md:justify-start gap-3">
+                <div>
+                  <img src={bca} alt="bca" width="50px" />
+                </div>
+                <div>
+                  <img src={mandiri} alt="mandiri" width="50px" />
+                </div>
+                <div>
+                  <img src={bni} alt="bni" width="50px" />
+                </div>
+              </div>
             </div>
-            <div className="mb-5">
-              <h4 className="pb-4">Kontak Kami</h4>
-              <ul className="text-gray-500 text-sm">
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
-                    F.A.Q
-                  </a>
-                </li>
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
-                    Blog
-                  </a>
-                </li>
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
-                    Kontak Kami
-                  </a>
-                </li>
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
+
+            <div className="lg:ml-20   ">
+              <h1 className=" font-bold mb-5 text-xl text-center  md:text-justify ">
+                Tautan
+              </h1>
+              <div className="text-gray-500 text-sm flex flex-row flex-wrap md:flex-col gap-4 justify-center md:justify-start ">
+                <p>
+                  <Link to="/">Home</Link>
+                </p>
+                <p>
+                  <Link to="/promotion">Promosi</Link>
+                </p>
+                <p>
+                  <Link to="/login">Login</Link>
+                </p>
+                <p>
+                  <Link to="/register">Register</Link>
+                </p>
+                <p>
+                  <Link to="/" className="hover:text-yellow-500">
                     Syarat & Ketentuan
-                  </a>
-                </li>
-                <li className="pb-4">
-                  <a href="true" className="hover:text-yellow-500">
+                  </Link>
+                </p>
+                <p>
+                  <Link to="/" className="hover:text-yellow-500">
                     Kebijakan Privasi
-                  </a>
-                </li>
-              </ul>
+                  </Link>
+                </p>
+              </div>
             </div>
-            <div className="mb-5">
-              <h4 className="pb-4">Download GoKu App</h4>
-              <p className="text-gray-500 text-sm mb-4">
-                Download GoKu App untuk pengalaman yang lebih baik
-              </p>
-              <p>
-                <i className="m pb-3 fa-brands fa-google-play"></i>
-              </p>
-              <p>
-                <i className="fa-brands fa-app-store"></i>
-              </p>
+
+            <div className=" flex flex-col justify-start gap-3  ">
+              <div>
+                <h1 className=" font-bold mb-5 text-xl text-center  md:text-justify   ">
+                  Download GoKu App
+                </h1>
+                <div className=" flex justify-center md:justify-start gap-3 items-center ">
+                  <img
+                    className="bg-transparent h-8  "
+                    src={appstore}
+                    alt="appstore"
+                  />
+
+                  <img
+                    className="bg-transparent h-10  "
+                    src={googleplay}
+                    alt="googlplay"
+                  />
+                </div>
+              </div>
+              <div>
+                <h1 className=" font-bold mb-5 text-xl text-center  md:text-justify  ">
+                  Layanan Pengaduan Konsumen
+                </h1>
+                <p className="text-gray-500 text-sm text-center  md:text-justify ">
+                  Direktorat Jenderal Perlindungan Konsumen dan Tata Tertib
+                  Niaga Kementrian Perdagangan RI Nomor WhatsApp Ditjen PTKN :
+                  +62 853 1111 1010
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,16 +48,17 @@ const UploadPaymentProof = () => {
         setMessage("");
       }
     } else {
-      setAddFile("")
+      setAddFile("");
       let preview = document.getElementById("imgprev");
-      preview.src = "https://dummyimage.com/600x400/d1d1d1/000000&text=No+Image";
+      preview.src =
+        "https://dummyimage.com/600x400/d1d1d1/000000&text=No+Image";
       setMessage("Ukuran gambar lebih dari 1 Mb");
     }
   };
 
   const handleSubmit = () => {
     try {
-      const id_transaction = order.id || id ;
+      const id_transaction = order.id || id;
       setLoading(true);
       if (addFile == "") {
         return setMessage("Please input payment proof file ");

@@ -4,6 +4,7 @@ const initialState = {
   userProduct: {},
   errorMessage: null,
   loading: null,
+  productId: null,
 };
 
 export const userProductSlice = createSlice({
@@ -24,6 +25,9 @@ export const userProductSlice = createSlice({
     getLoadingFalse: (state) => {
       state.loading = false;
     },
+    getProductDetail: (state, action) => {
+      state.productId = action.payload;
+    },
   },
 });
 
@@ -33,5 +37,6 @@ export const {
   findAll_productList_request,
   getLoading,
   getLoadingFalse,
+  getProductDetail,
 } = userProductSlice.actions;
 export default userProductSlice.reducer;

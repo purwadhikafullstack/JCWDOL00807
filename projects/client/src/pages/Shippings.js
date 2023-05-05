@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import { useNavigate } from "react-router-dom";
@@ -94,7 +94,7 @@ const Shipping = () => {
       setMessage(message);
     }
   };
-  let total = 0
+  let total = 0;
   checkout?.detailOrder?.forEach((val, idx) => {
     total += parseInt(val.price_per_item) * parseInt(val.qty);
   });
@@ -123,7 +123,7 @@ const Shipping = () => {
                 Weight
               </h3>
               <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5">
-              Subtotal Product
+                Subtotal Product
               </h3>
             </div>
             {checkout?.detailOrder?.map((val, idx) => {
@@ -242,9 +242,9 @@ const Shipping = () => {
               >
                 <option value="0">-- select jasa --</option>
                 {costs?.map((val) => {
-                  
-                const total = parseInt(val.price_per_item) * parseInt(val.qty);
-                
+                  const total =
+                    parseInt(val.price_per_item) * parseInt(val.qty);
+
                   return (
                     <option value={val.service}>
                       {val.description} - {val.cost[0].value} (estimasi{" "}
@@ -263,7 +263,7 @@ const Shipping = () => {
                   displayType={"text"}
                   thousandSeparator={true}
                   prefix={"Rp. "}
-                  />
+                />
               </div>
               <div className="flex font-semibold justify-between py-1 text-sm uppercase">
                 <span>Total </span>

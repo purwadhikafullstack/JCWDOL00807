@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -22,9 +22,12 @@ import ReactPaginate from "react-paginate";
 // debugger
 const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
-debugger
+  debugger;
   let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_detailorder_search" : "admin/detailorder_search";
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_detailorder_search"
+      : "admin/detailorder_search";
 
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
@@ -86,8 +89,8 @@ debugger
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getDetailOrderList()
-  }
+    getDetailOrderList();
+  };
   return (
     <>
       <SidebarAdmin />

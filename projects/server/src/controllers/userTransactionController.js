@@ -78,7 +78,7 @@ module.exports = {
         { transaction: t }
       );
 
-      const transactions_id = insert.id
+      const transactions_id = insert.id;
       const newMap = detailOrder.map((item) => {
         return { ...item, transactions_id };
       });
@@ -217,11 +217,7 @@ module.exports = {
             "Sorry, we couldn't find a transaction record that matches your request.",
         };
 
-      if (
-        statusTransaction.dataValues.status !==
-          "Waiting For Confirmation Payment" &&
-        statusTransaction.dataValues.status !== "Waiting For Payment"
-      )
+      if (statusTransaction.dataValues.status !== "Waiting For Payment")
         throw {
           message: `Sorry, Your request can only be accepted while it is in the waiting payment status or Waiting For Confirmation Payment status `,
         };

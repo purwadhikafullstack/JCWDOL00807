@@ -22,8 +22,7 @@ import { deleteCategory } from "../redux/action/categoriesProduct";
 import SidebarAdmin from "../components/SidebarAdmin";
 import AlertSuccess from "../components/AlertSuccess";
 import BackdropResetPassword from "../components/BackdropResetPassword";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/NavbarAdmin";
 import { findAllCategory } from "../redux/action/categoriesProduct";
 
 const CategoryProduct = () => {
@@ -171,7 +170,6 @@ const CategoryProduct = () => {
           />
         ) : null}
       </section>
-      <Footer />
     </div>
   );
 };

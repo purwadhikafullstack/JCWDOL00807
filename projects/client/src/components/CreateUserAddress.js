@@ -153,6 +153,8 @@ const CreateUserAddress = () => {
     setInputStreetAddress("");
     setDataCity([]);
     onClose();
+    setMessage("");
+    setErrorPhone("");
   };
 
   return (
