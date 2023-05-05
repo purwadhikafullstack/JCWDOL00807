@@ -306,6 +306,7 @@ Group by i.id;
         role,
         isActive,
         branch_stores_id,
+        namaBranchStore,
       } = req.dataToken;
       let productImage = req.files.images;
       console.log(productImage);
@@ -341,7 +342,7 @@ Group by i.id;
 
       // Validasi Input
       let checkName = await item_products.findOne({
-        where: { name },
+        where: { name, branch_stores_id },
       });
 
       if (!name || !description || !weight || !stock || !price || !category) {
@@ -460,6 +461,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -479,6 +490,16 @@ Group by i.id;
             branch_stores_id,
             product_categories_id,
             voucher_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -504,6 +525,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -520,6 +551,16 @@ Group by i.id;
             price,
             branch_stores_id,
             product_categories_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -543,6 +584,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -560,6 +611,16 @@ Group by i.id;
             branch_stores_id,
             product_categories_id,
             voucher_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -645,7 +706,17 @@ Group by i.id;
       );
 
       // Validasi Input
-
+      let checkName = await item_products.findOne({
+        where: { name, branch_stores_id, id: { [Op.not]: id } },
+      });
+      console.log(checkName);
+      if (checkName) {
+        throw {
+          isError: true,
+          message: "Name is already registered, please use the unique ones",
+          data: null,
+        };
+      }
       await item_products.update(
         {
           name,
@@ -686,24 +757,24 @@ Group by i.id;
         }
       }
 
-      if (stock) {
-        if (stock < 1) {
-          throw {
-            isError: true,
-            message: "Stock field  is invalid, please input positive integer",
-            data: null,
-          };
-        } else {
-          await item_products.update(
-            {
-              stock,
-            },
-            { where: { id, branch_stores_id } },
-            { transaction: t }
-          );
-          dataToSend.stock = stock;
-        }
-      }
+      // if (stock) {
+      //   if (stock < 1) {
+      //     throw {
+      //       isError: true,
+      //       message: "Stock field  is invalid, please input positive integer",
+      //       data: null,
+      //     };
+      //   } else {
+      //     await item_products.update(
+      //       {
+      //         stock,
+      //       },
+      //       { where: { id, branch_stores_id } },
+      //       { transaction: t }
+      //     );
+      //     dataToSend.stock = stock;
+      //   }
+      // }
 
       if (price) {
         if (price <= 0) {

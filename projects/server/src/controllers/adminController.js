@@ -295,7 +295,7 @@ where branch_store= ? and (status="Order Confirmed" or status="On Delivering" or
       const branchStores = await branch_stores.findOne({
         where: { id: branch_stores_id },
       });
-
+      let namaBranchStore = branchStores.dataValues.name;
       let token = createToken({
         admins_id,
         name,
@@ -303,6 +303,7 @@ where branch_store= ? and (status="Order Confirmed" or status="On Delivering" or
         role,
         isActive,
         branch_stores_id,
+        namaBranchStore,
       });
       res.status(200).send({
         isSuccess: true,
@@ -310,7 +311,7 @@ where branch_store= ? and (status="Order Confirmed" or status="On Delivering" or
         token: token,
         role: role,
         name: name,
-        branchStores: branchStores.dataValues.name,
+        branchStores: namaBranchStore,
       });
     } catch (error) {
       res.status(404).send({
