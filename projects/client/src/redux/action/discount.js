@@ -2,6 +2,7 @@ import axios from "axios";
 import { discountSlice } from "../reducer/discount";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const createDiscount = ({
   discount_type,
@@ -39,14 +40,18 @@ export const createDiscount = ({
       dispatch(discountSlice.actions.createDiscountSuccess(response.data));
 
       console.log(response.data);
-      alert("Create Discount Success");
+      Swal.fire("Good Job!", "Create discount success", "success");
 
       window.location.reload();
     } catch (error) {
       console.log(error);
       //   alert(error.message);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(discountSlice.actions.failed(error.response.data.message));
     }
   };
@@ -87,13 +92,18 @@ export const updateDiscount = ({
       dispatch(discountSlice.actions.updateDiscountSuccess(response.data));
 
       console.log(response.data);
-      alert("Update Discount Success");
+      Swal.fire("Good Job!", "Update Discount Success", "success");
 
       window.location.reload();
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      // alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(discountSlice.actions.failed(error.response.data.message));
     }
   };

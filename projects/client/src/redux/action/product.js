@@ -2,6 +2,7 @@ import axios from "axios";
 import { productSlice } from "../reducer/product";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const createProduct = ({ formData }, { token }) => {
   return async (dispatch) => {
@@ -21,12 +22,16 @@ export const createProduct = ({ formData }, { token }) => {
       dispatch(productSlice.actions.createProductSuccess(response.data));
 
       console.log(response);
-      alert("Create Product Success");
+      Swal.fire("Good Job!", "Create Product Success", "success");
       window.location.reload();
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(productSlice.actions.failed(error.response.data.message));
     }
   };
@@ -48,16 +53,20 @@ export const editProduct = ({ formData }, { id_product }, { token }) => {
         }
       );
       dispatch(productSlice.actions.editProductSuccess(response.data));
-      toast(response.data.message);
+      // toast(response.data.message);
+      Swal.fire("Good Job!", `${response.data.message}`, "success");
+
       console.log(response.data);
-      alert("Edit Product Success");
       // navigate("/admin/manage-product");
       window.location.reload();
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
-      alert(error.message);
-      toast(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
       dispatch(productSlice.actions.failed(error.response.data.message));
     }
   };

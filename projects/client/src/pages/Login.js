@@ -12,7 +12,8 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/action/user";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser2";
+import axios from "axios";
 
 const Login = () => {
   let email = useRef();
@@ -35,7 +36,7 @@ const Login = () => {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     try {
       let inputEmail = email.current.value;
       let inputPassword = password.current.value;
@@ -46,15 +47,14 @@ const Login = () => {
         setMessage("The email address you entered is not valid");
       } else {
         setMessage("");
-        dispatch(
-          loginUser({
-            email: inputEmail,
-            password: inputPassword,
-          })
+        const loginUserSuccess = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/user/login?email=${inputEmail}&password=${inputPassword}`
         );
+        dispatch(loginUser({ response: loginUserSuccess }));
       }
     } catch (error) {
       console.log(error);
+      setMessage(error.response.data.message);
     }
   };
 
@@ -65,9 +65,6 @@ const Login = () => {
       localStorage.setItem("my_Token", user.user.token);
       localStorage.setItem("my_Role", user.user.role);
       navigate("/");
-    }
-    if (user.errorMessage) {
-      setMessage(user.errorMessage);
     }
   });
 

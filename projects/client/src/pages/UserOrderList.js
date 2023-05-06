@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import {
@@ -22,6 +22,7 @@ import {
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
+import { useSelector } from "react-redux";
 
 import DialogConfirmation from "../components/DialogConfirmation";
 
@@ -50,17 +51,32 @@ const UserOrderListByQuery = () => {
   const [rows, setRows] = useState(0);
   const [query, setQuery] = useState("");
   const [msg, setMsg] = useState("");
+  // const [branchStore, setBranchStore] = useState("");
+  // const [branchId, setBranchId] = useState("");
   let sort = useRef();
   let asc = useRef();
+
+  let userProduct = useSelector((state) => state.userProduct);
+
+  // useEffect(() => {
+  //   // console.log(userProductList.userProduct.data.branch);
+  //   // console.log(userProductList);
+  //   if (!userProductList?.loading && userProductList?.userProduct?.data) {
+  //     if (userProductList?.userProduct?.data?.branch) {
+  //       setBranchStore(userProductList?.userProduct?.data?.branch);
+  //       setBranchId(userProductList?.userProduct?.data?.branch_id);
+  //     }
+  //   }
+  // }, [userProductList]);
 
   const getOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
       let inputSort = sort.current.value;
       let inputAsc = asc.current.value;
-      console.log(inputSort, inputAsc);
-      console.log(keyword, page);
-      console.log(status);
+      // console.log(inputSort, inputAsc);
+      // console.log(keyword, page);
+      // console.log(status);
       let response = await axios.get(
         `
       ${process.env.REACT_APP_API_BASE_URL}/user/order_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}&branch=${branch_name}
@@ -77,14 +93,14 @@ const UserOrderListByQuery = () => {
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
   const handleCheckboxChange = () => {
     const checkedValues = checkboxRefs.current
       .filter((checkbox) => checkbox.checked)
       .map((checkbox) => checkbox.value);
-    console.log(checkedValues.join(","));
+    // console.log(checkedValues.join(","));
     let checkedValuesString = checkedValues.join(",");
     setStatus(checkedValuesString);
   };
@@ -112,13 +128,21 @@ const UserOrderListByQuery = () => {
   const cancelOrderBySistem = async () => {
     try {
       const token = localStorage.my_Token;
-      let response = await axios.patch(
-        `${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-sistem`,
-        {},
-        {
-          headers: { Authorization: token },
-        }
-      );
+      if (!userProduct.loading && userProduct?.userProduct?.data) {
+        const branchStore = userProduct?.userProduct?.data?.branch;
+        const branch_id = userProduct?.userProduct?.data?.branch_id;
+
+        // console.log(branchStore, branch_id);
+        let response = await axios.patch(
+          `${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-sistem?branchId=${branch_id}&branchStore=${branchStore}`,
+          {},
+          {
+            headers: { Authorization: token },
+          }
+        );
+
+        console.log(response);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -126,8 +150,11 @@ const UserOrderListByQuery = () => {
 
   useEffect(() => {
     getOrderList();
-    cancelOrderBySistem();
   }, [page, keyword]);
+
+  useEffect(() => {
+    cancelOrderBySistem();
+  }, [userProduct, page, keyword]);
 
   const handleAscSort = () => {
     getOrderList();
@@ -202,9 +229,9 @@ const UserOrderListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>

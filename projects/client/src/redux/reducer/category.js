@@ -4,6 +4,7 @@ const initialState = {
   category: {},
   errorMessage: null,
   loading: null,
+  message: null,
 };
 
 export const categorySlice = createSlice({
@@ -24,22 +25,22 @@ export const categorySlice = createSlice({
       state.errorMessage = action.payload;
       state.loading = null;
     },
-    stateError: (state, action) => {
-      state.category = action.payload;
+    stateError: (state) => {
+      state.message = null;
       state.errorMessage = null;
     },
     createCategorySuccess: (state, action) => {
-      state.category = action.payload;
+      state.message = action.payload;
       state.loading = null;
       state.errorMessage = null;
     },
     updateCategorySuccess: (state, action) => {
-      state.category = action.payload;
+      state.message = action.payload;
       state.loading = null;
       state.errorMessage = null;
     },
     deleteCategorySuccess: (state, action) => {
-      state.category = action.payload;
+      state.message = action.payload;
       state.loading = null;
       state.errorMessage = null;
     },

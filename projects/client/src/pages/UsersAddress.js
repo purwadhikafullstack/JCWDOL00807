@@ -8,9 +8,10 @@ import {
   Text,
   StackDivider,
   Button,
+  Divider,
 } from "@chakra-ui/react";
 
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import CreateUserAddress from "../components/CreateUserAddress";
@@ -49,12 +50,9 @@ const UserAddress = () => {
       <section
         className=" flex-row md:flex justify-center
        container mx-auto gap-5  min-h-screen
-        px-5 md:px-0 m-10"
+       items-center  px-0  mt-0 md:mt-10 mb-10"
       >
-        <Card
-          textColor="#234E52"
-          className="w-[full] md:w-[1000px] px-5 md:px-0 "
-        >
+        <Card textColor="#234E52" className="w-[full] md:w-[1000px]  md:px-0 ">
           {message ? (
             <CardHeader textAlign="center">
               <AlertSuccess title={message} handleClick={handleClick} />
@@ -64,18 +62,18 @@ const UserAddress = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent="center"
-              height="160px"
+              height={["fit-content", "160px"]}
               variant="subtle"
-              bgColor="#DEF5E5"
+              bgColor={["white", "#DEF5E5"]}
               rounded="4px"
               textColor="#234E52"
             >
-              <Heading size="md" mt="45px" textAlign="center">
+              <Heading size="md" mt={["10", "45px"]} textAlign="center">
                 My Address
               </Heading>
             </CardHeader>
           )}
-          <div className=" md:flex md:px-5  flex flex-row h-[800px] ">
+          <div className=" md:flex md:px-5  flex flex-row flex-wrap ">
             <SidebarUser />
             {dataAddress?.length === 0 || !dataAddress ? (
               <div className=" ml-20 mt-20 text-lg   ">
@@ -90,7 +88,7 @@ const UserAddress = () => {
                   <Stack
                     divider={<StackDivider />}
                     spacing="4"
-                    mt="16"
+                    mt={["5", "16"]}
                     className=" p-0 md:pl-20 "
                   >
                     <Box className="flex justify-between items-center">
@@ -116,64 +114,70 @@ const UserAddress = () => {
                           <Button disabled size="sm">
                             Utama
                           </Button>
-                          <Button size="sm">
-                            <UpdateUserAddress
-                              id={dataAddress[0]?.id}
-                              data={dataAddress[0]}
-                            />
-                          </Button>
+
+                          <UpdateUserAddress
+                            id={dataAddress[0]?.id}
+                            data={dataAddress[0]}
+                            defaultAddress={true}
+                          />
                         </Box>
                       </Box>
                     </Box>
                   </Stack>
-                </CardBody>
-                <CardBody className=" p-0   overflow-auto max-h-[350px]  ">
-                  <Stack
-                    divider={<StackDivider />}
-                    spacing="4"
-                    mt="-4"
-                    className=" p-0 md:pl-20 "
-                  >
-                    {dataAddress?.map((val, idx) => (
-                      <div key={idx.toLocaleString()}>
-                        {val.isDefault === false ? (
-                          <Box className="flex justify-between items-center">
-                            <Box className="flex flex-col  items-start justify-start gap-1 ">
-                              <div className=" flex flex-row gap-3 ">
+
+                  <div className=" p-0 overflow-auto max-h-[350px] mt-4  ">
+                    <Stack
+                      divider={<StackDivider />}
+                      spacing="4"
+                      mt="-4"
+                      className=" p-0 md:pl-20 "
+                    >
+                      {dataAddress?.map((val, idx) => (
+                        <div key={idx.toLocaleString()}>
+                          {val.isDefault === false ? (
+                            <Box className="flex justify-between items-center gap-0 md:gap-10">
+                              <Box className="flex flex-col  items-start justify-start gap-1 ">
+                                <div className=" flex flex-row gap-3 ">
+                                  <Text
+                                    textTransform="capitalize"
+                                    className=" font-semibold "
+                                  >
+                                    {val.recipient}
+                                  </Text>
+                                  <Text>| {val.recipients_phone}</Text>
+                                </div>
                                 <Text
                                   textTransform="capitalize"
-                                  className=" font-semibold "
+                                  className=" text-sm"
                                 >
-                                  {val.recipient}
+                                  {val.street_address}
                                 </Text>
-                                <Text>| {val.recipients_phone}</Text>
-                              </div>
-                              <Text
-                                textTransform="capitalize"
-                                className=" text-sm"
-                              >
-                                {val.street_address}
-                              </Text>
-                              <Text
-                                textTransform="uppercase"
-                                className=" text-sm "
-                              >
-                                {val.city}, {val.province}, {val.postal_code}
-                              </Text>
-                            </Box>
+                                <Text
+                                  textTransform="uppercase"
+                                  className=" text-sm "
+                                >
+                                  {val.city}, {val.province}, {val.postal_code}
+                                </Text>
+                              </Box>
 
-                            <Box>
-                              <UpdateUserAddress id={val.id} data={val} />
+                              <Box>
+                                <UpdateUserAddress
+                                  id={val.id}
+                                  data={val}
+                                  defaultAddress={false}
+                                />
+                              </Box>
                             </Box>
-                          </Box>
-                        ) : null}
-                      </div>
-                    ))}
+                          ) : null}
+                        </div>
+                      ))}
+                    </Stack>
+                  </div>
+                  <Stack spacing="4" className=" p-0 md:pl-20 ">
+                    <Divider />
+                    <CreateUserAddress />
                   </Stack>
                 </CardBody>
-                <div className=" text-center mt-10  ">
-                  <CreateUserAddress />
-                </div>
               </div>
             )}
           </div>

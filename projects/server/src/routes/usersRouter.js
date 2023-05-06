@@ -39,4 +39,11 @@ Router.get(
   transactionController.getDetailOrderUserByQuery
 );
 
+Router.get("/user-address", tokenVerify, usersController.userAddresses);
+Router.get(
+  "/check-expired-token",
+  tokenVerify,
+  usersController.checkExpiredToken
+);
+
 module.exports = Router;

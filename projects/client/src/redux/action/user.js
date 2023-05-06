@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { authSlice } from "../reducer/auth";
+import Swal from "sweetalert2";
 
 export const keep_login_request = "keep_login_request";
 export const keep_login_payload = "keep_login_payload";
@@ -21,26 +22,29 @@ export const registerUser = ({
       );
       console.log(response.data);
       dispatch(authSlice.actions.registerSuccess(response.data));
-      toast(response.data.message);
+      // toast(response.data.message);
+      Swal.fire("Good Job!", `${response.data.message}`, "success");
     } catch (error) {
       dispatch(authSlice.actions.failed(error.response.data.message));
       console.log(error);
-      toast(error.response.data.message);
+
+      // toast(error.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${error.response.data.message}`,
+      });
     }
   };
 };
 
-export const loginUser = ({ email, password }) => {
+export const loginUser = ({ response }) => {
   return async (dispatch) => {
     try {
-      const getUserLogin = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/user/login?email=${email}&password=${password}`
-      );
-
-      dispatch(authSlice.actions.loginSuccess(getUserLogin.data));
+      console.log(response);
+      dispatch(authSlice.actions.loginSuccess(response.data));
     } catch (error) {
       console.log(error);
-      dispatch(authSlice.actions.failed(error.response.data.message));
     }
   };
 };

@@ -11,7 +11,7 @@ import {
 
 import { useSelector, useDispatch } from "react-redux";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 import { keepLogin } from "../redux/action/user";
@@ -20,7 +20,6 @@ import { Link } from "react-router-dom";
 const SidebarUser = () => {
   const dispatch = useDispatch();
   let user = useSelector((state) => state.auth.user);
-
   const [messageDelete, setMessageDelete] = useState("");
 
   const handleClose = () => {
@@ -50,11 +49,15 @@ const SidebarUser = () => {
     }
   };
 
-  console.log(user);
+  useEffect(() => {
+    if (!user?.image) {
+      setMessageDelete("");
+    }
+  }, [user]);
 
   return (
     <section>
-      <Card className="  flex flex-col justify-center w-screen md:w-[300px] min-h-fit  md:h-[800px]  pt-10 items-center ">
+      <Card className="  flex flex-col justify-center w-screen md:w-[300px] min-h-fit  md:h-[800px]  pt-10 items-center  ">
         <CardHeader className="flex flex-col items-center gap-5">
           {user?.image ? (
             <Tooltip label="Delete Profile" size="xs">
@@ -73,7 +76,7 @@ const SidebarUser = () => {
           </Text>
         </CardHeader>
 
-        <CardBody className=" flex flex-col gap-14 w-full md:h-screen">
+        <CardBody className=" flex flex-col  gap-3 md:gap-14 w-full md:h-screen rounded-none md:rounded-lg ">
           <Box className="flex flex-row gap-3 ">
             <Icon className=" text-2xl " icon="line-md:account-small" />
             <Box className=" flex flex-col">

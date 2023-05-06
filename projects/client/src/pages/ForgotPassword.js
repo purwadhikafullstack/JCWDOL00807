@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import axios from "axios";
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser2";
 import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
@@ -86,7 +86,14 @@ const ForgotPassword = () => {
           )}
 
           <p className=" text-sm text-center mt-4 text-slate-500 ">
-            Or you can create new account?{" "}
+            You can{" "}
+            <Link to="/login">
+              {" "}
+              <span className="text-sm text-[#8EC3B0] font-semibold">
+                login
+              </span>
+            </Link>{" "}
+            or you can create new account?
             <Link to="/register">
               <span className="text-sm text-[#8EC3B0] font-semibold ">
                 create new one

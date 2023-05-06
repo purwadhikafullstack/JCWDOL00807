@@ -8,19 +8,18 @@ import {
   Checkbox,
   InputGroup,
   Input,
-  InputRightAddon,
+  InputLeftElement,
   Button,
 } from "@chakra-ui/react";
-import Navbar from "../components/Navbar2";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import CardProduct from "../components/CardProduct";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 import ReactPaginate from "react-paginate";
-import { Link } from "react-router-dom";
 import React from "react";
 
-const ProductList = () => {
+const UserProductList = () => {
   const { name } = useParams();
   const [listProduct, setListProduct] = useState([]);
   const [title, setTitle] = useState("");
@@ -31,7 +30,6 @@ const ProductList = () => {
   const [latest, setLatest] = useState(false);
   const [bestSeller, setBestSeller] = useState(false);
   const [search, setSearch] = useState("");
-  const [inputSearch, setInputSearch] = useState("");
   const [allProduct, setAllProduct] = useState(false);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
@@ -79,6 +77,7 @@ const ProductList = () => {
           inputBestSeller = "";
           inputAllProduct = "";
         } else {
+          // setTitle(name);
           if (name === "promotion") {
             setPromo(true);
             inputPromotion = "promotion";
@@ -86,6 +85,7 @@ const ProductList = () => {
             inputBestSeller = "";
             inputAllProduct = "";
             inputCategory = "";
+            setTitle("product promotion");
           } else if (name === "latest") {
             setLatest(true);
             inputLatest = "latest";
@@ -93,6 +93,7 @@ const ProductList = () => {
             inputBestSeller = "";
             inputAllProduct = "";
             inputCategory = "";
+            setTitle("new product");
           } else if (name === "bestSeller") {
             setBestSeller(true);
             inputBestSeller = "bestSeller";
@@ -100,6 +101,7 @@ const ProductList = () => {
             inputLatest = "";
             inputAllProduct = "";
             inputCategory = "";
+            setTitle("product bestSeller");
           } else if (name === "allproduct") {
             setAllProduct(true);
             inputAllProduct = "allproduct";
@@ -107,6 +109,7 @@ const ProductList = () => {
             inputLatest = "";
             inputBestSeller = "";
             inputCategory = "";
+            setTitle("all product");
           }
         }
 
@@ -135,9 +138,14 @@ const ProductList = () => {
           console.log(filterCategory);
           inputCategory = filterCategory;
         }
+
+        console.log(
+          `${api}/user/product-filter?branch_stores_id=${branchId}&branch_store_name=${branch}&promotion=${inputPromotion}&bestSeller=${inputBestSeller}&latest=${inputLatest}&allProduct=${inputAllProduct}&categories=${inputCategory}&search=${search}&sortBy=${sort}&limit=${limit}&page=${page}`
+        );
         const dataSearchAndFilter = await axios.get(
           `${api}/user/product-filter?branch_stores_id=${branchId}&branch_store_name=${branch}&promotion=${inputPromotion}&bestSeller=${inputBestSeller}&latest=${inputLatest}&allProduct=${inputAllProduct}&categories=${inputCategory}&search=${search}&sortBy=${sort}&limit=${limit}&page=${page}`
         );
+
         console.log(dataSearchAndFilter);
 
         setListProduct(dataSearchAndFilter?.data?.data);
@@ -166,10 +174,8 @@ const ProductList = () => {
   ]);
 
   const handleSearch = (e) => {
-    setInputSearch(e);
-  };
-  const handleSearchSubmit = () => {
-    setSearch(inputSearch);
+    setSearch(e);
+    console.log(e);
   };
 
   const changePage = ({ selected }) => {
@@ -186,6 +192,12 @@ const ProductList = () => {
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (userProduct.search) {
+      setSearch(userProduct.search);
+    }
+  }, []);
 
   return (
     <section>
@@ -307,20 +319,22 @@ const ProductList = () => {
                   </Select>
                 </Box>
                 <InputGroup w={["fit-content", "300px"]}>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={
+                      <Icon className=" text-xl " icon="ic:round-search" />
+                    }
+                  />
                   <Input
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSearch(e.target.value);
+                      }
+                    }}
                     placeholder="Search Product"
                     type="text"
-                    p={["2", "5"]}
                     bgColor="white"
-                    onChange={(e) => handleSearch(e.target.value)}
                   />
-                  <InputRightAddon>
-                    <Icon
-                      className=" text-xl "
-                      onClick={handleSearchSubmit}
-                      icon="ic:round-search"
-                    />
-                  </InputRightAddon>
                 </InputGroup>
               </div>
             </div>
@@ -332,19 +346,21 @@ const ProductList = () => {
             ) : (
               <div className=" grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-5 md:p-2 ">
                 {listProduct.map((val, idx) => (
-                  <CardProduct
-                    key={idx.toLocaleString()}
-                    discountPersentage={val.cut_percentage}
-                    image={val.images}
-                    name={val.name}
-                    description={val.description}
-                    price={val.price}
-                    priceAfterDiscount={val.price_after_discount}
-                    discount_type={val.discount_type}
-                    status={val.status}
-                    stock={val.stock}
-                    productid={val.id}
-                  />
+                  <div key={idx.toLocaleString()}>
+                    <CardProduct
+                      key={idx.toLocaleString()}
+                      discountPersentage={val.cut_percentage}
+                      image={val.images}
+                      name={val.name}
+                      description={val.description}
+                      price={val.price}
+                      priceAfterDiscount={val.price_after_discount}
+                      discount_type={val.discount_type}
+                      status={val.status}
+                      stock={val.stock}
+                      productid={val.id}
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -384,4 +400,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default UserProductList;
