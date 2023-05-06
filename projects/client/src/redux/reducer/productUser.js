@@ -5,6 +5,7 @@ const initialState = {
   errorMessage: null,
   loading: null,
   productId: null,
+  search: null,
 };
 
 export const userProductSlice = createSlice({
@@ -28,6 +29,9 @@ export const userProductSlice = createSlice({
     getProductDetail: (state, action) => {
       state.productId = action.payload;
     },
+    getDataSearch: (state, action) => {
+      state.search = action.payload;
+    },
   },
 });
 
@@ -38,5 +42,6 @@ export const {
   getLoading,
   getLoadingFalse,
   getProductDetail,
+  getDataSearch,
 } = userProductSlice.actions;
 export default userProductSlice.reducer;

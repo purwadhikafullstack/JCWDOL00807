@@ -350,6 +350,7 @@ module.exports = {
       let dataBestSeller = getDataBestSeller.map(
         (val) => `${val.product_name}`
       );
+      // console.log(search);
 
       let inputPromotion;
       let inputLatest;
@@ -402,6 +403,8 @@ module.exports = {
       if (inputLatest) {
         order.push(...inputLatest);
       }
+
+      // console.log(inputSearch);
 
       const { count } = await item_products.findAndCountAll({
         attributes: [
@@ -526,6 +529,8 @@ module.exports = {
         limit: limit,
         offset: offset,
       });
+
+      console.log(productList);
       productList.map((val) => {
         if (!val.images) {
           return null;
@@ -552,7 +557,7 @@ module.exports = {
   },
   productDetail: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { name } = req.params;
       const { branch_id } = req.query;
 
       console.log(req.query);
@@ -613,7 +618,12 @@ module.exports = {
           },
         ],
 
-        where: { [Op.and]: [{ id }, { branch_stores_id: branch_id }] },
+        where: {
+          [Op.and]: [
+            { name: { [Op.like]: `%${name}%` } },
+            { branch_stores_id: branch_id },
+          ],
+        },
       });
 
       console.log(product);

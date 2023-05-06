@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -17,9 +17,7 @@ import CardProduct from "../components/CardProduct";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 import ReactPaginate from "react-paginate";
-import { Link } from "react-router-dom";
 import React from "react";
-import { userProductDetail } from "../redux/action/userProduct";
 
 const UserProductList = () => {
   const { name } = useParams();
@@ -38,7 +36,6 @@ const UserProductList = () => {
   const [rows, setRows] = useState(0);
   const [msg, setMsg] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const dispatch = useDispatch();
 
   const api = process.env.REACT_APP_API_BASE_URL;
   let userProduct = useSelector((state) => state.userProduct);
@@ -80,7 +77,7 @@ const UserProductList = () => {
           inputBestSeller = "";
           inputAllProduct = "";
         } else {
-          setTitle(name);
+          // setTitle(name);
           if (name === "promotion") {
             setPromo(true);
             inputPromotion = "promotion";
@@ -149,6 +146,8 @@ const UserProductList = () => {
           `${api}/user/product-filter?branch_stores_id=${branchId}&branch_store_name=${branch}&promotion=${inputPromotion}&bestSeller=${inputBestSeller}&latest=${inputLatest}&allProduct=${inputAllProduct}&categories=${inputCategory}&search=${search}&sortBy=${sort}&limit=${limit}&page=${page}`
         );
 
+        console.log(dataSearchAndFilter);
+
         setListProduct(dataSearchAndFilter?.data?.data);
         setPage(dataSearchAndFilter?.data?.page);
         setPages(dataSearchAndFilter?.data?.totalPages);
@@ -179,11 +178,6 @@ const UserProductList = () => {
     console.log(e);
   };
 
-  const handleClickProduct = (e) => {
-    console.log(e);
-    dispatch(userProductDetail(e));
-  };
-
   const changePage = ({ selected }) => {
     setPage(selected);
     if (selected === 9) {
@@ -198,6 +192,12 @@ const UserProductList = () => {
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (userProduct.search) {
+      setSearch(userProduct.search);
+    }
+  }, []);
 
   return (
     <section>
@@ -346,10 +346,7 @@ const UserProductList = () => {
             ) : (
               <div className=" grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-5 md:p-2 ">
                 {listProduct.map((val, idx) => (
-                  <div
-                    key={idx.toLocaleString()}
-                    onClick={(e) => handleClickProduct(val.id)}
-                  >
+                  <div key={idx.toLocaleString()}>
                     <CardProduct
                       key={idx.toLocaleString()}
                       discountPersentage={val.cut_percentage}

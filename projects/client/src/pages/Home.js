@@ -2,7 +2,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/NavbarUser";
 import { Icon } from "@iconify/react";
 import CardProduct from "../components/CardProduct";
-import { Button } from "@chakra-ui/react";
+import { Button, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import MainBanner from "../components/MainBanner";
@@ -10,9 +10,9 @@ import Banner from "../components/Banner";
 import Carousel from "nuka-carousel";
 import ramadhanSales from "../asset/banner/ramadhan-sales.png";
 import shipping from "../asset/banner/shipping.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { keepLogin } from "../redux/action/user";
-import { userProductDetail } from "../redux/action/userProduct";
+import { dataSeach } from "../redux/action/userProduct";
 
 const Home = () => {
   let userProduct = useSelector((state) => state.userProduct);
@@ -22,6 +22,7 @@ const Home = () => {
   const [latest, setLatest] = useState([]);
   const [promotion, setPromotion] = useState([]);
   const [bestSeller, setBestSeller] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(keepLogin());
@@ -35,8 +36,9 @@ const Home = () => {
     // eslint-disable-next-line
   }, [userProduct]);
 
-  const handleClickProduct = (e) => {
-    dispatch(userProductDetail(e));
+  const handleSearch = (e) => {
+    dispatch(dataSeach(e));
+    navigate(`/product-list/${e}`);
   };
 
   return (
@@ -65,6 +67,23 @@ const Home = () => {
           <Banner images={ramadhanSales} title="ramadhanSale" />
         </Carousel>
 
+        <InputGroup w={["fit-content", "300px"]}>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<Icon className=" text-xl " icon="ic:round-search" />}
+          />
+          <Input
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch(e.target.value);
+              }
+            }}
+            placeholder="Search Product"
+            type="text"
+            bgColor="white"
+          />
+        </InputGroup>
+
         <div className=" mx-3 md:mx-2">
           <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
             Categories
@@ -73,7 +92,7 @@ const Home = () => {
             {category.map((val, idx) => (
               <Link
                 key={idx.toLocaleString()}
-                to={`/category-${val.toLowerCase()}`}
+                to={`/product-list/category-${val.toLowerCase()}`}
               >
                 <div className=" min-w-fit ">{val}</div>
               </Link>
@@ -85,7 +104,7 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               Promotion
             </h1>
-            <Link to={`/promotion`}>
+            <Link to={`/product-list/promotion`}>
               <Button
                 bg="#3C6255"
                 textColor="white"
@@ -103,10 +122,7 @@ const Home = () => {
 
           <div className="flex overflow-x-auto w-[full] gap-5 border-x-2 rounded-lg  ">
             {promotion.map((val, idx) => (
-              <div
-                key={idx.toLocaleString()}
-                onClick={(e) => handleClickProduct(val.id)}
-              >
+              <div key={idx.toLocaleString()}>
                 <CardProduct
                   productid={val.id}
                   discountPersentage={val.cut_percentage}
@@ -127,7 +143,7 @@ const Home = () => {
         <div className="mx-3 md:mx-2">
           <div className=" flex justify-between">
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">Latest</h1>
-            <Link to={`/latest`}>
+            <Link to={`/product-list/latest`}>
               <Button
                 bg="#3C6255"
                 textColor="white"
@@ -145,10 +161,7 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {latest.map((val, idx) => (
-              <div
-                key={idx.toLocaleString()}
-                onClick={(e) => handleClickProduct(val.id)}
-              >
+              <div key={idx.toLocaleString()}>
                 <CardProduct
                   discountPersentage={val.cut_percentage}
                   productid={val.id}
@@ -171,7 +184,7 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               All Product
             </h1>
-            <Link to={`/allproduct`}>
+            <Link to={`/product-list/allproduct`}>
               <Button
                 bg="#3C6255"
                 textColor="white"
@@ -189,10 +202,7 @@ const Home = () => {
 
           <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
             {allProduct.map((val, idx) => (
-              <div
-                key={idx.toLocaleString()}
-                onClick={(e) => handleClickProduct(val.id)}
-              >
+              <div key={idx.toLocaleString()}>
                 <CardProduct
                   productid={val.id}
                   discountPersentage={val.cut_percentage}
@@ -215,7 +225,7 @@ const Home = () => {
             <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
               Product Best Seller
             </h1>
-            <Link to={`/bestSeller`}>
+            <Link to={`/product-list/bestSeller`}>
               <Button
                 bg="#3C6255"
                 textColor="white"
@@ -232,10 +242,7 @@ const Home = () => {
           </div>
           <div className="flex  overflow-x-auto w-[full] gap-5 mb-5  border-x-2 rounded-lg ">
             {bestSeller.map((val, idx) => (
-              <div
-                key={idx.toLocaleString()}
-                onClick={(e) => handleClickProduct(val.id)}
-              >
+              <div key={idx.toLocaleString()}>
                 <CardProduct
                   productid={val.id}
                   discountPersentage={val.cut_percentage}

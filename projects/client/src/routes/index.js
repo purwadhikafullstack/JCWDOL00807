@@ -347,7 +347,7 @@ export default function Router() {
     { path: "404", element: <PageNotFound /> },
     { path: "/authentication/:token", element: <Verification /> },
     { path: "*", element: <PageNotFound /> },
-    { path: "/:name", element: <UserProductList /> },
+    { path: "/product-list/:name", element: <UserProductList /> },
     { path: "/product/:name", element: <UserProductDetail /> },
     { path: "/claimReferral/:token", element: <VoucherReferral /> },
   ]);

@@ -114,9 +114,47 @@ module.exports = {
   findAllCategory: async (req, res) => {
     try {
       const { admins_id: admin_id, role, isActive } = req.dataToken;
+      let { search, sort } = req.query;
+
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 0;
+      const offset = limit * page;
 
       if (role !== "admin branch" || isActive === false)
         throw { message: "Unauthorization" };
+
+      let order;
+      let inputSearch;
+      if (sort === "asc") {
+        order = [["name", "DESC"]];
+      } else if (sort === "desc") {
+        order = [["name", "asc"]];
+      } else {
+        order = [["id", "DESC"]];
+      }
+
+      if (search) {
+        inputSearch = { name: { [Op.substring]: search } };
+      }
+
+      const { count } = await products_categories.findAndCountAll({
+        attributes: [
+          "id",
+          "name",
+          [
+            sequelize.fn("DATE_FORMAT", sequelize.col("createdAt"), "%y-%m-%d"),
+            "createdAt",
+          ],
+          [
+            sequelize.fn("DATE_FORMAT", sequelize.col("updatedAt"), "%y-%m-%d"),
+            "updatedAt",
+          ],
+        ],
+        where: { name: { [Op.substring]: search } },
+        order: order,
+      });
+
+      let totalPages = Math.ceil(count / limit);
 
       const getAllData = await products_categories.findAll({
         attributes: [
@@ -131,11 +169,20 @@ module.exports = {
             "updatedAt",
           ],
         ],
-        order: [["id", "DESC"]],
+        where: inputSearch,
+
+        order: order,
+        limit: limit,
+        offset: offset,
       });
+
       res.status(200).send({
         isSuccess: true,
         data: getAllData,
+        count,
+        page,
+        totalPages,
+        limit,
       });
     } catch (error) {
       res.status(500).send({

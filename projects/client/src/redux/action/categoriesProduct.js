@@ -3,24 +3,25 @@ import { categorySlice } from "../reducer/category";
 
 export const findAll_category_request = "findAll_address_request";
 
-export const findAllCategory = () => {
+export const findAllCategory = ({ sort, search, page }) => {
   return async (dispatch) => {
     dispatch({ type: findAll_category_request });
+
     try {
       let token = localStorage.my_Token;
-
       const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/categories/find-all`,
+        `http://localhost:8000/api/categories/find-all?search=${search}&sort=${sort}&page=${page}&limit=5`,
         {
           headers: {
             Authorization: token,
           },
         }
       );
+      // console.log(response);
       dispatch(categorySlice.actions.getAllCategorySuccess(response.data));
     } catch (error) {
       // console.log(error);
-      // console.log(error.response.data.message);
+      console.log(error.response.data.message);
       dispatch(categorySlice.actions.failed(error.response.data.message));
     }
   };
@@ -52,9 +53,11 @@ export const createCategory = (categoryName) => {
           },
         }
       );
-      dispatch(findAllCategory());
+      dispatch(findAllCategory({ sort: "", search: "", page: 0 }));
       console.log(response.data.message);
-      dispatch(categorySlice.actions.createCategorySuccess(response.data));
+      dispatch(
+        categorySlice.actions.createCategorySuccess(response.data.message)
+      );
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
@@ -80,9 +83,11 @@ export const updateCategory = (categoryName, id_category) => {
           },
         }
       );
-      dispatch(findAllCategory());
+      dispatch(findAllCategory({ sort: "", search: "", page: 0 }));
       console.log(response.data.message);
-      dispatch(categorySlice.actions.updateCategorySuccess(response.data));
+      dispatch(
+        categorySlice.actions.updateCategorySuccess(response.data.message)
+      );
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
@@ -105,9 +110,11 @@ export const deleteCategory = (idCategory) => {
           },
         }
       );
-      dispatch(findAllCategory());
+      dispatch(findAllCategory({ sort: "", search: "", page: 0 }));
       console.log(response.data.message);
-      dispatch(categorySlice.actions.deleteCategorySuccess(response.data));
+      dispatch(
+        categorySlice.actions.deleteCategorySuccess(response.data.message)
+      );
     } catch (error) {
       console.log(error);
       console.log(error.response.data.message);
