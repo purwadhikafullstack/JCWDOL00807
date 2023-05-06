@@ -45,11 +45,10 @@ function App() {
               dispatch(
                 userProductList({ lat: "-6.18234", lng: "106.8428715" })
               );
-              console.log("jaja");
             }
           );
         } else {
-          console.log("Browser not support geolocation");
+          console.log("Browser is not support geolocation");
           dispatch(userProductList({ lat: "-6.18234", lng: "106.8428715" }));
         }
       }

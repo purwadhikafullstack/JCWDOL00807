@@ -17,12 +17,11 @@ import {
   Stack,
   Checkbox,
   Button,
-  ButtonGroup
+  ButtonGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
-import { useSelector } from "react-redux";
 
 import DialogConfirmation from "../components/DialogConfirmation";
 
@@ -382,28 +381,37 @@ const UserOrderListByQuery = () => {
                               height="150"
                             ></img>
                           </a>
-                        )}  
+                        )}
                       </Td>
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
                       <Td>
                         <ButtonGroup gap="2">
-                          <Button colorScheme="blue" onClick={() => handleDetailButton(value.id)}>
+                          <Button
+                            colorScheme="blue"
+                            onClick={() => handleDetailButton(value.id)}
+                          >
                             See Detail
                           </Button>
                           {value.status == "Waiting For Payment" && (
-                            <Button colorScheme="pink" onClick={() => handleUploadPayment(value.id)}>
+                            <Button
+                              colorScheme="pink"
+                              onClick={() => handleUploadPayment(value.id)}
+                            >
                               Upload Payment Proof
                             </Button>
                           )}
                           {value.status == "On Delivering" && (
-                            <Button colorScheme="green" onClick={() => {
-                              setDialogMsg(
-                                `Are you sure Approve this transaction ${value.invoice_no} ?`
-                              );
-                              setTrxId(value.id);
-                              setBtnTitleYes("Yes, Approve!");
-                            }}>
+                            <Button
+                              colorScheme="green"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure Approve this transaction ${value.invoice_no} ?`
+                                );
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, Approve!");
+                              }}
+                            >
                               Approve Order
                             </Button>
                           )}
