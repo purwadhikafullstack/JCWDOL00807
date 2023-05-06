@@ -81,12 +81,18 @@ Router.get(
 );
 
 Router.get(
+  "/detailorder_search_all",
+  tokenVerify,
+  transactionController.getDetailOrderAllByQuery
+);
+
+Router.get(
   "/super_order_search",
   tokenVerify,
   transactionController.getSuperOrderListByQuery
 );
 Router.get(
-  "/super_detailorder_search/:idtrx",
+  "/super_detailorder_search_all",
   tokenVerify,
   transactionController.getSuperDetailOrderByQuery
 );

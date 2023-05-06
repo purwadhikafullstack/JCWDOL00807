@@ -39,6 +39,7 @@ import Shipping from "../pages/Shippings";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import UploadPaymentProof from "../pages/UploadPaymentProof";
 import HistoryStockByQuery from "../pages/HistoryStock";
+import DetailOrderListAllByQuery from "../pages/DetailOrderListAll";
 
 // debugger
 export default function Router() {
@@ -192,8 +193,18 @@ export default function Router() {
           path: "detail-order-list/:id",
           element: (
             <AuthGuard>
-              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+              <RoleBasedGuard accessibleRoles={["admin branch"]}>
                 <DetailOrderListByQuery />
+              </RoleBasedGuard>
+            </AuthGuard>
+          ),
+        },
+        {
+          path: "detail-order-list",
+          element: (
+            <AuthGuard>
+              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+                <DetailOrderListAllByQuery />
               </RoleBasedGuard>
             </AuthGuard>
           ),
