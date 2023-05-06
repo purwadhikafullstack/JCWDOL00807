@@ -234,12 +234,12 @@ export default function Router() {
           path: "history-stock-logs",
           element: (
             <AuthGuard>
-              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+              <RoleBasedGuard accessibleRoles={["admin branch"]}>
                 <HistoryStockByQuery />
               </RoleBasedGuard>
             </AuthGuard>
-          )
-        }
+          ),
+        },
       ],
     },
 

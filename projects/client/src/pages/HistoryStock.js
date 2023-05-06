@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -31,7 +31,7 @@ const HistoryStockByQuery = () => {
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
   const [dataHistory, setDataHistory] = useState([]);
-  
+
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -41,7 +41,6 @@ const HistoryStockByQuery = () => {
   const [msg, setMsg] = useState("");
   let sort = useRef();
   let asc = useRef();
-
 
   const getHistoryList = async () => {
     try {
@@ -69,7 +68,7 @@ const HistoryStockByQuery = () => {
       console.log(error);
     }
   };
-  
+
   const changePage = ({ selected }) => {
     setPage(selected);
     if (selected === 9) {
