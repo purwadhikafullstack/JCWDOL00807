@@ -3,25 +3,13 @@ import { useSelector } from "react-redux";
 
 // Guard cek token
 
-export default function GuestGuard({ children }) {
-  const my_token = localStorage.getItem("my_Token");
-  const isAutenticated = my_token ? true : false;
+export default function GuestGuard({ isAdmin, children }) {
+
+  // const my_token = localStorage.getItem("my_Token");
+  // const isAutenticated = my_token ? true : false;
+  
   // if (!isAutenticated) {
-  //   return <Navigate to={"/login"} />;
-  // } else {
-  //   return <>{children}</>;
+  //   return isAdmin ? <Navigate to={"/admin/login"} /> : <Navigate to={"/login"} />;
   // }
   return <>{children}</>;
-
-  // if (user?.loading === false) {
-  //   const my_token = localStorage.getItem("my_Token");
-  //   const isAutenticated = my_token ? true : false;
-
-  //   if (isAutenticated && user.user.name) {
-  //     return <Navigate to={"/"} />;
-  //   }
-  //   return <>{children}</>;
-  // } else {
-  //   return <>{children}</>;
-  // }
 }

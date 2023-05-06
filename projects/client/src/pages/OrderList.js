@@ -4,6 +4,7 @@ import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
+import ImagePreviewModal from "../components/ImagePreviewModal";
 import {
   Select,
   Table,
@@ -16,10 +17,14 @@ import {
   Tr,
   Stack,
   Checkbox,
+  Button,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
+
+import DialogConfirmation from "../components/DialogConfirmation";
 
 const OrderListByQuery = () => {
   const navigate = useNavigate();
@@ -51,6 +56,8 @@ const OrderListByQuery = () => {
   const [msg, setMsg] = useState("");
   let sort = useRef();
   let asc = useRef();
+
+  const notAllowedCancel = ["On Delivering", "Order Confirmed", "Canceled"];
 
   const getOrderList = async () => {
     try {
@@ -116,6 +123,53 @@ const OrderListByQuery = () => {
 
   const handleAscSort = () => {
     getOrderList();
+  };
+  const updateStatus = async (idtrx, status) => {
+    handleCloseDialog();
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.post(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/admin/transaction-reviews/${idtrx}
+      `,
+        {
+          status,
+        },
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      const oldDataOrder = dataOrder;
+      const newDataOrder = oldDataOrder.map((val) => {
+        val.status = val.id == data.id ? data.status : val.status;
+        return val;
+      });
+      setDataOrder(newDataOrder);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [dialogMsg, setDialogMsg] = useState("");
+  const [resultReview, setResultReview] = useState("");
+  const [trxId, setTrxId] = useState("");
+  const [btnTitleYes, setBtnTitleYes] = useState("");
+  const handleConfirmDialog = (idtrx, status) => {
+    updateStatus(idtrx, status);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogMsg("");
+    setResultReview("");
+    setTrxId("");
+    setBtnTitleYes("");
+  };
+
+  const handleDetailButton = (idtrx) => {
+    navigate(`/admin/detail-order-list/${idtrx}`);
   };
 
   return (
@@ -239,6 +293,7 @@ const OrderListByQuery = () => {
                   <Th>Payment Proof</Th>
                   <Th>Expired Date</Th>
                   <Th>UpdatedAt</Th>
+                  <Th>Action</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -294,15 +349,93 @@ const OrderListByQuery = () => {
                         )}
                       </Td>
                       <Td>
-                        <img
-                          src={value.payment_proof}
-                          alt="*"
-                          width="100"
-                          height="150"
-                        ></img>
+                        {value.payment_proof && (
+                          <a href={value.payment_proof} target="_blank">
+                            <img
+                              // onClick={() => handleImagePreview(value.payment_proof)}
+                              src={value.payment_proof}
+                              alt="*"
+                              width="100"
+                              height="150"
+                            ></img>
+                          </a>
+                        )}
                       </Td>
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
+                      <Td>
+                        <ButtonGroup gap="2">
+                          <Button
+                            colorScheme="blue"
+                            onClick={() => handleDetailButton(value.id)}
+                          >
+                            Detail
+                          </Button>
+                          {!notAllowedCancel.includes(value.status) && (
+                            <Button
+                              colorScheme="red"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure cancel this transaction ${value.invoice_no} ?`
+                                );
+                                setResultReview("canceled");
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, Cancel!");
+                              }}
+                            >
+                              Cancel Order
+                            </Button>
+                          )}
+                          {value.status ==
+                            "Waiting For Confirmation Payment" && (
+                            <Button
+                              colorScheme="orange"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure rejected this transaction ${value.invoice_no} ?`
+                                );
+                                setResultReview("rejected");
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, Rejected!");
+                              }}
+                            >
+                              Rejected
+                            </Button>
+                          )}
+                          {value.status ==
+                            "Waiting For Confirmation Payment" && (
+                            <Button
+                              colorScheme="yellow"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure Confirmed this transaction ${value.invoice_no} ?`
+                                );
+                                setResultReview("confirmed");
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, confirmed!");
+                              }}
+                            >
+                              Confirmed
+                            </Button>
+                          )}
+
+                          {value.status == "Ongoing" && (
+                            <Button
+                              colorScheme="pink"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure Deliver this transaction ${value.invoice_no} ?`
+                                );
+                                setResultReview("delivered");
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, Deliver!");
+                              }}
+                            >
+                              Delivering Order
+                            </Button>
+                          )}
+                        </ButtonGroup>
+                      </Td>
                     </Tr>
                   );
                 })}
@@ -338,6 +471,16 @@ const OrderListByQuery = () => {
           </nav>
         </div>
         <Footer />
+        {dialogMsg ? (
+          <DialogConfirmation
+            message={dialogMsg}
+            btnTitleNo="Close"
+            btnTitleYes={btnTitleYes}
+            handleClose={handleCloseDialog}
+            handleYes={() => handleConfirmDialog(trxId, resultReview)}
+            handleNo={handleCloseDialog}
+          />
+        ) : null}
       </div>
     </>
   );

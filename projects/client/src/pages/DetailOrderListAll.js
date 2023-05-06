@@ -1,12 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/NavbarUser";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
-import CancelUserOrder from "../components/CancelUserOrder";
+import SidebarAdmin from "../components/SidebarAdmin";
 import {
-  ButtonGroup,
-  Button,
   Select,
   Table,
   TableCaption,
@@ -20,15 +18,15 @@ import {
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
-import SidebarUser from "../components/SidebarUser";
-import BackdropResetPassword from "../components/BackdropResetPassword";
-import DialogConfirmation from "../components/DialogConfirmation";
-import { useSelector } from "react-redux";
 
-
-const UserDetailOrderListByQuery = () => {
+// debugger
+const DetailOrderListAllByQuery = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  let currentRole = localStorage.getItem("my_Role");
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_detailorder_search_all"
+      : "admin/detailorder_search_all";
 
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
@@ -39,28 +37,8 @@ const UserDetailOrderListByQuery = () => {
   const [rows, setRows] = useState(0);
   const [query, setQuery] = useState("");
   const [msg, setMsg] = useState("");
-  const [messageCancel, setMessageCancel] = useState("");
-  const [cancelErrorMessage, setCancelErrorMessage] = useState("");
-  const [branchStore, setBranchStore] = useState("");
-  const [branchId, setBranchId] = useState("");
   let sort = useRef();
   let asc = useRef();
-
-  const allowedApprove = ["On Delivering"];
-  const [isApprove, setIsApprove] = useState();
-  let userProductList = useSelector((state) => state.userProduct);
-  // console.log(userProductList);
-
-  useEffect(() => {
-    // console.log(userProductList.userProduct.data.branch);
-    if (!userProductList?.loading) {
-      setBranchStore(userProductList?.userProduct?.data?.branch);
-      setBranchId(userProductList?.userProduct?.data?.branch_id);
-    }
-  }, [userProductList]);
-
-  console.log(branchStore);
-  console.log(branchId);
 
   const getDetailOrderList = async () => {
     try {
@@ -69,7 +47,7 @@ const UserDetailOrderListByQuery = () => {
       let inputAsc = asc.current.value;
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/user/detailorder_search/${id}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
+      ${process.env.REACT_APP_API_BASE_URL}/${urlOrder}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
       `,
         {
           headers: {
@@ -77,19 +55,12 @@ const UserDetailOrderListByQuery = () => {
           },
         }
       );
-      // console.log(response);
-      setDataDetailOrder(response?.data?.data?.result);
-      setBranch(
-        `transaction ${
-          response?.data?.data?.result[0]?.invoice_no || "-"
-        } on status ${response?.data?.data?.result[0]?.status || "-"}`
-      );
-      setPage(response?.data?.data?.page);
-      setPages(response?.data?.data?.totalPage);
-      setRows(response?.data?.data?.totalRows[0].count_row);
-      setIsApprove(
-        allowedApprove.includes(response?.data?.data?.result[0]?.status)
-      );
+      const { data } = response;
+      setDataDetailOrder(data?.data?.result);
+      setBranch(data?.data?.branchName);
+      setPage(data?.data?.page);
+      setPages(data?.data?.totalPage);
+      setRows(data?.data?.totalRows[0].count_row);
     } catch (error) {
       console.log(error);
     }
@@ -121,80 +92,11 @@ const UserDetailOrderListByQuery = () => {
     getDetailOrderList();
   };
 
-  const handleReasonCancellation = async (reason, onClose) => {
-    try {
-      const token = localStorage.my_Token;
-      console.log(token);
-      const cancelOrder = await axios.patch(
-        ` ${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-user?transactionId=${dataDetailOrder[0]?.transactions_id}&cancellation_reasons=${reason}&branchId=${branchId}&branchStore=${branchStore}`,
-        {},
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      onClose();
-      setMessageCancel(cancelOrder.data.message);
-    } catch (error) {
-      console.log(error.response.data.message);
-      setCancelErrorMessage(error.response.data.message);
-    }
-  };
-
-  const handleClose = () => {
-    setMessageCancel("");
-    navigate("/accounts/order-list");
-  };
-
-  const handleUploadPayment = (idtrx) => {
-    navigate(`/upload/payment-proof?id=${idtrx}`);
-  };
-
-  const updateStatus = async (idtrx) => {
-    handleCloseDialog();
-    try {
-      const token = localStorage.getItem("my_Token");
-      let response = await axios.get(
-        `
-      ${process.env.REACT_APP_API_BASE_URL}/transaction/order-confirmed/${idtrx}
-      `,
-        {
-          headers: {
-            authorization: token,
-          },
-        }
-      );
-      const { data } = response?.data;
-      setBranch(
-        `transaction ${
-          data?.invoice_no || "-"
-        } on status ${data?.status || "-"}`
-      );
-      setIsApprove(allowedApprove.includes(data?.status));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const [dialogMsg, setDialogMsg] = useState("");
-  const [trxId, setTrxId] = useState("");
-  const [btnTitleYes, setBtnTitleYes] = useState("");
-  const handleConfirmDialog = (idtrx) => {
-    updateStatus(idtrx);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogMsg("");
-    setTrxId("");
-    setBtnTitleYes("");
-  };
-
   return (
     <>
-      <Navbar />
-      <div className="p-4 sm:ml-0">
+      <SidebarAdmin />
+      <div className="p-4 sm:ml-64">
+        <Navbar />
         <form className="m-5 justify-start hidden" onSubmit={searchData}>
           <label
             for="default-search"
@@ -213,9 +115,9 @@ const UserDetailOrderListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -264,6 +166,7 @@ const UserDetailOrderListByQuery = () => {
 
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
           <TableContainer>
+            <SidebarAdmin />
             <Table variant="striped">
               <TableCaption
                 placement="top"
@@ -273,44 +176,10 @@ const UserDetailOrderListByQuery = () => {
               >
                 Detail Order List Table - {branch}
               </TableCaption>
-              <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
-                <ButtonGroup>
-                  <CancelUserOrder
-                  status={dataDetailOrder[0]?.status}
-                  handleSubmit={handleReasonCancellation}
-                  errorMessage={cancelErrorMessage}
-                />
-                  {dataDetailOrder[0]?.status == "Waiting For Payment" && (
-                    <Button
-                      colorScheme="pink"
-                      onClick={() => handleUploadPayment(id)}
-                    >
-                      Upload Payment Proof
-                    </Button>
-                  )}
-                  {isApprove && (
-                    <Button
-                      colorScheme="green"
-                      onClick={() => {
-                        setDialogMsg(
-                          `Are you sure Approve this transaction ${dataDetailOrder[0]?.invoice_no} ?`
-                        );
-                        setTrxId(id);
-                        setBtnTitleYes("Yes, Approve!");
-                      }}
-                    >
-                      Approve Order
-                    </Button>
-                  )}
-                </ButtonGroup>
-            
-              </TableCaption>
-
               <Thead className=" text-center">
                 <Tr>
-                  {/* <Th>Id</Th> */}
-                  {/* <Th>Transaction Id</Th> */}
                   <Th>No</Th>
+                  <Th>Transaction Id</Th>
                   <Th>Product Name</Th>
                   <Th>Quantity</Th>
                   <Th>Price per item</Th>
@@ -327,9 +196,8 @@ const UserDetailOrderListByQuery = () => {
                 {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      {/* <Td>{value.id}</Td> */}
-                      {/* <Td>{value.transactions_id}</Td> */}
                       <Td>{index + 1}</Td>
+                      <Td>{value.transactions_id}</Td>
                       <Td>{value.product_name}</Td>
                       <Td>{value.qty}</Td>
                       <Td>
@@ -418,27 +286,9 @@ const UserDetailOrderListByQuery = () => {
             />
           </nav>
         </div>
-        {messageCancel ? (
-          <BackdropResetPassword
-            message={messageCancel}
-            handleClose={handleClose}
-          />
-        ) : null}
-
-        {dialogMsg ? (
-          <DialogConfirmation
-            message={dialogMsg}
-            btnTitleNo="Close"
-            btnTitleYes={btnTitleYes}
-            handleClose={handleCloseDialog}
-            handleYes={() => handleConfirmDialog(trxId)}
-            handleNo={handleCloseDialog}
-          />
-        ) : null}
-
         <Footer />
       </div>
     </>
   );
 };
-export default UserDetailOrderListByQuery;
+export default DetailOrderListAllByQuery;

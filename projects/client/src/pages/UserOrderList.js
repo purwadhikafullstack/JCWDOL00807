@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
@@ -15,14 +16,21 @@ import {
   Tr,
   Stack,
   Checkbox,
+  Button,
+  ButtonGroup
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
 import { useSelector } from "react-redux";
 
+import DialogConfirmation from "../components/DialogConfirmation";
+
 const UserOrderListByQuery = () => {
   const navigate = useNavigate();
+
+  let userProduct = useSelector((state) => state.userProduct.userProduct);
+  const branch_name = userProduct?.data?.branch;
 
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
@@ -48,8 +56,6 @@ const UserOrderListByQuery = () => {
   let sort = useRef();
   let asc = useRef();
 
-  let userProduct = useSelector((state) => state.userProduct);
-
   // useEffect(() => {
   //   // console.log(userProductList.userProduct.data.branch);
   //   // console.log(userProductList);
@@ -71,7 +77,7 @@ const UserOrderListByQuery = () => {
       // console.log(status);
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/user/order_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}
+      ${process.env.REACT_APP_API_BASE_URL}/user/order_search?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}&status=${status}&branch=${branch_name}
       `,
         {
           headers: {
@@ -159,6 +165,46 @@ const UserOrderListByQuery = () => {
   const handleUploadPayment = (idtrx) => {
     navigate(`/upload/payment-proof?id=${idtrx}`);
   };
+
+  const updateStatus = async (idtrx) => {
+    handleCloseDialog();
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.get(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/transaction/order-confirmed/${idtrx}
+      `,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      const oldDataOrder = dataOrder;
+      const newDataOrder = oldDataOrder.map((val) => {
+        val.status = val.id == data.id ? data.status : val.status;
+        return val;
+      });
+      setDataOrder(newDataOrder);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [dialogMsg, setDialogMsg] = useState("");
+  const [trxId, setTrxId] = useState("");
+  const [btnTitleYes, setBtnTitleYes] = useState("");
+  const handleConfirmDialog = (idtrx) => {
+    updateStatus(idtrx);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogMsg("");
+    setTrxId("");
+    setBtnTitleYes("");
+  };
+
   return (
     <>
       <Navbar />
@@ -326,30 +372,42 @@ const UserOrderListByQuery = () => {
                         )}
                       </Td>
                       <Td>
-                        <img
-                          src={value.payment_proof}
-                          alt="*"
-                          width="100"
-                          height="150"
-                        ></img>
+                        {value.payment_proof && (
+                          <a href={value.payment_proof} target="_blank">
+                            <img
+                              // onClick={() => handleImagePreview(value.payment_proof)}
+                              src={value.payment_proof}
+                              alt="*"
+                              width="100"
+                              height="150"
+                            ></img>
+                          </a>
+                        )}  
                       </Td>
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
                       <Td>
-                        <button
-                          className="text-lg text-blue-600 button flex items-center ml-2 hover:underline"
-                          onClick={() => handleDetailButton(value.id)}
-                        >
-                          <span>See Detail</span>
-                        </button>
-                        {!value.payment_proof && (
-                          <button
-                            className="text-lg text-blue-600 button flex items-center ml-2 hover:underline"
-                            onClick={() => handleUploadPayment(value.id)}
-                          >
-                            <span>Upload Payment Proof</span>
-                          </button>
-                        )}
+                        <ButtonGroup gap="2">
+                          <Button colorScheme="blue" onClick={() => handleDetailButton(value.id)}>
+                            See Detail
+                          </Button>
+                          {value.status == "Waiting For Payment" && (
+                            <Button colorScheme="pink" onClick={() => handleUploadPayment(value.id)}>
+                              Upload Payment Proof
+                            </Button>
+                          )}
+                          {value.status == "On Delivering" && (
+                            <Button colorScheme="green" onClick={() => {
+                              setDialogMsg(
+                                `Are you sure Approve this transaction ${value.invoice_no} ?`
+                              );
+                              setTrxId(value.id);
+                              setBtnTitleYes("Yes, Approve!");
+                            }}>
+                              Approve Order
+                            </Button>
+                          )}
+                        </ButtonGroup>
                       </Td>
                     </Tr>
                   );
@@ -386,6 +444,17 @@ const UserOrderListByQuery = () => {
           </nav>
         </div>
         <Footer />
+
+        {dialogMsg ? (
+          <DialogConfirmation
+            message={dialogMsg}
+            btnTitleNo="Close"
+            btnTitleYes={btnTitleYes}
+            handleClose={handleCloseDialog}
+            handleYes={() => handleConfirmDialog(trxId)}
+            handleNo={handleCloseDialog}
+          />
+        ) : null}
       </div>
     </>
   );
