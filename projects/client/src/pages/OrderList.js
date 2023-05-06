@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -124,7 +124,6 @@ const OrderListByQuery = () => {
   const handleAscSort = () => {
     getOrderList();
   };
-
   const updateStatus = async (idtrx, status) => {
     handleCloseDialog();
     try {
@@ -196,9 +195,9 @@ const OrderListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -285,7 +284,7 @@ const OrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Transaction Id</Th>
+                  <Th>No.</Th>
                   <Th>Username</Th>
                   <Th>Invoice Number</Th>
                   <Th>Date</Th>
@@ -301,7 +300,7 @@ const OrderListByQuery = () => {
                 {dataOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.name}</Td>
                       <Td>{value.invoice_no}</Td>
                       <Td>{value.Date}</Td>
@@ -316,6 +315,13 @@ const OrderListByQuery = () => {
                       </Td>
                       <Td>
                         {value?.status === "Waiting For Payment" ? (
+                          <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
+                            <h2 className="text-sm font-normal">
+                              {value?.status}
+                            </h2>
+                          </div>
+                        ) : value?.status ===
+                          "Waiting For Order Confirmation" ? (
                           <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-yellow-500 bg-yellow-100/60 dark:bg-gray-800">
                             <h2 className="text-sm font-normal">
                               {value?.status}

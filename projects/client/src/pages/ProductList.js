@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -143,9 +143,9 @@ const ProductListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -230,7 +230,7 @@ const ProductListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id Product</Th>
+                  <Th>No.</Th>
                   <Th>Name</Th>
                   <Th>Images</Th>
                   <Th>Categories</Th>
@@ -247,7 +247,7 @@ const ProductListByQuery = () => {
                 {dataProduct?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.name}</Td>
                       <Td>
                         <img

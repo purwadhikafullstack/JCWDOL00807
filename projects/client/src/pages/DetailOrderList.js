@@ -109,7 +109,6 @@ const DetailOrderListByQuery = () => {
   const handleAscSort = () => {
     getDetailOrderList();
   };
-
   const updateStatus = async (idtrx, status) => {
     handleCloseDialog();
     try {
@@ -184,9 +183,9 @@ const DetailOrderListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokelinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -311,7 +310,7 @@ const DetailOrderListByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id</Th>
+                  <Th>No</Th>
                   <Th>Transaction Id</Th>
                   <Th>Product Name</Th>
                   <Th>Quantity</Th>
@@ -329,7 +328,7 @@ const DetailOrderListByQuery = () => {
                 {dataDetailOrder?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.transactions_id}</Td>
                       <Td>{value.product_name}</Td>
                       <Td>{value.qty}</Td>

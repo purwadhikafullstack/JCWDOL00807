@@ -83,6 +83,7 @@ const jodAction = async (id, branch_name) => {
   }
 }
 
+
 // import helper
 const differentTime = require("../helper/differentTime");
 
@@ -230,7 +231,7 @@ module.exports = {
       await t.commit();
       res.status(200).send({
         isSuccess: true,
-        message: "Add order is success",
+        message: "Add is success",
         data: insert,
       });
     } catch (error) {
@@ -313,6 +314,8 @@ module.exports = {
   CancelOrderByUser: async (req, res) => {
     try {
       const userId = req.dataToken.id;
+      const { branchId } = req.query;
+      const { branchStore } = req.query;
       const { transactionId, cancellation_reasons } = req.query;
 
       if (!userId)
@@ -340,11 +343,7 @@ module.exports = {
             "Sorry, we couldn't find a transaction record that matches your request.",
         };
 
-      if (
-        statusTransaction.dataValues.status !==
-          "Waiting For Confirmation Payment" &&
-        statusTransaction.dataValues.status !== "Waiting For Payment"
-      )
+      if (statusTransaction.dataValues.status !== "Waiting For Payment")
         throw {
           message: `Sorry, Your request can only be accepted while it is in the waiting payment status or Waiting For Confirmation Payment status `,
         };
@@ -362,10 +361,84 @@ module.exports = {
         { where: { [Op.and]: [{ id: transactionId }, { users_id: userId }] } }
       );
 
-      res.status(200).send({
+      const updateStockProduct = await transaction_detail.findAll({
+        attributes: ["product_name", "qty"],
+        where: { transactions_id: transactionId },
+      });
+
+      updateStockProduct.map(async (val) => {
+        await item_products.update(
+          {
+            stock: sequelize.literal(`stock + ${val.qty}`),
+          },
+          {
+            where: {
+              name: val.product_name,
+              branch_stores_id: branchId,
+            },
+          }
+        );
+      });
+
+      const historyLogData = updateStockProduct.map((val) => {
+        return {
+          admin_name: "none",
+          branch_store: branchStore,
+          product_name: val.product_name,
+          qty: val.qty,
+          description: `Cancel order by User : ${cancellation_reasons}`,
+        };
+      });
+
+      await stock_history_logs.bulkCreate(historyLogData);
+
+      await res.status(200).send({
         isSuccess: true,
         message: "Your order has been canceled",
       });
+
+      // const name = transactionDetail.map((val) => {
+      //   return val.product_name;
+      // });
+
+      // const previousQty = await item_products.findAll({
+      //   attributes: ["stock"],
+      //   where: { name, branch_stores_id: branchId },
+      // });
+
+      // const stockMapping = previousQty.map((val) => {
+      //   return val.stock;
+      // });
+
+      // const newstock = transactionDetail.map((val)=>{
+      //   return val.q
+      // })
+
+      // const stock = transactionDetail.map((val) => {
+      //   return val.;
+      // });
+
+      //       const updates = transactionDetail.map((val) => {
+      //   return {
+      //     where: { name: val.product_name },
+      //     changes: { stock: sequelize.literal(`stock + ${val.qty}`) },
+      //   };
+      // });
+
+      // await item_products.bulkCreate([update], {
+      //   updateOnDuplicate: ["stock"],
+      // });
+
+      // await historyLog.bulkCreate(
+      //   {
+      //     admin_name: none,
+      //     branch_store: newData.dataValues.branch,
+      //     product_name: newData.dataValues.name,
+      //     qty: stock,
+      //     description: `Update : ${description}`,
+      //   },
+      //   { transaction: t }
+      // );
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
@@ -374,13 +447,19 @@ module.exports = {
     }
   },
   cancelOrderBySistem: async (req, res) => {
+    const t = await sequelize.transaction();
     try {
       const id = req.dataToken.id;
-      let checkStatusOrder = await transactions.findAll({
-        where: {
-          [Op.and]: [{ users_id: id }, { status: "Waiting For Payment" }],
+      const { branchId, branchStore } = req.query;
+
+      let checkStatusOrder = await transactions.findAll(
+        {
+          where: {
+            [Op.and]: [{ users_id: id }, { status: "Waiting For Payment" }],
+          },
         },
-      });
+        { transaction: t }
+      );
 
       if (checkStatusOrder.length === 0)
         throw {
@@ -388,23 +467,90 @@ module.exports = {
         };
 
       const transaction_id = [];
-      checkStatusOrder.forEach((val) => {
-        const diffHours = differentTime(val.createdAt);
-        if (diffHours > 24) {
-          transaction_id.push(val.id);
-        }
-      });
+      checkStatusOrder.forEach(
+        (val) => {
+          const diffHours = differentTime(val.createdAt);
+          if (diffHours > 24) {
+            transaction_id.push(val.id);
+          }
+        },
+        { transaction: t }
+      );
 
       await transactions.update(
         { status: "Canceled" },
-        { where: { id: transaction_id } }
+        { where: { id: transaction_id } },
+        { transaction: t }
       );
 
+      const updateStockProduct = await transaction_detail.findAll(
+        {
+          attributes: ["product_name", "transactions_id", "qty"],
+          where: { transactions_id: transaction_id },
+        },
+        { transaction: t }
+      );
+
+      console.log(updateStockProduct);
+
+      updateStockProduct.map(
+        async (val) => {
+          console.log(val.qty);
+          await item_products.update(
+            {
+              stock: sequelize.literal(`stock + ${val.qty}`),
+            },
+            {
+              where: {
+                name: val.product_name,
+                branch_stores_id: branchId,
+              },
+            }
+          );
+        },
+        { transaction: t }
+      );
+
+      // const temp = updateStockProduct.map((val) => {
+      //   return val.product_name;
+      // });
+      // const result = await item_products.findAll({
+      //   where: { name: temp, branch_stores_id: branchId },
+      // });
+
+      // const jakartaPusat = await item_products.findAll({
+      //   where: { name: temp, branch_stores_id: 1 },
+      // });
+
+      // const jakartaBarat = await item_products.findAll({
+      //   where: { name: temp, branch_stores_id: 2 },
+      // });
+
+      const historyLogData = updateStockProduct.map(
+        (val) => {
+          return {
+            admin_name: "none",
+            branch_store: branchStore,
+            product_name: val.product_name,
+            qty: val.qty,
+            description: `Cancel order by sistem `,
+          };
+        },
+        { transaction: t }
+      );
+
+      await historyLog.bulkCreate(historyLogData, { transaction: t });
+      await t.commit();
       res.status(200).send({
         isSuccess: true,
         message: "Cancel Order By Sistem Success",
+        data: result,
+        // jakartaPusat: jakartaPusat,
+        // jakartaBarat: jakartaBarat,
+        // updateStockProduct,
       });
     } catch (error) {
+      await t.rollback();
       console.log(error);
       res.status(500).send({
         isSuccess: false,

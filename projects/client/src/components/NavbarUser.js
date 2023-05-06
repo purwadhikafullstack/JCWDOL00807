@@ -10,13 +10,12 @@ import {
   MenuDivider,
 } from "@chakra-ui/react";
 import { Icon } from "@iconify/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { keepLogin } from "../redux/action/user";
+import UserAddress from "../pages/UsersAddress";
 
-const Navbar = () => {
-  const dispatch = useDispatch();
+const NavbarUser = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("my_Token");
 
@@ -38,9 +37,9 @@ const Navbar = () => {
 
     navigate("/login");
     window.location.reload();
-
   };
 
+  // console.log(user);
   useEffect(() => {
     if (!address.loading) {
       if (address?.userAddress?.data) {
@@ -53,14 +52,21 @@ const Navbar = () => {
           clearTimeout(timeOut);
         };
       }
+      // setBranchStore(userProduct?.data?.branch);
+      // const timeOut = setTimeout(() => {
+      //   setBranchStore(userProduct?.data?.branch);
+      // }, 700);
+      // return () => {
+      //   clearTimeout(timeOut);
+      // };
     }
     // eslint-disable-next-line
-  }, [userProduct]);
+  }, [userProduct, user.addtional]);
 
   return (
     <>
       <nav className="shadow shadow-slate-200 bg-[#e9ffe7]  sticky top-0 z-10 ">
-        <div className=" container mx-auto flex flex-wrap items-center justify-between h-24 p-3 md:p-0 ">
+        <div className=" container mx-auto flex flex-wrap items-center justify-between h-24 p-3 md:p-2 lg:0">
           <Link to="/">
             <span className="self-center text-3xl font-extrabold whitespace-nowrap ">
               GoKu
@@ -83,9 +89,9 @@ const Navbar = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               ></path>
             </svg>
           </button>
@@ -114,7 +120,9 @@ const Navbar = () => {
                           icon="ic:round-shopping-cart"
                         />
                         {token && (
-                          <span className="cart-quantity">{count}</span>
+                          <span className="cart-quantity w-6 h-6   ">
+                            {count}
+                          </span>
                         )}
                       </Link>
                     </div>
@@ -130,6 +138,9 @@ const Navbar = () => {
                         <MenuGroup>
                           <Link to="/accounts/profile">
                             <MenuItem>My Profile</MenuItem>
+                          </Link>
+                          <Link to="/accounts/order-list">
+                            <MenuItem>My Order</MenuItem>
                           </Link>
                           <MenuItem onClick={handleLogout}>Logout</MenuItem>
                         </MenuGroup>
@@ -167,4 +178,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarUser;

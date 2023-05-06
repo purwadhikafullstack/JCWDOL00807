@@ -11,6 +11,5 @@ export default function GuestGuard({ isAdmin, children }) {
   // if (!isAutenticated) {
   //   return isAdmin ? <Navigate to={"/admin/login"} /> : <Navigate to={"/login"} />;
   // }
-
   return <>{children}</>;
 }

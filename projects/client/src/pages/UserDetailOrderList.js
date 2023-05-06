@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
-import SidebarAdmin from "../components/SidebarAdmin";
-import CancellationReasons from "../components/CancellationReasons";
+import CancelUserOrder from "../components/CancelUserOrder";
 import {
   ButtonGroup,
   Button,
@@ -24,6 +23,8 @@ import ReactPaginate from "react-paginate";
 import SidebarUser from "../components/SidebarUser";
 import BackdropResetPassword from "../components/BackdropResetPassword";
 import DialogConfirmation from "../components/DialogConfirmation";
+import { useSelector } from "react-redux";
+
 
 const UserDetailOrderListByQuery = () => {
   const navigate = useNavigate();
@@ -40,11 +41,26 @@ const UserDetailOrderListByQuery = () => {
   const [msg, setMsg] = useState("");
   const [messageCancel, setMessageCancel] = useState("");
   const [cancelErrorMessage, setCancelErrorMessage] = useState("");
+  const [branchStore, setBranchStore] = useState("");
+  const [branchId, setBranchId] = useState("");
   let sort = useRef();
   let asc = useRef();
 
   const allowedApprove = ["On Delivering"];
   const [isApprove, setIsApprove] = useState();
+  let userProductList = useSelector((state) => state.userProduct);
+  // console.log(userProductList);
+
+  useEffect(() => {
+    // console.log(userProductList.userProduct.data.branch);
+    if (!userProductList?.loading) {
+      setBranchStore(userProductList?.userProduct?.data?.branch);
+      setBranchId(userProductList?.userProduct?.data?.branch_id);
+    }
+  }, [userProductList]);
+
+  console.log(branchStore);
+  console.log(branchId);
 
   const getDetailOrderList = async () => {
     try {
@@ -61,7 +77,7 @@ const UserDetailOrderListByQuery = () => {
           },
         }
       );
-      console.log(response);
+      // console.log(response);
       setDataDetailOrder(response?.data?.data?.result);
       setBranch(
         `transaction ${
@@ -110,7 +126,7 @@ const UserDetailOrderListByQuery = () => {
       const token = localStorage.my_Token;
       console.log(token);
       const cancelOrder = await axios.patch(
-        ` ${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-user?transactionId=${dataDetailOrder[0]?.transactions_id}&cancellation_reasons=${reason}`,
+        ` ${process.env.REACT_APP_API_BASE_URL}/transaction/cancel-order-by-user?transactionId=${dataDetailOrder[0]?.transactions_id}&cancellation_reasons=${reason}&branchId=${branchId}&branchStore=${branchStore}`,
         {},
         {
           headers: {
@@ -197,9 +213,9 @@ const UserDetailOrderListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -259,11 +275,11 @@ const UserDetailOrderListByQuery = () => {
               </TableCaption>
               <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
                 <ButtonGroup>
-                  <CancellationReasons
-                    status={dataDetailOrder[0]?.status}
-                    handleSubmit={handleReasonCancellation}
-                    errorMessage={cancelErrorMessage}
-                  />
+                  <CancelUserOrder
+                  status={dataDetailOrder[0]?.status}
+                  handleSubmit={handleReasonCancellation}
+                  errorMessage={cancelErrorMessage}
+                />
                   {dataDetailOrder[0]?.status == "Waiting For Payment" && (
                     <Button
                       colorScheme="pink"
@@ -287,6 +303,7 @@ const UserDetailOrderListByQuery = () => {
                     </Button>
                   )}
                 </ButtonGroup>
+            
               </TableCaption>
 
               <Thead className=" text-center">

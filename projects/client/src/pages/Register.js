@@ -12,7 +12,7 @@ import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../redux/action/user";
 import { useDispatch, useSelector } from "react-redux";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarUser2";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -260,31 +260,7 @@ const Register = () => {
                     required=""
                   />
                 </div>
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="terms"
-                      aria-describedby="terms"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                      required=""
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      for="terms"
-                      className="font-light text-gray-500 dark:text-gray-300"
-                    >
-                      I accept the{" "}
-                      <a
-                        className="font-medium hover:underline text-[#69cb44] text-500"
-                        href="true"
-                      >
-                        Terms and Conditions
-                      </a>
-                    </label>
-                  </div>
-                </div>
+
                 {loading === true ? null : (
                   <div>
                     <Button

@@ -93,16 +93,18 @@ const CardProduct = ({
       )}
       {image ? (
         stock === 0 ? (
-          <Link to={`/product/${name}`}>
-            <img
-              className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  "
-              src={image}
-              alt={image}
-            />
-            <div className=" absolute  text-sm font-bold w-fit p-2 h-10 rounded-xl bg-black text-white  text-center translate-x-24 translate-y-[-100px]">
-              Out Of Stock
-            </div>
-          </Link>
+          <div className=" relative z-0">
+            <Link to={`/product/${name}`}>
+              <img
+                className="object-cover object-center h-[100px] md:h-[160px] m-auto block mt-10  overflow-x-auto "
+                src={image}
+                alt={image}
+              />
+              <div className="absolute text-xs md:text-sm font-bold  px-1 md:px-0 p-0 md:p-2 h-5 md:h-10 rounded-xl bg-black text-white  text-center translate-x-10 md:translate-x-[105px]  translate-y-[-50px] md:translate-y-[-100px]">
+                Out Of Stock
+              </div>
+            </Link>
+          </div>
         ) : (
           <Link to={`/product/${name}`}>
             <img

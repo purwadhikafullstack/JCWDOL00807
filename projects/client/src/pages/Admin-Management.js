@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import SidebarAdmin from "../components/SidebarAdmin";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -93,7 +93,9 @@ const AdminManagement = () => {
       <div className="p-4 sm:ml-64">
         <Navbar />
         <div className="flex-grow">
-        <span className="text-center block mt-4 font-bold">Tabel List Admin Branch</span>
+          <span className="text-center block mt-4 font-bold">
+            Tabel List Admin Branch
+          </span>
           <form class="form w-3/12 my-4 ml-4">
             <Input
               class="w-full bg-gray-200"
@@ -216,15 +218,17 @@ const AdminManagement = () => {
             <div className="flex justify-center mt-10 mb-10">
               <nav role="navigation" aria-label="pagination">
                 <ReactPaginate
-                breakLabel={
-                  <span ClassName="flex justify-center mr-4 ml-4">...</span>
-                }
+                  breakLabel={
+                    <span ClassName="flex justify-center mr-4 ml-4">...</span>
+                  }
                   previousLabel={"< Prev"}
                   nextLabel={"Next >"}
                   pageCount={Math.ceil(totalRecord / limit)}
                   onPageChange={(data) => handlePageChange(data.selected + 1)}
                   forcePage={page - 1}
-                  containerClassName={"flex items-center justify-center mt-8 mb-4"}
+                  containerClassName={
+                    "flex items-center justify-center mt-8 mb-4"
+                  }
                   previousLinkClassName={"pagination__link"}
                   nextLinkClassName={"pagination__link"}
                   disabledClassName={"pagination__link--disabled"}

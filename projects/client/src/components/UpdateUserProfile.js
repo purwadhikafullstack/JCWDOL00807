@@ -16,14 +16,17 @@ import {
   AlertIcon,
   AlertTitle,
   useDisclosure,
+  FormHelperText,
+  FormControl,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRef } from "react";
 import { updateProfile } from "../redux/action/user";
 import { handleStateError } from "../redux/action/user";
+import moment from "moment";
 
-const UpdateUserProfile = () => {
+const UpdateUserProfile = ({ tabel }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   let name = useRef();
   let birthdate = useRef();
@@ -32,36 +35,38 @@ const UpdateUserProfile = () => {
   let image = useRef();
 
   let user = useSelector((state) => state.auth);
-
   const [date, setdate] = useState("");
   const [message, setMessage] = useState("");
   const [addFile, setAddFile] = useState("");
+  const [errBirthdate, setErrBirthdate] = useState("");
+  const [errName, setErrName] = useState("");
+
   let dispatch = useDispatch();
 
   const handleUpdateProfile = async () => {
     let regxEmail = /\S+@\S+\.\S+/;
     try {
       let inputName = name.current.value;
-      let inputBirthdate = birthdate.current.value;
+      let inputBirthdate = date;
       let inputGender = gender.current.value;
       let inputEmail = email.current.value;
 
       if (regxEmail.test(inputEmail) === false) {
         return setMessage("not valid email");
+      } else if (!message && !errBirthdate) {
+        let formData = new FormData();
+        formData.append("images", addFile);
+        formData.append("name", inputName);
+        formData.append("email", inputEmail);
+        formData.append("gender", inputGender);
+        formData.append("birthdate", inputBirthdate);
+
+        dispatch(
+          updateProfile({
+            formData,
+          })
+        );
       }
-
-      let formData = new FormData();
-      formData.append("images", addFile);
-      formData.append("name", inputName);
-      formData.append("email", inputEmail);
-      formData.append("gender", inputGender);
-      formData.append("birthdate", inputBirthdate);
-
-      dispatch(
-        updateProfile({
-          formData,
-        })
-      );
     } catch (error) {
       console.log(error);
     }
@@ -83,6 +88,8 @@ const UpdateUserProfile = () => {
   const onBtnClose = () => {
     dispatch(handleStateError("cancel"));
     onClose();
+    setErrBirthdate("");
+    setErrName("");
   };
 
   const onBtnAddFile = (e) => {
@@ -98,11 +105,47 @@ const UpdateUserProfile = () => {
     }
   };
 
+  const updateBirthDate = (e) => {
+    const date = moment(new Date());
+    if (new Date(e) > new Date()) {
+      setMessage("The date you selected is invalid");
+      setErrBirthdate(
+        `The birthdate format entered must be before ${date.format(
+          "DD MMMM YYYY"
+        )}`
+      );
+    } else {
+      setErrBirthdate("");
+      setMessage("");
+      setdate(e);
+    }
+  };
+
+  const updateName = (e) => {
+    if (e < 1) {
+      setErrName("Your name is required. Please fill in the field.");
+    } else {
+      setErrName("");
+    }
+  };
+
   return (
     <>
-      <Button leftIcon="" colorScheme="gray" bgColor="#BCEAD5" onClick={onOpen}>
-        Update Profile
-      </Button>
+      {tabel === true ? (
+        <Button
+          size="sm"
+          variant="link"
+          colorScheme="red"
+          onClick={onOpen}
+          w="fit-content"
+        >
+          Update Profile
+        </Button>
+      ) : (
+        <Button colorScheme="gray" bgColor="#BCEAD5" onClick={onOpen}>
+          Update Profile
+        </Button>
+      )}
 
       <Drawer
         size={["full", "md"]}
@@ -125,24 +168,34 @@ const UpdateUserProfile = () => {
             <Stack spacing="24px">
               <Image m="0 auto" id="imgprev" w="full" />
               <Box>
-                <FormLabel htmlFor="name">Name</FormLabel>
-                <Input
-                  placeholder={user?.user.name}
-                  ref={name}
-                  defaultValue={user?.user.name}
-                />
+                <FormControl>
+                  <FormLabel htmlFor="name">Name</FormLabel>
+                  <Input
+                    // value={name}
+                    placeholder={user?.user.name}
+                    ref={name}
+                    defaultValue={user?.user.name}
+                    onChange={(e) => updateName(e.target.value)}
+                  />
+                  {errName ? (
+                    <FormHelperText color="red">{errName}</FormHelperText>
+                  ) : null}
+                </FormControl>
               </Box>
+
               <Box>
-                <FormLabel htmlFor="birthdate">Birthdate</FormLabel>
-                <Input
-                  value={date}
-                  size="md"
-                  type="date"
-                  ref={birthdate}
-                  onChange={(e) => {
-                    setdate(e.target.value);
-                  }}
-                />
+                <FormControl>
+                  <FormLabel htmlFor="birthdate">Birthdate</FormLabel>
+                  <Input
+                    value={date}
+                    size="md"
+                    type="date"
+                    onChange={(e) => updateBirthDate(e.target.value)}
+                  />
+                  {errBirthdate ? (
+                    <FormHelperText color="red">{errBirthdate}</FormHelperText>
+                  ) : null}
+                </FormControl>
               </Box>
               <Box>
                 <FormLabel htmlFor="gender">Gender</FormLabel>

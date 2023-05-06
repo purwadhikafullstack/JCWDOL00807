@@ -29,7 +29,7 @@ import { deleteUserAddress } from "../redux/action/userAddress";
 import BackdropResetPassword from "./BackdropResetPassword";
 import { Icon } from "@iconify/react";
 
-const UpdateUserAddress = ({ id, data }) => {
+const UpdateUserAddress = ({ id, data, defaultAddress }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const api = process.env.REACT_APP_API_BASE_URL;
 
@@ -52,8 +52,6 @@ const UpdateUserAddress = ({ id, data }) => {
     useState("");
 
   const onBtnOpen = () => {
-    // console.log(id);
-    // console.log(data);
     setPreviousData(data);
     setDataAddress({
       city: data.city,
@@ -235,18 +233,27 @@ const UpdateUserAddress = ({ id, data }) => {
 
   return (
     <>
-      <Button
-        leftIcon=""
-        colorScheme="whatsapp"
-        variant="link"
-        onClick={onBtnOpen}
-      >
-        <div className=" flex gap-1">
-          <Icon icon="fluent:calendar-edit-16-regular" />
-          Edit
-        </div>
-      </Button>
-
+      {" "}
+      {defaultAddress ? (
+        <>
+          {" "}
+          <Button leftIcon="" size="sm" variant="solid" onClick={onBtnOpen}>
+            <div className=" flex gap-1">
+              <Icon icon="fluent:calendar-edit-16-regular" />
+              Edit
+            </div>
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button colorScheme="whatsapp" variant="link" onClick={onBtnOpen}>
+            <div className=" flex gap-1">
+              <Icon icon="fluent:calendar-edit-16-regular" />
+              Edit
+            </div>
+          </Button>
+        </>
+      )}
       <Drawer
         size={["full", "md"]}
         isOpen={isOpen}
@@ -273,16 +280,16 @@ const UpdateUserAddress = ({ id, data }) => {
                   <Input
                     className=" w-[full] md:w-[500px]  "
                     onChange={(e) => setInputRecipient(e.target.value)}
-                    // defaultValue={previousData.recipient}
-                    placeholder={previousData.recipient}
+                    defaultValue={previousData.recipient}
+                    // placeholder={previousData.recipient}
                   />
                 </Box>
                 <Box>
                   <FormLabel htmlFor="phone_number">Phone Number</FormLabel>
                   <Input
-                    // defaultValue={previousData.recipients_phone}
+                    defaultValue={previousData.recipients_phone}
                     className=" w-[full] md:w-[500px]  "
-                    placeholder={previousData.recipients_phone}
+                    // placeholder={previousData.recipients_phone}
                     size="md"
                     onChange={(e) => {
                       handlePhoneNumber(e.target.value);
@@ -341,9 +348,8 @@ const UpdateUserAddress = ({ id, data }) => {
                     </FormLabel>
                     <Textarea
                       id="streetAddress"
-                      // defaultValue={inputStreetAddress}
-
-                      placeholder={inputStreetAddress}
+                      defaultValue={inputStreetAddress}
+                      // placeholder={inputStreetAddress}
                       onChange={(e) => setInputStreetAddress(e.target.value)}
                     />
                   </Box>
@@ -408,13 +414,13 @@ const UpdateUserAddress = ({ id, data }) => {
                 mr={3}
                 onClick={handleRemoveAddress}
               >
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-1 md:gap-3 items-center">
                   <Icon icon="ph:trash-simple-thin" className="text-lg" />
                   Remove Address
                 </div>
               </Button>
             </Box>
-            <Button variant="outline" mr={3} onClick={onBtnClose}>
+            <Button variant="outline" mr={[1, 3]} onClick={onBtnClose}>
               Cancel
             </Button>
             <Button colorScheme="whatsapp" onClick={handleUpdateAddress}>

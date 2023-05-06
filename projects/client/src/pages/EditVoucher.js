@@ -11,6 +11,7 @@ import {
   Image,
   Select,
   Textarea,
+  Button,
 } from "@chakra-ui/react";
 
 import { useState, useRef, useEffect } from "react";
@@ -18,6 +19,7 @@ import { updateVoucher } from "../redux/action/voucher";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Icon } from "@iconify/react";
 
 const UpdateVoucher = () => {
   let username = useRef();
@@ -172,9 +174,20 @@ const UpdateVoucher = () => {
     getUserVerified();
     getDataVoucherById();
   }, []);
-
+  function handleClick() {
+    window.history.back();
+  }
   return (
     <>
+      <Button
+        leftIcon={<Icon icon="bx:arrow-back" />}
+        backgroundColor="blue.500"
+        color="white"
+        _hover={{ backgroundColor: "blue.600" }}
+        onClick={handleClick}
+      >
+        Back
+      </Button>
       <div className="bg-neutral-50 py-6     px-6 text-center text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200">
         <h1 className="mb-6 text-5xl font-bold">Edit Voucher Form</h1>
       </div>

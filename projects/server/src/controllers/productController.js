@@ -306,6 +306,7 @@ Group by i.id;
         role,
         isActive,
         branch_stores_id,
+        namaBranchStore,
       } = req.dataToken;
       let productImage = req.files.images;
       console.log(productImage);
@@ -341,7 +342,7 @@ Group by i.id;
 
       // Validasi Input
       let checkName = await item_products.findOne({
-        where: { name },
+        where: { name, branch_stores_id },
       });
 
       if (!name || !description || !weight || !stock || !price || !category) {
@@ -460,6 +461,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -479,6 +490,16 @@ Group by i.id;
             branch_stores_id,
             product_categories_id,
             voucher_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -504,6 +525,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -520,6 +551,16 @@ Group by i.id;
             price,
             branch_stores_id,
             product_categories_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -543,6 +584,16 @@ Group by i.id;
           },
           { transaction: t }
         );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
+          },
+          { transaction: t }
+        );
         await t.commit();
         res.status(200).send({
           isError: false,
@@ -560,6 +611,16 @@ Group by i.id;
             branch_stores_id,
             product_categories_id,
             voucher_id,
+          },
+          { transaction: t }
+        );
+        await historyLog.create(
+          {
+            admin_name: admins_name,
+            branch_store: namaBranchStore,
+            product_name: name,
+            qty: stock,
+            description: `Input Produk Baru beserta stock pertama`,
           },
           { transaction: t }
         );
@@ -645,28 +706,25 @@ Group by i.id;
       );
 
       // Validasi Input
-      if (name) {
-        let checkName = await item_products.findOne({
-          where: { name },
-        });
-        console.log(checkName);
-        if (checkName) {
-          throw {
-            isError: true,
-            message: "Your name is already registered, please try another name",
-            data: null,
-          };
-        } else {
-          await item_products.update(
-            {
-              name,
-            },
-            { where: { id, branch_stores_id } },
-            { transactions: t }
-          );
-          dataToSend.name = name;
-        }
+      let checkName = await item_products.findOne({
+        where: { name, branch_stores_id, id: { [Op.not]: id } },
+      });
+      console.log(checkName);
+      if (checkName) {
+        throw {
+          isError: true,
+          message: "Name is already registered, please use the unique ones",
+          data: null,
+        };
       }
+      await item_products.update(
+        {
+          name,
+        },
+        { where: { id, branch_stores_id } },
+        { transactions: t }
+      );
+      dataToSend.name = name;
 
       if (description) {
         await item_products.update(
@@ -699,24 +757,24 @@ Group by i.id;
         }
       }
 
-      if (stock) {
-        if (stock < 1) {
-          throw {
-            isError: true,
-            message: "Stock field  is invalid, please input positive integer",
-            data: null,
-          };
-        } else {
-          await item_products.update(
-            {
-              stock,
-            },
-            { where: { id, branch_stores_id } },
-            { transaction: t }
-          );
-          dataToSend.stock = stock;
-        }
-      }
+      // if (stock) {
+      //   if (stock < 1) {
+      //     throw {
+      //       isError: true,
+      //       message: "Stock field  is invalid, please input positive integer",
+      //       data: null,
+      //     };
+      //   } else {
+      //     await item_products.update(
+      //       {
+      //         stock,
+      //       },
+      //       { where: { id, branch_stores_id } },
+      //       { transaction: t }
+      //     );
+      //     dataToSend.stock = stock;
+      //   }
+      // }
 
       if (price) {
         if (price <= 0) {
@@ -1100,6 +1158,7 @@ LIMIT :limit OFFSET :offset
     try {
       const {
         admins_id: admin_id,
+        name,
         role,
         isActive,
         branch_stores_id,
@@ -1164,7 +1223,7 @@ LIMIT :limit OFFSET :offset
           message: `Can't update stock because it makes negative, current stock ${newData.dataValues.stock}`,
         };
 
-      const updateStock = await item_products.update(
+      await item_products.update(
         {
           stock: newData.dataValues.new_stock,
         },
@@ -1174,7 +1233,7 @@ LIMIT :limit OFFSET :offset
 
       await historyLog.create(
         {
-          admin_name: newData.dataValues.branch_store.dataValues.admins.name,
+          admin_name: name,
           branch_store: newData.dataValues.branch,
           product_name: newData.dataValues.name,
           qty: stock,
@@ -1205,6 +1264,7 @@ LIMIT :limit OFFSET :offset
         role,
         isActive,
         branch_stores_id,
+        name,
       } = req.dataToken;
       const { id } = req.params;
       const { description } = req.query;
@@ -1274,11 +1334,10 @@ LIMIT :limit OFFSET :offset
       let [dataWasDelete] = afterDelete;
       await historyLog.create(
         {
-          admin_name:
-            dataWasDelete.dataValues.branch_store.dataValues.admins.name,
+          admin_name: name,
           branch_store: dataWasDelete.dataValues.branch,
           product_name: dataWasDelete.dataValues.name,
-          qty: dataExist.dataValues.stock,
+          qty: `-${dataExist.dataValues.stock}`,
           description: `Delete : ${description}`,
         },
         { transaction: t }
@@ -1298,48 +1357,48 @@ LIMIT :limit OFFSET :offset
       });
     }
   },
-  getAllStockProduct: async (req, res) => {
-    const t = await sequelize.transaction();
-    try {
-      const { admins_id: admin_id, role, isActive } = req.dataToken;
-      if (role !== "admin branch" || isActive === false)
-        throw { message: "Unauthorization" };
+  // getAllStockProduct: async (req, res) => {
+  //   const t = await sequelize.transaction();
+  //   try {
+  //     const { admins_id: admin_id, role, isActive } = req.dataToken;
+  //     if (role !== "admin branch" || isActive === false)
+  //       throw { message: "Unauthorization" };
 
-      let branchId = await branch_stores.findOne({
-        attributes: [
-          ["id", "branch_id"],
-          "name",
-          [Sequelize.literal("admin.id"), "admins"],
-          [Sequelize.literal("admin.name"), "names"],
-        ],
-        include: [
-          {
-            model: admin,
-            attributes: [],
-            where: { id: admin_id },
-          },
-        ],
-      });
+  //     let branchId = await branch_stores.findOne({
+  //       attributes: [
+  //         ["id", "branch_id"],
+  //         "name",
+  //         [Sequelize.literal("admin.id"), "admins"],
+  //         [Sequelize.literal("admin.name"), "names"],
+  //       ],
+  //       include: [
+  //         {
+  //           model: admin,
+  //           attributes: [],
+  //           where: { id: admin_id },
+  //         },
+  //       ],
+  //     });
 
-      const branch_stores_id = branchId.dataValues.branch_id;
+  //     const branch_stores_id = branchId.dataValues.branch_id;
 
-      let getAllData = await item_products.findAll({
-        attributes: ["id", "name", "stock"],
-        where: { branch_stores_id },
-      });
+  //     let getAllData = await item_products.findAll({
+  //       attributes: ["id", "name", "stock"],
+  //       where: { branch_stores_id },
+  //     });
 
-      await t.commit();
-      res.status(201).send({
-        isSuccess: true,
-        data: getAllData,
-      });
-    } catch (error) {
-      await t.rollback();
+  //     await t.commit();
+  //     res.status(201).send({
+  //       isSuccess: true,
+  //       data: getAllData,
+  //     });
+  //   } catch (error) {
+  //     await t.rollback();
 
-      res.status(500).send({
-        isSuccess: false,
-        message: error.message,
-      });
-    }
-  },
+  //     res.status(500).send({
+  //       isSuccess: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // },
 };

@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const SidebarAdmin = () => {
@@ -7,6 +7,16 @@ const SidebarAdmin = () => {
   useEffect(() => {
     setRole(localStorage.getItem("my_Role"));
   }, []);
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("my_Token");
+    localStorage.removeItem("my_Role");
+    localStorage.removeItem("adminName");
+    localStorage.removeItem("branchStoreAdmin");
+    navigate("/admin/login");
+    window.location.reload();
+  };
 
   return (
     <section>
@@ -26,8 +36,8 @@ const SidebarAdmin = () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            clip-rule="evenodd"
-            fill-rule="evenodd"
+            clipRule="evenodd"
+            fillRule="evenodd"
             d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
           ></path>
         </svg>
@@ -40,6 +50,15 @@ const SidebarAdmin = () => {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2">
+            <li>
+              <span className="flex-1 ml-3 justify-center whitespace-nowrap text-3xl font-bold w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                GoKu
+              </span>
+              {}{" "}
+              <small className=" capitalize w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                {role}
+              </small>
+            </li>
             <li>
               <Link
                 to="/admin/home"
@@ -73,9 +92,9 @@ const SidebarAdmin = () => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                     <span className="flex-1 ml-3 whitespace-nowrap">
@@ -117,9 +136,9 @@ const SidebarAdmin = () => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                     <span className="flex-1 ml-3 whitespace-nowrap">
@@ -140,9 +159,9 @@ const SidebarAdmin = () => {
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       ></path>
                     </svg>
                     <span className="flex-1 ml-3 whitespace-nowrap">
@@ -233,6 +252,15 @@ const SidebarAdmin = () => {
               >
                 <Icon icon="mdi:sale" width="25" height="25" />
                 <span className="flex-1 ml-3 whitespace-nowrap">Sales</span>
+              </Link>
+            </li>
+            <li onClick={handleLogout}>
+              <Link
+                to="/admin/sales"
+                className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                <Icon icon="simple-line-icons:logout" width="25" height="25" />
+                <span className="flex-1 ml-3 whitespace-nowrap">Logout</span>
               </Link>
             </li>
           </ul>

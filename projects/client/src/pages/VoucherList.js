@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import SidebarAdmin from "../components/SidebarAdmin";
 import {
@@ -143,9 +143,9 @@ const DiscountListByQuery = () => {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
@@ -223,17 +223,23 @@ const DiscountListByQuery = () => {
                 {dataVoucher?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.voucher_type}</Td>
                       <Td>{value.description}</Td>
-                      <Td>
-                        <img
-                          src={value.image}
-                          alt="*"
-                          width="100"
-                          height="100"
-                        ></img>
-                      </Td>
+                      {value.image ? (
+                        <>
+                          <Td>
+                            <img
+                              src={value.image}
+                              alt="*"
+                              width="100"
+                              height="100"
+                            ></img>
+                          </Td>
+                        </>
+                      ) : (
+                        <Td>-</Td>
+                      )}
                       {value.cut_nominal ? (
                         <>
                           <Td>{value.cut_nominal}</Td>
