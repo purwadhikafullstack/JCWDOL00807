@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import UserAddress from "../pages/UsersAddress";
 
 const NavbarUser = () => {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ const NavbarUser = () => {
     window.location.reload();
   };
 
+  // console.log(user);
   useEffect(() => {
     if (!address.loading) {
       if (address?.userAddress?.data) {
@@ -50,9 +52,16 @@ const NavbarUser = () => {
           clearTimeout(timeOut);
         };
       }
+      // setBranchStore(userProduct?.data?.branch);
+      // const timeOut = setTimeout(() => {
+      //   setBranchStore(userProduct?.data?.branch);
+      // }, 700);
+      // return () => {
+      //   clearTimeout(timeOut);
+      // };
     }
     // eslint-disable-next-line
-  }, [userProduct]);
+  }, [userProduct, user.addtional]);
 
   return (
     <>

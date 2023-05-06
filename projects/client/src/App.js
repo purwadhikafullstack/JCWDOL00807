@@ -23,11 +23,11 @@ function App() {
         address?.userAddress?.data?.length >= 1
       ) {
         console.log("address utama");
-        let lat = address.userAddress.data[0]?.latitude;
-        let lng = address.userAddress.data[0]?.longitude;
+        let lat = address?.userAddress?.data[0]?.latitude;
+        let lng = address?.userAddress?.data[0]?.longitude;
         dispatch(userProductList({ lat: lat, lng: lng }));
       } else if (
-        !address.userAddress.data ||
+        !address?.userAddress?.data ||
         address?.userAddress?.data?.length === 0
       ) {
         console.log("branch pusat");
@@ -35,8 +35,8 @@ function App() {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             function (position) {
-              const latitude = position.coords.latitude;
-              const longitude = position.coords.longitude;
+              const latitude = position?.coords?.latitude;
+              const longitude = position?.coords?.longitude;
               dispatch(userProductList({ lat: latitude, lng: longitude }));
               console.log("branch alamat terdekat");
             },
@@ -57,12 +57,13 @@ function App() {
   };
 
   useEffect(() => {
-    const timeOut = setTimeout(() => {
-      geolocation();
-    }, 1000);
-    return () => {
-      clearTimeout(timeOut);
-    };
+    // const timeOut = setTimeout(() => {
+    //   geolocation();
+    // }, 1000);
+    // return () => {
+    //   clearTimeout(timeOut);
+    // };
+    geolocation();
     // eslint-disable-next-line
   }, [address, user.addtional]);
 
