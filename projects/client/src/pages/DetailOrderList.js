@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
@@ -14,17 +14,23 @@ import {
   Th,
   Thead,
   Tr,
+  Button,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
+import DialogConfirmation from "../components/DialogConfirmation";
 
 // debugger
 const DetailOrderListByQuery = () => {
   const navigate = useNavigate();
-debugger
   let currentRole = localStorage.getItem("my_Role");
-  const urlOrder = currentRole == "super admin" ? "admin/super_detailorder_search" : "admin/detailorder_search";
+  const urlOrder =
+    currentRole == "super admin"
+      ? "admin/super_detailorder_search"
+      : "admin/detailorder_search";
+  const { id } = useParams();
 
   const [branch, setBranch] = useState("");
   const [dataDetailOrder, setDataDetailOrder] = useState([]);
@@ -38,6 +44,14 @@ debugger
   let sort = useRef();
   let asc = useRef();
 
+  const notAllowedCancel = ["On Delivering", "Order Confirmed", "Canceled"];
+  const allowedConfirmPayment = ["Waiting For Confirmation Payment"];
+  const allowedDelivering = ["Ongoing"];
+
+  const [iscancel, setIscancel] = useState(false);
+  const [isConfirmPayment, setIsConfirmPayment] = useState(false);
+  const [isDelivering, setIsDelivering] = useState(false);
+
   const getDetailOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
@@ -45,7 +59,7 @@ debugger
       let inputAsc = asc.current.value;
       let response = await axios.get(
         `
-      ${process.env.REACT_APP_API_BASE_URL}/${urlOrder}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
+      ${process.env.REACT_APP_API_BASE_URL}/${urlOrder}/${id}?search_query=${keyword}&page=${page}&limit=${limit}&sort=${inputSort}&asc=${inputAsc}
       `,
         {
           headers: {
@@ -53,11 +67,23 @@ debugger
           },
         }
       );
-      setDataDetailOrder(response?.data?.data?.result);
-      setBranch(response?.data?.data?.branchName);
-      setPage(response?.data?.data?.page);
-      setPages(response?.data?.data?.totalPage);
-      setRows(response?.data?.data?.totalRows[0].count_row);
+      const { data } = response;
+      setDataDetailOrder(data?.data?.result);
+      setBranch(
+        `transaction ${data?.data?.result[0]?.invoice_no || "-"} - on status ${
+          data?.data?.result[0]?.status || "-"
+        }`
+      );
+      setPage(data?.data?.page);
+      setPages(data?.data?.totalPage);
+      setRows(data?.data?.totalRows[0].count_row);
+      setIscancel(!notAllowedCancel.includes(data?.data?.result[0]?.status));
+      setIsConfirmPayment(
+        allowedConfirmPayment.includes(data?.data?.result[0]?.status)
+      );
+      setIsDelivering(
+        allowedDelivering.includes(data?.data?.result[0]?.status)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -86,8 +112,60 @@ debugger
   }, [page, keyword]);
 
   const handleAscSort = () => {
-    getDetailOrderList()
-  }
+    getDetailOrderList();
+  };
+
+  const updateStatus = async (idtrx, status) => {
+    handleCloseDialog();
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.post(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/admin/transaction-reviews/${idtrx}
+      `,
+        {
+          status,
+        },
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      setBranch(
+        `transaction ${
+          data?.invoice_no || "-"
+        } on status ${data?.status || "-"}`
+      );
+      setIscancel(!notAllowedCancel.includes(data?.status));
+      setIsConfirmPayment(
+        allowedConfirmPayment.includes(data?.status)
+      );
+      setIsDelivering(
+        allowedDelivering.includes(data?.status)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setDialogMsg("");
+    setResultReview("");
+    setTrxId("");
+    setBtnTitleYes("");
+  };
+
+  const [dialogMsg, setDialogMsg] = useState("");
+  const [resultReview, setResultReview] = useState("");
+  const [trxId, setTrxId] = useState("");
+  const [btnTitleYes, setBtnTitleYes] = useState("");
+
+  const handleConfirmDialog = (idtrx, status) => {
+    updateStatus(idtrx, status);
+  };
+
   return (
     <>
       <SidebarAdmin />
@@ -171,6 +249,70 @@ debugger
                 textAlign="center"
               >
                 Detail Order List Table - {branch}
+              </TableCaption>
+              <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
+                <ButtonGroup gap="2">
+                  {iscancel && (
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        setDialogMsg(
+                          `Are you sure cancel this transaction ${dataDetailOrder[0]?.invoice_no} ?`
+                        );
+                        setResultReview("canceled");
+                        setTrxId(id);
+                        setBtnTitleYes("Yes, Cancel!");
+                      }}
+                    >
+                      Cancel Order
+                    </Button>
+                  )}
+                  {isConfirmPayment && (
+                    <Button
+                      colorScheme="orange"
+                      onClick={() => {
+                        setDialogMsg(
+                          `Are you sure rejected this transaction ${dataDetailOrder[0]?.invoice_no} ?`
+                        );
+                        setResultReview("rejected");
+                        setTrxId(id);
+                        setBtnTitleYes("Yes, Rejected!");
+                      }}
+                    >
+                      Rejected
+                    </Button>
+                  )}
+                  {isConfirmPayment && (
+                    <Button
+                      colorScheme="yellow"
+                      onClick={() => {
+                        setDialogMsg(
+                          `Are you sure Confirmed this transaction ${dataDetailOrder[0]?.invoice_no} ?`
+                        );
+                        setResultReview("confirmed");
+                        setTrxId(id);
+                        setBtnTitleYes("Yes, confirmed!");
+                      }}
+                    >
+                      Confirmed
+                    </Button>
+                  )}
+                  {isDelivering && (
+                    <Button
+                      colorScheme="pink"
+                      onClick={() => {
+                        setDialogMsg(
+                          `Are you sure Deliver this transaction ${dataDetailOrder[0]?.invoice_no} ?`
+                        );
+                        setResultReview("delivered");
+                        setTrxId(id);
+                        setBtnTitleYes("Yes, Deliver!");
+                      }}
+                    >
+                      Delivering Order
+                    </Button>
+                  )}
+                </ButtonGroup>
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
@@ -283,6 +425,17 @@ debugger
           </nav>
         </div>
         <Footer />
+
+        {dialogMsg ? (
+          <DialogConfirmation
+            message={dialogMsg}
+            btnTitleNo="Close"
+            btnTitleYes={btnTitleYes}
+            handleClose={handleCloseDialog}
+            handleYes={() => handleConfirmDialog(trxId, resultReview)}
+            handleNo={handleCloseDialog}
+          />
+        ) : null}
       </div>
     </>
   );

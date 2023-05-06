@@ -192,7 +192,7 @@ const SidebarAdmin = () => {
                 </li>
                 <li>
                   <Link
-                    to="/admin/detail-order-list"
+                    to="/admin/history-stock-logs"
                     className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <Icon
@@ -202,7 +202,7 @@ const SidebarAdmin = () => {
                     />
 
                     <span className="flex-1 ml-3 whitespace-nowrap">
-                      Detail Order List
+                      History Stock Logs
                     </span>
                   </Link>
                 </li>

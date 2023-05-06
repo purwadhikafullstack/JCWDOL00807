@@ -638,43 +638,5 @@ module.exports = {
         message: error.message,
       });
     }
-  },
-  userAddresses: async (req, res) => {
-    try {
-      const userid = req.dataToken.id;
-      if (!userid)
-        throw {
-          message:
-            "Unauthorization, please register or login for continue see your cart",
-        };
-      const userExist = await users.findOne({
-        where: { id: userid },
-      });
-
-      if (userExist === null)
-        throw {
-          message:
-            "Unauthorization, please register or login for continue see your cart",
-        };
-
-      const getAddress = await user_address.findAll({
-        where: {
-          user_id: {
-            [Op.eq]: userid
-          }
-        }
-      });
-
-      res.status(200).send({
-        isSuccess: true,
-        message: "User Address list",
-        data: getAddress
-      });
-    } catch (error) {
-      res.status(404).send({
-        isSuccess: false,
-        message: error.message,
-      });
-    }
   }
 };

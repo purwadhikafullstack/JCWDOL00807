@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadPaymentProof } from "../redux/action/order";
+import DialogConfirmation from "../components/DialogConfirmation";
 import {
   Alert,
   AlertIcon,
@@ -30,13 +31,19 @@ const UploadPaymentProof = () => {
   const params = new URLSearchParams(search);
   const id = params.get("id");
   const order = useSelector((state) => state.orders.order);
+  let userProduct = useSelector((state) => state.userProduct.userProduct);
+  const branch_name = userProduct?.data?.branch;
 
   console.log(id);
   console.log(order);
+  console.log(branch_name);
 
   const [addFile, setAddFile] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [dialogTitle, setDialogTitle] = useState();
+  const [msgDialog, setMsgDialog] = useState();
 
   const onBtnAddFile = (e) => {
     const file = e.target.files[0];
@@ -71,8 +78,13 @@ const UploadPaymentProof = () => {
       } else {
         formData.append("id_transaction", id_transaction);
       }
+      if (!branch_name) {
+        return setMessage("Branch name was empty");
+      } else {
+        formData.append("branch_name", branch_name);
+      }
       console.log(formData);
-      debugger;
+      // debugger;
       dispatch(uploadPaymentProof({ formData }));
       navigate("/payment-success");
     } catch (error) {
@@ -81,6 +93,10 @@ const UploadPaymentProof = () => {
       console.log(error);
     }
   };
+
+  const handleCloseDialog = () => {
+    setMsgDialog("")
+  }
 
   return (
     <>
@@ -142,7 +158,10 @@ const UploadPaymentProof = () => {
           <div>
             <button
               className="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
-              onClick={handleSubmit}
+              onClick={() => {
+                setDialogTitle("Konfirmasi Pesanan")
+                setMsgDialog("Upload payment proof dan konfirmasi pesanan anda ?")
+              }}
             >
               Upload Payment Proof
             </button>
@@ -150,6 +169,10 @@ const UploadPaymentProof = () => {
         </div>
       </div>
       <Footer />
+
+      {msgDialog ? (
+        <DialogConfirmation message={msgDialog} title={dialogTitle} handleYes={handleSubmit} handleNo={handleCloseDialog} />
+      ) : null}
     </>
   );
 };

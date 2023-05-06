@@ -26,5 +26,10 @@ Router.post(
   uploadImages,
   userTransactionController.uploadPaymentProof
 );
+Router.get(
+  "/order-confirmed/:id",
+  tokenVerify,
+  userTransactionController.OrderConfirmation
+);
 
 module.exports = Router;

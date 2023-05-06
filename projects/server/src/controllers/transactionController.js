@@ -1,5 +1,6 @@
 const { sequelize, Sequelize } = require("./../models");
 const { Op } = require("sequelize");
+const schedule = require('node-schedule');
 const transporter = require("../lib/nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs").promises;
@@ -10,6 +11,7 @@ require("dotenv").config();
 
 // import model
 const db = require("./../models/index");
+const { stat } = require("fs");
 const admin = db.admins;
 const branch_stores = db.branch_stores;
 const item_products = db.item_products;
@@ -17,6 +19,7 @@ const product_categories = db.product_categories;
 const discounts = db.discounts;
 const vouchers = db.vouchers;
 const historyLog = db.stock_history_logs;
+const transaction = db.transactions;
 
 module.exports = {
   // get order list for admin branch
@@ -214,6 +217,10 @@ module.exports = {
         isActive,
         branch_stores_id,
       } = req.dataToken;
+
+      const idtrx = req.params.idtrx;
+
+      console.log(`id transaction: ${idtrx}`);
       // Validasi Admin
       if (isActive === false) {
         res.status(404).send({
@@ -278,12 +285,13 @@ module.exports = {
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id
-        where t.branch_store=:branchName and (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search)
+        where t.branch_store=:branchName and (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search) and t.id=:idtrx
     `,
         {
           replacements: {
             search: "%" + search + "%",
             branchName,
+            idtrx,
           },
           type: sequelize.QueryTypes.SELECT,
         }
@@ -292,11 +300,11 @@ module.exports = {
       // console.log(totalPage);
       let result = await sequelize.query(
         `
-        SELECT td.id,td.transactions_id,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
+        SELECT td.id,td.transactions_id,t.invoice_no,t.status,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id
-        where t.branch_store=:branchName and (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search)
+        where t.branch_store=:branchName and (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search) and t.id=:idtrx
         Group by td.id
     order by ${sort}
     LIMIT :limit OFFSET :offset
@@ -305,6 +313,7 @@ module.exports = {
           replacements: {
             search: "%" + search + "%",
             branchName,
+            idtrx,
             limit,
             offset,
           },
@@ -346,6 +355,7 @@ module.exports = {
         isActive,
         branch_stores_id,
       } = req.dataToken;
+
       // Validasi Admin
       if (isActive === false) {
         res.status(404).send({
@@ -520,6 +530,9 @@ module.exports = {
         isActive,
         branch_stores_id,
       } = req.dataToken;
+
+      const idtrx = req.params.idtrx;
+
       // Validasi Admin
       if (isActive === false) {
         res.status(404).send({
@@ -580,11 +593,12 @@ module.exports = {
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id
-        where (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search)
+        where (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search) and t.id=:idtrx
     `,
         {
           replacements: {
             search: "%" + search + "%",
+            idtrx,
           },
           type: sequelize.QueryTypes.SELECT,
         }
@@ -593,11 +607,11 @@ module.exports = {
       // console.log(totalPage);
       let result = await sequelize.query(
         `
-        SELECT td.id,td.transactions_id,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
+        SELECT td.id,td.transactions_id,t.invoice_no,t.status,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id
-        where (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search)
+        where (td.id like :search or td.transactions_id like :search or td.product_name like :search or td.qty like :search or td.discount_type like :search or td.voucher_type like :search or us.name like :search) and t.id=:idtrx
         Group by td.id
     order by ${sort}
     LIMIT :limit OFFSET :offset
@@ -605,6 +619,7 @@ module.exports = {
         {
           replacements: {
             search: "%" + search + "%",
+            idtrx,
             limit,
             offset,
           },
@@ -645,6 +660,7 @@ module.exports = {
       const status = req.query.status || null;
       const sortBy = req.query.sort;
       const ascOrDesc = req.query.asc;
+      const branchName = req.query.branch;
 
       let sort = "";
       let statusOrder;
@@ -679,12 +695,13 @@ module.exports = {
           SELECT count(*) as count_row
           FROM transactions t
           LEFT JOIN users us on t.users_id = us.id 
-          where t.users_id = :id and (t.branch_store like :search or t.status like :search or t.invoice_no like :search or t.id like :search) and t.status is not :status
+          where t.users_id = :id and (t.branch_store like :search or t.status like :search or t.invoice_no like :search or t.id like :search) and t.status is not :status and t.branch_store = :branchName
     `,
           {
             replacements: {
               search: "%" + search + "%",
               status,
+              branchName,
               id,
             },
             type: sequelize.QueryTypes.SELECT,
@@ -698,7 +715,7 @@ module.exports = {
             FROM transactions t
             JOIN transaction_details td ON td.transactions_id = t.id
             LEFT JOIN users us on t.users_id = us.id
-            where t.users_id= :id and (t.branch_store like :search or t.status like :search or t.invoice_no like :search or t.id like :search) and t.status is not :status
+            where t.users_id= :id and (t.branch_store like :search or t.status like :search or t.invoice_no like :search or t.id like :search) and t.status is not :status and t.branch_store = :branchName
             Group by t.id
     order by ${sort}
     LIMIT :limit OFFSET :offset
@@ -708,6 +725,7 @@ module.exports = {
               search: "%" + search + "%",
               id,
               status,
+              branchName,
               limit,
               offset,
             },
@@ -733,11 +751,12 @@ module.exports = {
             SELECT count(*) as count_row
             FROM transactions t
             LEFT JOIN users us on t.users_id = us.id 
-            where t.users_id = :id and (t.status like :search or t.invoice_no like :search or t.id like :search) and t.status  in (:statusOrder)
+            where t.users_id = :id and (t.status like :search or t.invoice_no like :search or t.id like :search) and t.status  in (:statusOrder) and t.branch_store = :branchName
     `,
           {
             replacements: {
               search: "%" + search + "%",
+              branchName,
               statusOrder,
               id,
             },
@@ -752,7 +771,7 @@ module.exports = {
             FROM transactions t
             JOIN transaction_details td ON td.transactions_id = t.id
             LEFT JOIN users us on t.users_id = us.id
-            where t.users_id= :id and (t.status like :search or us.name like :search or t.invoice_no like :search or t.id like :search) and t.status in (:statusOrder)
+            where t.users_id= :id and (t.status like :search or us.name like :search or t.invoice_no like :search or t.id like :search) and t.status in (:statusOrder) and t.branch_store = :branchName
             Group by t.id
     order by ${sort}
     LIMIT :limit OFFSET :offset
@@ -762,6 +781,7 @@ module.exports = {
               search: "%" + search + "%",
               id,
               statusOrder,
+              branchName,
               limit,
               offset,
             },
@@ -854,7 +874,7 @@ module.exports = {
       // console.log(totalPage);
       let result = await sequelize.query(
         `
-        SELECT td.id,td.transactions_id,t.status,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
+        SELECT td.id,td.transactions_id,t.invoice_no,t.status,td.product_name,td.qty,td.discount_type,td.voucher_type,td.price_per_item,td.weight,us.name,td.cut_percentage, td.cut_nominal, DATE_FORMAT(td.updatedAt, "%d %M %Y") as updatedAt, DATE_FORMAT(t.createdAt, "%d %M %Y") as createdAt
         FROM transactions t
         JOIN transaction_details td ON td.transactions_id = t.id
         LEFT JOIN users us on t.users_id = us.id
@@ -886,6 +906,281 @@ module.exports = {
       res.status(200).send({
         isError: false,
         message: "Query Detail Order List Success",
+        data: dataToSend,
+      });
+    } catch (error) {
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
+  OrderUserReview: async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+      const {
+        admins_id,
+        name: admins_name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
+      const id_transaction = req.params.id;
+      const { status } = req.body;
+      const allowedStatus = ["confirmed", "rejected", "canceled", "delivered"];
+      const cancelNotAllowed = ["On Delivering", "Order Confirmed"];
+
+      // Validasi Admin
+      if (isActive === false)
+        throw {
+          isError: true,
+          messasge: "Admin is not active, please contact to super admin",
+        };
+
+      if (role !== "admin branch")
+        throw {
+          isError: true,
+          message: "Role is not permitted",
+        };
+
+      const getTransaction = await transaction.findOne({
+        where: { id: id_transaction },
+      });
+      console.log(`status transaction: ${getTransaction.status}`);
+      if (
+        getTransaction.status != "Waiting For Confirmation Payment" &&
+        status == "confirmed" &&
+        status == "rejected"
+      )
+        throw {
+          isError: true,
+          message:
+            "Sorry your transaction cannot reviewed or different status state",
+        };
+      if (
+        cancelNotAllowed.includes(getTransaction.status) &&
+        status == "canceled"
+      )
+        throw {
+          isError: true,
+          message: "Sorry your transaction cannot be cancel",
+        };
+
+      if (getTransaction.status != "Ongoing" && status == "delivered")
+        throw {
+          isError: true,
+          message: "Sorry your transaction cannot be delivering",
+        };
+
+      if (allowedStatus.includes(status.toLowerCase())) {
+        if (status == "rejected") {
+          await transaction.update(
+            {
+              status: "Waiting For Payment",
+              admin_name: admins_name,
+            },
+            {
+              where: {
+                id: {
+                  [Op.eq]: id_transaction,
+                },
+              },
+            },
+            { transaction: t }
+          );
+          await t.commit();
+          res.status(200).send({
+            isError: false,
+            message: "Order was rejected",
+            data: await transaction.findOne({
+              where: { id: { [Op.eq]: id_transaction } },
+            }),
+          });
+        } else if (status == "confirmed") {
+          await transaction.update(
+            {
+              status: "Ongoing",
+              admin_name: admins_name,
+            },
+            {
+              where: {
+                id: {
+                  [Op.eq]: id_transaction,
+                },
+              },
+            },
+            { transaction: t }
+          );
+          await t.commit();
+          res.status(200).send({
+            isError: false,
+            message: "Order was confirmed",
+            data: await transaction.findOne({
+              where: { id: { [Op.eq]: id_transaction } },
+            }),
+          });
+        } else if (status == "canceled") {
+          await transaction.update(
+            {
+              status: "Canceled",
+              admin_name: admins_name,
+            },
+            {
+              where: {
+                id: {
+                  [Op.eq]: id_transaction,
+                },
+              },
+            },
+            { transaction: t }
+          );
+          await t.commit();
+          res.status(200).send({
+            isError: false,
+            message: "Order was cancelled",
+            data: await transaction.findOne({
+              where: { id: { [Op.eq]: id_transaction } },
+            }),
+          });
+        } else if (status == "delivered") {
+          await transaction.update(
+            {
+              status: "On Delivering",
+              admin_name: admins_name,
+            },
+            {
+              where: {
+                id: {
+                  [Op.eq]: id_transaction,
+                },
+              },
+            },
+            { transaction: t }
+          );
+          await t.commit();
+          res.status(200).send({
+            isError: false,
+            message: "Order was delivering",
+            data: await transaction.findOne({
+              where: { id: { [Op.eq]: id_transaction } },
+            }),
+          });
+        }
+      } else {
+        res.status(404).send({
+          isError: true,
+          message: "Status you send not allowed",
+          data: null,
+        });
+      }
+    } catch (error) {
+      res.status(404).send({
+        isError: true,
+        message: error.message,
+        data: null,
+      });
+    }
+  },
+  HistoryStockQuery: async (req, res) => {
+    try {
+      const {
+        admins_id,
+        name: admins_name,
+        email,
+        role,
+        isActive,
+        branch_stores_id,
+      } = req.dataToken;
+      // Validasi Admin
+      if (isActive === false) {
+        res.status(404).send({
+          isError: true,
+          messasge: "Admin is not active, please contact to super admin",
+          data: null,
+        });
+        return;
+      }
+      if (role !== "admin branch") {
+        res.status(404).send({
+          isError: true,
+          message: "Role is not permitted",
+          data: null,
+        });
+        return;
+      }
+
+      const branchStore = await branch_stores.findOne({
+        where: { id: branch_stores_id },
+      });
+      const branchName = branchStore.dataValues.name;
+      const sortBy = req.query.sort;
+      console.log(sortBy);
+      const ascOrDesc = req.query.asc;
+      console.log(ascOrDesc);
+
+      if (sortBy == "id") {
+        sort = "id" + " " + ascOrDesc;
+      } else if (sortBy == "admin") {
+        sort = "admin_name" + " " + ascOrDesc;
+      } else if (sortBy == "product") {
+        sort = "product_name" + " " + ascOrDesc;
+      } else if (sortBy == "branch") {
+        sort = "branch_store" + " " + ascOrDesc;
+      } else if (sortBy == "date") {
+        sort = "createdAt" + " " + ascOrDesc;
+      } else if (sortBy == "qty") {
+        sort = "qty" + " " + ascOrDesc;
+      }
+
+      console.log(sort);
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 0;
+      const search = req.query.search_query || "";
+      const offset = limit * page;
+
+      let totalRows = await sequelize.query(
+        `
+          SELECT count(*) as count_row
+          FROM stock_history_logs
+          where branch_store = :branchName and (id like :search or branch_store like :search or admin_name like :search or product_name like :search or qty like :search or description like :search)
+    `,
+        {
+          replacements: {
+            search: "%" + search + "%",
+            branchName,
+          },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+      let totalPage = Math.ceil(totalRows[0].count_row / limit);
+      // console.log(totalPage);
+      let result = await sequelize.query(
+        `
+            SELECT id, admin_name, branch_store, product_name, qty, description,DATE_FORMAT(createdAt, "%d %M %Y") as created_at, DATE_FORMAT(updatedAt, "%d %M %Y") as updated_at
+            FROM stock_history_logs
+            where branch_store = :branchName and (id like :search or branch_store like :search or admin_name like :search or product_name like :search or qty like :search or description like :search)
+            Group by id
+    order by ${sort}
+    LIMIT :limit OFFSET :offset
+    `,
+        {
+          replacements: {
+            search: "%" + search + "%",
+            branchName,
+            limit,
+            offset,
+          },
+          type: sequelize.QueryTypes.SELECT,
+        }
+      );
+
+      // console.log(result);
+      let dataToSend = { result, page, limit, totalRows, totalPage };
+      res.status(200).send({
+        isError: false,
+        message: "History stock List Success",
         data: dataToSend,
       });
     } catch (error) {

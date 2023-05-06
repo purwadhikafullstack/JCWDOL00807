@@ -75,7 +75,7 @@ Router.get(
   transactionController.getOrderListByQuery
 );
 Router.get(
-  "/detailorder_search",
+  "/detailorder_search/:idtrx",
   tokenVerify,
   transactionController.getDetailOrderByQuery
 );
@@ -86,9 +86,21 @@ Router.get(
   transactionController.getSuperOrderListByQuery
 );
 Router.get(
-  "/super_detailorder_search",
+  "/super_detailorder_search/:idtrx",
   tokenVerify,
   transactionController.getSuperDetailOrderByQuery
+);
+
+Router.post(
+  "/transaction-reviews/:id",
+  tokenVerify,
+  transactionController.OrderUserReview
+);
+
+Router.get(
+  "/history_stock",
+  tokenVerify,
+  transactionController.HistoryStockQuery
 );
 
 module.exports = Router;

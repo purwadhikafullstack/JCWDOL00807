@@ -38,6 +38,7 @@ import CartList from "../pages/CartList";
 import Shipping from "../pages/Shippings";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import UploadPaymentProof from "../pages/UploadPaymentProof";
+import HistoryStockByQuery from "../pages/HistoryStock";
 
 // debugger
 export default function Router() {
@@ -54,7 +55,7 @@ export default function Router() {
         {
           path: "login",
           element: (
-            <GuestGuard>
+            <GuestGuard isAdmin={true}>
               <AdminLogin />
             </GuestGuard>
           ),
@@ -188,7 +189,7 @@ export default function Router() {
           ),
         },
         {
-          path: "detail-order-list",
+          path: "detail-order-list/:id",
           element: (
             <AuthGuard>
               <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
@@ -217,6 +218,16 @@ export default function Router() {
             </AuthGuard>
           ),
         },
+        {
+          path: "history-stock-logs",
+          element: (
+            <AuthGuard>
+              <RoleBasedGuard accessibleRoles={["super admin", "admin branch"]}>
+                <HistoryStockByQuery />
+              </RoleBasedGuard>
+            </AuthGuard>
+          )
+        }
       ],
     },
 
@@ -225,7 +236,7 @@ export default function Router() {
     {
       path: "login",
       element: (
-        <GuestGuard>
+        <GuestGuard isAdmin={false}>
           <Login />
         </GuestGuard>
       ),
@@ -235,7 +246,7 @@ export default function Router() {
     {
       path: "/register",
       element: (
-        <GuestGuard>
+        <GuestGuard isAdmin={false}>
           <Register />
         </GuestGuard>
       ),

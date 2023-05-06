@@ -6,6 +6,8 @@ import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
 import CancellationReasons from "../components/CancellationReasons";
 import {
+  ButtonGroup,
+  Button,
   Select,
   Table,
   TableCaption,
@@ -21,6 +23,7 @@ import React from "react";
 import ReactPaginate from "react-paginate";
 import SidebarUser from "../components/SidebarUser";
 import BackdropResetPassword from "../components/BackdropResetPassword";
+import DialogConfirmation from "../components/DialogConfirmation";
 
 const UserDetailOrderListByQuery = () => {
   const navigate = useNavigate();
@@ -40,6 +43,9 @@ const UserDetailOrderListByQuery = () => {
   let sort = useRef();
   let asc = useRef();
 
+  const allowedApprove = ["On Delivering"];
+  const [isApprove, setIsApprove] = useState();
+
   const getDetailOrderList = async () => {
     try {
       const token = localStorage.getItem("my_Token");
@@ -57,10 +63,17 @@ const UserDetailOrderListByQuery = () => {
       );
       console.log(response);
       setDataDetailOrder(response?.data?.data?.result);
-      setBranch(`transaction ${id}`);
+      setBranch(
+        `transaction ${
+          response?.data?.data?.result[0]?.invoice_no || "-"
+        } on status ${response?.data?.data?.result[0]?.status || "-"}`
+      );
       setPage(response?.data?.data?.page);
       setPages(response?.data?.data?.totalPage);
       setRows(response?.data?.data?.totalRows[0].count_row);
+      setIsApprove(
+        allowedApprove.includes(response?.data?.data?.result[0]?.status)
+      );
     } catch (error) {
       console.log(error);
     }
@@ -117,6 +130,49 @@ const UserDetailOrderListByQuery = () => {
   const handleClose = () => {
     setMessageCancel("");
     navigate("/accounts/order-list");
+  };
+
+  const handleUploadPayment = (idtrx) => {
+    navigate(`/upload/payment-proof?id=${idtrx}`);
+  };
+
+  const updateStatus = async (idtrx) => {
+    handleCloseDialog();
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.get(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/transaction/order-confirmed/${idtrx}
+      `,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      setBranch(
+        `transaction ${
+          data?.invoice_no || "-"
+        } on status ${data?.status || "-"}`
+      );
+      setIsApprove(allowedApprove.includes(data?.status));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [dialogMsg, setDialogMsg] = useState("");
+  const [trxId, setTrxId] = useState("");
+  const [btnTitleYes, setBtnTitleYes] = useState("");
+  const handleConfirmDialog = (idtrx) => {
+    updateStatus(idtrx);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogMsg("");
+    setTrxId("");
+    setBtnTitleYes("");
   };
 
   return (
@@ -202,11 +258,35 @@ const UserDetailOrderListByQuery = () => {
                 Detail Order List Table - {branch}
               </TableCaption>
               <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
-                <CancellationReasons
-                  status={dataDetailOrder[0]?.status}
-                  handleSubmit={handleReasonCancellation}
-                  errorMessage={cancelErrorMessage}
-                />
+                <ButtonGroup>
+                  <CancellationReasons
+                    status={dataDetailOrder[0]?.status}
+                    handleSubmit={handleReasonCancellation}
+                    errorMessage={cancelErrorMessage}
+                  />
+                  {dataDetailOrder[0]?.status == "Waiting For Payment" && (
+                    <Button
+                      colorScheme="pink"
+                      onClick={() => handleUploadPayment(id)}
+                    >
+                      Upload Payment Proof
+                    </Button>
+                  )}
+                  {isApprove && (
+                    <Button
+                      colorScheme="green"
+                      onClick={() => {
+                        setDialogMsg(
+                          `Are you sure Approve this transaction ${dataDetailOrder[0]?.invoice_no} ?`
+                        );
+                        setTrxId(id);
+                        setBtnTitleYes("Yes, Approve!");
+                      }}
+                    >
+                      Approve Order
+                    </Button>
+                  )}
+                </ButtonGroup>
               </TableCaption>
 
               <Thead className=" text-center">
@@ -325,6 +405,17 @@ const UserDetailOrderListByQuery = () => {
           <BackdropResetPassword
             message={messageCancel}
             handleClose={handleClose}
+          />
+        ) : null}
+
+        {dialogMsg ? (
+          <DialogConfirmation
+            message={dialogMsg}
+            btnTitleNo="Close"
+            btnTitleYes={btnTitleYes}
+            handleClose={handleCloseDialog}
+            handleYes={() => handleConfirmDialog(trxId)}
+            handleNo={handleCloseDialog}
           />
         ) : null}
 
