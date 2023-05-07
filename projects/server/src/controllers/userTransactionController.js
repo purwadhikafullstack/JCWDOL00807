@@ -115,7 +115,7 @@ module.exports = {
       if (userExist === null)
         throw {
           message:
-            "Unauthorization, please register or login for continue  add product to cart",
+            "Unauthorization, please register or login for continue  transaction",
         };
       var d = new Date();
       d.setDate(d.getDate() + 1);
@@ -399,49 +399,6 @@ module.exports = {
         isSuccess: true,
         message: "Your order has been canceled",
       });
-
-      // const name = transactionDetail.map((val) => {
-      //   return val.product_name;
-      // });
-
-      // const previousQty = await item_products.findAll({
-      //   attributes: ["stock"],
-      //   where: { name, branch_stores_id: branchId },
-      // });
-
-      // const stockMapping = previousQty.map((val) => {
-      //   return val.stock;
-      // });
-
-      // const newstock = transactionDetail.map((val)=>{
-      //   return val.q
-      // })
-
-      // const stock = transactionDetail.map((val) => {
-      //   return val.;
-      // });
-
-      //       const updates = transactionDetail.map((val) => {
-      //   return {
-      //     where: { name: val.product_name },
-      //     changes: { stock: sequelize.literal(`stock + ${val.qty}`) },
-      //   };
-      // });
-
-      // await item_products.bulkCreate([update], {
-      //   updateOnDuplicate: ["stock"],
-      // });
-
-      // await historyLog.bulkCreate(
-      //   {
-      //     admin_name: none,
-      //     branch_store: newData.dataValues.branch,
-      //     product_name: newData.dataValues.name,
-      //     qty: stock,
-      //     description: `Update : ${description}`,
-      //   },
-      //   { transaction: t }
-      // );
     } catch (error) {
       res.status(500).send({
         isSuccess: false,
@@ -486,71 +443,11 @@ module.exports = {
         { transaction: t }
       );
 
-      const updateStockProduct = await transaction_detail.findAll(
-        {
-          attributes: ["product_name", "transactions_id", "qty"],
-          where: { transactions_id: transaction_id },
-        },
-        { transaction: t }
-      );
-
-      console.log(updateStockProduct);
-
-      updateStockProduct.map(
-        async (val) => {
-          console.log(val.qty);
-          await item_products.update(
-            {
-              stock: sequelize.literal(`stock + ${val.qty}`),
-            },
-            {
-              where: {
-                name: val.product_name,
-                branch_stores_id: branchId,
-              },
-            }
-          );
-        },
-        { transaction: t }
-      );
-
-      // const temp = updateStockProduct.map((val) => {
-      //   return val.product_name;
-      // });
-      // const result = await item_products.findAll({
-      //   where: { name: temp, branch_stores_id: branchId },
-      // });
-
-      // const jakartaPusat = await item_products.findAll({
-      //   where: { name: temp, branch_stores_id: 1 },
-      // });
-
-      // const jakartaBarat = await item_products.findAll({
-      //   where: { name: temp, branch_stores_id: 2 },
-      // });
-
-      const historyLogData = updateStockProduct.map(
-        (val) => {
-          return {
-            admin_name: "none",
-            branch_store: branchStore,
-            product_name: val.product_name,
-            qty: val.qty,
-            description: `Cancel order by system `,
-          };
-        },
-        { transaction: t }
-      );
-
-      await historyLog.bulkCreate(historyLogData, { transaction: t });
       await t.commit();
       res.status(200).send({
         isSuccess: true,
         message: "Cancel Order By System is Success",
         data: result,
-        // jakartaPusat: jakartaPusat,
-        // jakartaBarat: jakartaBarat,
-        // updateStockProduct,
       });
     } catch (error) {
       await t.rollback();
@@ -578,7 +475,7 @@ module.exports = {
       if (userExist === null)
         throw {
           message:
-            "Unauthorization, please register or login for continue  add product to cart",
+            "Unauthorization, please register or login for continue  transaction",
         };
 
       const getTransaction = await transaction.findOne({

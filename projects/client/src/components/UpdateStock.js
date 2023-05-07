@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import axios from "axios";
 import BackdropResetPassword from "./BackdropResetPassword";
+import Swal from "sweetalert2";
 
 const UpdateStock = ({ id_product, name_product, stock, getProductList }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -88,12 +89,8 @@ const UpdateStock = ({ id_product, name_product, stock, getProductList }) => {
           },
         }
       );
-      toast({
-        title: response.data.message,
-        status: "success",
-        isClosable: false,
-        position: "top",
-      });
+      Swal.fire("Good Job!", `${response.data.message}`, "success");
+
       getProductList();
       onBtnClose();
       setRemove("");
@@ -144,12 +141,8 @@ const UpdateStock = ({ id_product, name_product, stock, getProductList }) => {
       );
 
       getProductList();
-      toast({
-        title: response.data.message,
-        status: "success",
-        isClosable: false,
-        position: "top",
-      });
+      Swal.fire("Good Job!", `${response.data.message}`, "success");
+
       onClose();
       setRemove(false);
     } catch (error) {

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const MainBanner = ({ images, title, title2, button }) => {
   return (
     <div>
@@ -17,12 +19,12 @@ const MainBanner = ({ images, title, title2, button }) => {
             <p className=" text-xs  md:text-xl text-gray-300 md:mt-3 md:mb-10 mb-2  ">
               {title2}
             </p>
-            <a
-              href="#"
-              className="inline-block bg-white text-xs md:text-lg text-gray-900 md:font-bold py-1  px-1 md:py-3 md:px-6 rounded-lg hover:bg-gray-200  "
-            >
-              {button}
-            </a>
+            <Link to="/product-list/allproduct">
+              <div className="inline-block bg-white text-xs md:text-lg text-gray-900 md:font-bold py-1  px-1 md:py-3 md:px-6 rounded-lg hover:bg-gray-200">
+                {" "}
+                {button}
+              </div>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
@@ -19,6 +19,7 @@ import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
 import CardProduct from "../components/CardProduct";
 import { Divider } from "@chakra-ui/react";
 import Swal from "sweetalert2";
+import { Icon } from "@iconify/react";
 
 const UserProductDetail = () => {
   const dispatch = useDispatch();
@@ -66,7 +67,7 @@ const UserProductDetail = () => {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: " Out of stock",
+          text: "Quantity product was zero",
         });
         // alert("Quantity product was zero");
       } else if (qty > dataProduct.stock) {
@@ -96,10 +97,15 @@ const UserProductDetail = () => {
       const token = localStorage.my_Token;
       if (!token) {
         setMessage(
-          "Unauthorization, please register or login for continue  add product to cart"
+          "Unauthorization, please register or login for continue  add to transaction"
         );
       } else if (qty < 1) {
-        setMessage("Quantity product was zero");
+        // setMessage("Quantity product was zero");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Quantity product was zero",
+        });
       } else if (qty > dataProduct.stock) {
         setMessage("Sorry your quantity more then stock");
       } else {
@@ -141,9 +147,14 @@ const UserProductDetail = () => {
     setQty(e);
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <>
       <Navbar />
+
       <section className="text-gray-700 body-font overflow-hidden bg-white container mx-auto">
         {!dataProduct?.stock ? (
           <div className="  flex justify-center h-screen items-center ">
@@ -152,6 +163,21 @@ const UserProductDetail = () => {
           </div>
         ) : (
           <>
+            <Button
+              rightIcon={
+                <Icon
+                  icon="material-symbols:arrow-right-alt-rounded"
+                  rotate={2}
+                />
+              }
+              colorScheme="teal"
+              variant="outline"
+              mt="2"
+              onClick={handleBack}
+            >
+              Back
+            </Button>
+
             <div className="px-5 py-5 md:py-24">
               <div className="md:flex justify-between flex-wrap  ">
                 {dataProduct?.stock === 0 ? (

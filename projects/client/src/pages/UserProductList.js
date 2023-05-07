@@ -63,9 +63,9 @@ const UserProductList = () => {
         let inputBestSeller;
         let inputAllProduct;
         let inputCategory;
-        const branch = userProduct.userProduct.data.branch;
-        const branchId = userProduct.userProduct.data.branch_id;
-        setCategories(userProduct.userProduct.data.category);
+        const branch = userProduct?.userProduct?.data?.branch;
+        const branchId = userProduct?.userProduct?.data?.branch_id;
+        setCategories(userProduct?.userProduct?.data?.category);
 
         if (name.includes("-")) {
           let nameSplit = name.split("-");
@@ -146,7 +146,7 @@ const UserProductList = () => {
           `${api}/user/product-filter?branch_stores_id=${branchId}&branch_store_name=${branch}&promotion=${inputPromotion}&bestSeller=${inputBestSeller}&latest=${inputLatest}&allProduct=${inputAllProduct}&categories=${inputCategory}&search=${search}&sortBy=${sort}&limit=${limit}&page=${page}`
         );
 
-        console.log(dataSearchAndFilter);
+        console.log(dataSearchAndFilter.data.data);
 
         setListProduct(dataSearchAndFilter?.data?.data);
         setPage(dataSearchAndFilter?.data?.page);
@@ -230,19 +230,22 @@ const UserProductList = () => {
               >
                 <div className=" flex flex-row  gap-5 md:gap-0 md:flex-col w-full md:w-[210px] mb-5 md:mb-0  ml-4 md:ml-0  ">
                   <div className=" flex flex-col w-1/2 md:w-full gap-5 md:mb-5 md:mt-10  ">
-                    <h1 className=" capitalize font-bold text-sm md:text-lg h-2 md:h-5">
+                    <h1 className=" capitalize font-bold text-sm md:text-lg h-6 md:h-5 mt-1 md:mt-0 ">
                       filter product based on
                     </h1>
-                    <Checkbox
-                      size={["xs", "md"]}
-                      colorScheme="green"
-                      isChecked={allProduct}
-                      value={"allProduct"}
-                      onChange={(e) => setAllProduct(e.target.checked)}
-                      className="text-[14px] md:text-md"
-                    >
-                      All Product
-                    </Checkbox>
+                    {name == "allproduct" ? (
+                      <Checkbox
+                        size={["xs", "md"]}
+                        colorScheme="green"
+                        isChecked={allProduct}
+                        value={"allProduct"}
+                        onChange={(e) => setAllProduct(e.target.checked)}
+                        className="text-[14px] md:text-md"
+                      >
+                        All Product
+                      </Checkbox>
+                    ) : null}
+
                     <Checkbox
                       size={["xs", "md"]}
                       colorScheme="green"
@@ -257,16 +260,6 @@ const UserProductList = () => {
                     <Checkbox
                       size={["xs", "md"]}
                       colorScheme="green"
-                      isChecked={latest}
-                      value="latest"
-                      className="text-[14px] md:text-md"
-                      onChange={(e) => setLatest(e.target.checked)}
-                    >
-                      Latest
-                    </Checkbox>
-                    <Checkbox
-                      size={["xs", "md"]}
-                      colorScheme="green"
                       isChecked={bestSeller}
                       value="bestSeller"
                       className="text-[14px] md:text-md"
@@ -277,10 +270,10 @@ const UserProductList = () => {
                   </div>
 
                   <div className=" flex flex-col gap-5 w-1/2 md:w-full ">
-                    <h1 className="capitalize font-bold  text-lg h-2  md:h-5">
+                    <h1 className="capitalize font-bold  text-sm md:text-lg  h-6  md:h-5 flex-1 items-center  mt-1 md:mt-0">
                       product category
                     </h1>
-                    {categories.map((val, idx) => (
+                    {categories?.map((val, idx) => (
                       <Checkbox
                         key={idx}
                         size={["xs", "md"]}
@@ -318,7 +311,7 @@ const UserProductList = () => {
                     <option value="lowestPrice">Lowest Price</option>
                   </Select>
                 </Box>
-                <InputGroup w={["fit-content", "300px"]}>
+                <InputGroup w={["180px", "220px"]}>
                   <InputLeftElement
                     pointerEvents="none"
                     children={

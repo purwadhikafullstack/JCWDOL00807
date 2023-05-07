@@ -82,7 +82,9 @@ module.exports = {
     ORDER BY carts.id DESC
   `,
         {
+
           replacements: { userid, branch_id },
+
           type: sequelize.QueryTypes.SELECT,
         }
       );

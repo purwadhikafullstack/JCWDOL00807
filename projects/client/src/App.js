@@ -67,7 +67,7 @@ function App() {
   }, [address, user.addtional]);
 
   useEffect(() => {
-    // dispatch(keepLogin());
+    dispatch(keepLogin());
     dispatch(userProductList());
     // dispatch(keepLoginAdmin());
     // eslint-disable-next-line react-hooks/exhaustive-deps

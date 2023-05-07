@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, cartList, saveCartToCheckout } from "../redux/action/carts";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const CardProduct = ({
   productid,
@@ -25,36 +26,58 @@ const CardProduct = ({
   let grandtotal = 0;
 
   const handleAddToCart = async () => {
-    await dispatch(addToCart(productid, 1, branch_id));
-    await dispatch(cartList(branch_id));
+    const token = localStorage.my_Token;
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please register or login for continue  add to cart",
+      });
+    } else {
+      await dispatch(addToCart(productid, 1, branch_id));
+      await dispatch(cartList(branch_id));
+    }
   };
 
   const handleBuyNow = () => {
-    grandtotal = grandtotal + parseInt(priceAfterDiscount);
-    const checkout = {
-      detailOrder: [
-        {
-          product_name: name,
-          qty: 1,
-          discount_type: discount_type,
-          voucher_type: null,
-          price_per_item: priceAfterDiscount,
-          weight,
-        },
-      ],
-      products_id: [
-        {
-          product_id: productid,
-        },
-      ],
-      grandtotal,
-      isFromCart: false,
-      branch_name,
-      branch_id,
-    };
-    console.log(checkout);
-    dispatch(saveCartToCheckout(checkout));
-    navigate("/shipping");
+
+    const token = localStorage.my_token;
+
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${"Please register or login for continue  add to transaction"}`,
+      });
+    } else {
+      grandtotal = grandtotal + parseInt(priceAfterDiscount);
+
+      const checkout = {
+        detailOrder: [
+          {
+            product_name: name,
+            qty: 1,
+            discount_type: null,
+            voucher_type: null,
+            price_per_item: priceAfterDiscount,
+            weight,
+          },
+        ],
+        products_id: [
+          {
+            product_id: productid,
+          },
+        ],
+        grandtotal,
+        isFromCart: false,
+        branch_name,
+        branch_id,
+      };
+      console.log(checkout);
+      dispatch(saveCartToCheckout(checkout));
+      navigate("/shipping");
+    }
+
   };
 
   return (

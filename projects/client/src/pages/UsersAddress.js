@@ -42,7 +42,7 @@ const UserAddress = () => {
   setTimeout(() => {
     dispatch(handleStateError("cancel"));
     setMessage("");
-  }, 5000);
+  }, 50000);
 
   return (
     <div>
