@@ -49,7 +49,7 @@ const CartList = () => {
   };
 
   const handleQuantityChange = async (event, product_id, stock) => {
-    const value = Math.max(min, Math.min(max, Number(event.target.value)));
+    const value = Math.max(min, Math.min(max, Number(event?.target?.value)));
     if (value > stock) {
       setMessage("Out of stock");
     } else {
@@ -132,11 +132,11 @@ const CartList = () => {
             {carts?.map((val, idx) => {
               const imageUrl =
                 "http://localhost:8000/" +
-                val.product_image.replace("Admin/", "");
+                val?.product_image?.replace("Admin/", "");
               const total =
-                parseInt(val.price_after_discount) * parseInt(val.qty);
+                parseInt(val?.price_after_discount) * parseInt(val?.qty);
               grandtotal = grandtotal + total;
-              const weightInGram = parseInt(val.product_weight) * 1000;
+              const weightInGram = parseInt(val?.product_weight) * 1000;
               totalweight = totalweight + weightInGram;
 
               return (
@@ -205,14 +205,14 @@ const CartList = () => {
                   </div>
                   <CurrencyFormat
                     className="text-center w-1/5 font-semibold text-sm"
-                    value={val.price_after_discount}
+                    value={parseInt(val?.price_after_discount)}
                     displayType={"text"}
                     thousandSeparator={true}
                     prefix={"Rp. "}
                   />
                   <CurrencyFormat
                     className="text-center w-1/5 font-semibold text-sm"
-                    value={total}
+                    value={parseInt(total)}
                     displayType={"text"}
                     thousandSeparator={true}
                     prefix={"Rp. "}
