@@ -128,17 +128,13 @@ const DetailOrderListByQuery = () => {
       );
       const { data } = response?.data;
       setBranch(
-        `transaction ${
-          data?.invoice_no || "-"
-        } on status ${data?.status || "-"}`
+        `transaction ${data?.invoice_no || "-"} on status ${
+          data?.status || "-"
+        }`
       );
       setIscancel(!notAllowedCancel.includes(data?.status));
-      setIsConfirmPayment(
-        allowedConfirmPayment.includes(data?.status)
-      );
-      setIsDelivering(
-        allowedDelivering.includes(data?.status)
-      );
+      setIsConfirmPayment(allowedConfirmPayment.includes(data?.status));
+      setIsDelivering(allowedDelivering.includes(data?.status));
     } catch (error) {
       console.log(error);
     }
@@ -224,10 +220,10 @@ const DetailOrderListByQuery = () => {
           </div>
           <div className="mt-5 mb-5 ml-5 ">
             <Select ref={asc} onChange={() => handleAscSort()}>
-              <option selected value="asc">
-                Ascending
+              <option selected value="desc">
+                Descending
               </option>
-              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
             </Select>
           </div>
         </form>

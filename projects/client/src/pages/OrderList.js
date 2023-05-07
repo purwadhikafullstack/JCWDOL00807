@@ -263,10 +263,10 @@ const OrderListByQuery = () => {
           </div>
           <div className="mt-5 mb-5 ml-5 ">
             <Select ref={asc} onChange={() => handleAscSort()}>
-              <option selected value="asc">
-                Ascending
+              <option selected value="desc">
+                Descending
               </option>
-              <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
             </Select>
           </div>
         </form>
