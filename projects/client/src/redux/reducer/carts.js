@@ -24,12 +24,12 @@ export const cartSlice = createSlice({
     },
     updateQtySuccess: (state, action) => {
       // debugger
-      const {item_products_id, qty} = action.payload
+      const { item_products_id, qty } = action.payload;
       let newCart = state.carts.map((item) => {
-        item.qty = item.item_products_id == item_products_id ? qty : item.qty
-        return item
+        item.qty = item.item_products_id == item_products_id ? qty : item.qty;
+        return item;
       });
-      state.carts = newCart
+      state.carts = newCart;
       state.loading = false;
     },
     deleteQtySuccess: (state, action) => {
@@ -42,16 +42,22 @@ export const cartSlice = createSlice({
       state.loading = false;
     },
     savetoCheckout: (state, action) => {
-      state.checkout = action.payload
-      state.loading = false
+      state.checkout = action.payload;
+      state.loading = false;
     },
     failed: (state, action) => {
       state.errorMessage = action.payload;
       state.loading = null;
     },
-
   },
 });
 
-export const { listSuccess, addToCartSuccess, updateQtySuccess, deleteQtySuccess, savetoCheckout, failed } = cartSlice.actions;
+export const {
+  listSuccess,
+  addToCartSuccess,
+  updateQtySuccess,
+  deleteQtySuccess,
+  savetoCheckout,
+  failed,
+} = cartSlice.actions;
 export default cartSlice.reducer;
