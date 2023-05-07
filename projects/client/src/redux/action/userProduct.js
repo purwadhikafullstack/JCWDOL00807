@@ -25,9 +25,3 @@ export const userProductDetail = (id) => {
     dispatch(userProductSlice.actions.getProductDetail(id));
   };
 };
-
-export const dataSeach = (search) => {
-  return async (dispatch) => {
-    dispatch(userProductSlice.actions.getDataSearch(search));
-  };
-};

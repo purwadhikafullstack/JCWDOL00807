@@ -324,13 +324,15 @@ module.exports = {
         branch_stores_id,
         branch_store_name,
         promotion,
-        latest,
+        // latest,
         bestSeller,
         allProduct,
         categories,
         sortBy,
         search,
       } = req.query;
+
+      console.log(bestSeller);
 
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 0;
@@ -353,7 +355,7 @@ module.exports = {
       // console.log(search);
 
       let inputPromotion;
-      let inputLatest;
+      // let inputLatest;
       let inputBestSeller;
       let inputCategories;
       let inputSort;
@@ -362,47 +364,43 @@ module.exports = {
       if (promotion) {
         inputPromotion = { status: 1 };
       }
-      if (latest) {
-        inputLatest = [["createdAt", "DESC"]];
-      }
-
-      if (bestSeller) {
-        inputBestSeller = { branch_stores_id, name: dataBestSeller };
-      } else {
-        inputBestSeller = { branch_stores_id };
-      }
-
+      // if (latest) {
+      //   inputLatest = [["createdAt", "DESC"]];
+      // }
       if (categories) {
         let newCategories = categories.split(",");
         inputCategories = { name: [...newCategories] };
       }
-      if (sortBy === "highPrice") {
+
+      if (allProduct && !sortBy) {
+        inputSort = [["createdAt", "ASC"]];
+      } else if (sortBy === "highPrice") {
         inputSort = [["price_after_discount_notNull", "DESC"]];
-      }
-      if (sortBy === "lowestPrice") {
+      } else if (sortBy === "lowestPrice") {
         inputSort = [["price_after_discount_notNull", "ASC"]];
-      }
-      if (sortBy === "nameAsc") {
+      } else if (sortBy === "nameAsc") {
         inputSort = [["name", "ASC"]];
-      }
-      if (sortBy === "nameDesc") {
+      } else if (sortBy === "nameDesc") {
         inputSort = [["name", "DESC"]];
+      } else {
+        inputSort = [["createdAt", "ASC"]];
       }
+
       if (search) {
-        inputSearch = { name: { [Op.substring]: search } };
+        inputSearch = { name: { [Op.substring]: search }, branch_stores_id };
       }
 
-      if (allProduct === "allProduct") {
-        inputLatest = [["createdAt", "ASC"]];
+      if (bestSeller) {
+        inputBestSeller = { name: dataBestSeller };
       }
 
-      let order = [];
-      if (inputSort) {
-        order.push(...inputSort);
-      }
-      if (inputLatest) {
-        order.push(...inputLatest);
-      }
+      // let order = [];
+      // if (inputSort) {
+      //   order.push(...inputSort);
+      // }
+      // if (inputLatest) {
+      //   order.push(...inputLatest);
+      // }
 
       // console.log(inputSearch);
 
@@ -461,12 +459,10 @@ module.exports = {
           },
         ],
         where: {
-          [Op.and]: [inputBestSeller, inputSearch],
+          [Op.and]: [inputBestSeller, inputSearch, { branch_stores_id }],
         },
-        order: order,
+        order: inputSort,
       });
-
-      let totalPages = Math.ceil(count / limit);
 
       const productList = await item_products.findAll({
         attributes: [
@@ -523,12 +519,14 @@ module.exports = {
           },
         ],
         where: {
-          [Op.and]: [inputBestSeller, inputSearch],
+          [Op.and]: [inputBestSeller, inputSearch, { branch_stores_id }],
         },
-        order: order,
-        limit: limit,
-        offset: offset,
+        offset,
+        limit,
+        order: inputSort,
       });
+
+      let totalPages = Math.ceil(count / limit);
 
       console.log(productList);
       productList.map((val) => {

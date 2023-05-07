@@ -10,7 +10,7 @@ export const findAllCategory = ({ sort, search, page }) => {
     try {
       let token = localStorage.my_Token;
       const response = await axios.get(
-        `http://localhost:8000/api/categories/find-all?search=${search}&sort=${sort}&page=${page}&limit=5`,
+        `${process.env.REACT_APP_API_BASE_URL}/categories/find-all?search=${search}&sort=${sort}&page=${page}&limit=5`,
         {
           headers: {
             Authorization: token,

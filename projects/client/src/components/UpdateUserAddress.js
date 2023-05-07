@@ -349,6 +349,7 @@ const UpdateUserAddress = ({ id, data, defaultAddress }) => {
                     <Textarea
                       id="streetAddress"
                       defaultValue={inputStreetAddress}
+                      value={inputStreetAddress}
                       // placeholder={inputStreetAddress}
                       onChange={(e) => setInputStreetAddress(e.target.value)}
                     />

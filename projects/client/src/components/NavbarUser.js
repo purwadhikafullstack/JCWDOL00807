@@ -13,7 +13,7 @@ import { Icon } from "@iconify/react";
 import { useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UserAddress from "../pages/UsersAddress";
+import { Hide, Show } from "@chakra-ui/react";
 
 const NavbarUser = () => {
   const navigate = useNavigate();
@@ -39,7 +39,6 @@ const NavbarUser = () => {
     window.location.reload();
   };
 
-  // console.log(user);
   useEffect(() => {
     if (!address.loading) {
       if (address?.userAddress?.data) {
@@ -73,28 +72,38 @@ const NavbarUser = () => {
             </span>
           </Link>
 
-          <button
-            onClick={handleMenuToggle}
-            type="button"
-            className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
-            aria-controls="navbar-default"
-            aria-expanded={isMenuOpen}
-          >
-            <span className="sr-only">Open main menu</span>
-            <svg
-              className="w-6 h-6"
-              aria-hidden="true"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className=" flex ">
+            <div className="cart-icon block sm:hidden ">
+              <Link to={"/shopping-cart"}>
+                <Icon className=" text-4xl " icon="ic:round-shopping-cart" />
+                {token && (
+                  <span className="cart-quantity w-6 h-6   ">{count}</span>
+                )}
+              </Link>
+            </div>
+            <button
+              onClick={handleMenuToggle}
+              type="button"
+              className="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+              aria-controls="navbar-default"
+              aria-expanded={isMenuOpen}
             >
-              <path
-                fillRule="evenodd"
-                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          </button>
+              <span className="sr-only">Open main menu</span>
+              <svg
+                className="w-6 h-6"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </button>
+          </div>
 
           <div
             className={`${
@@ -102,52 +111,105 @@ const NavbarUser = () => {
             } w-full md:block md:w-auto`}
             id="navbar-default"
           >
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-[#e9ffe7] items-center ">
+            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-[#e9ffe7] items-center">
               {user?.user?.name ? (
                 <>
-                  <li className="flex gap-1 ">
-                    <Icon
-                      className="text-lg"
-                      icon="material-symbols:location-on-outline"
-                    />
-                    <h1 className=" font-bold ">{branchStore}</h1>
-                  </li>
-                  <li>
-                    <div className="cart-icon">
-                      <Link to={"/shopping-cart"}>
+                  <div className="hidden sm:block ">
+                    <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-[#e9ffe7] items-center">
+                      <li className="flex gap-1 ">
                         <Icon
-                          className=" text-4xl "
-                          icon="ic:round-shopping-cart"
+                          className="text-lg"
+                          icon="material-symbols:location-on-outline"
                         />
-                        {token && (
-                          <span className="cart-quantity w-6 h-6   ">
-                            {count}
-                          </span>
-                        )}
+                        <h1 className=" font-bold ">{branchStore}</h1>
+                      </li>
+                      <li>
+                        <div className="cart-icon">
+                          <Link to={"/shopping-cart"}>
+                            <Icon
+                              className=" text-4xl "
+                              icon="ic:round-shopping-cart"
+                            />
+                            {token && (
+                              <span className="cart-quantity w-6 h-6   ">
+                                {count}
+                              </span>
+                            )}
+                          </Link>
+                        </div>
+                      </li>
+
+                      <li className=" flex flex-col justify-center items-center ">
+                        <Menu>
+                          <Tooltip label={user?.user?.name} fontSize="xs">
+                            <MenuButton>
+                              <Avatar src={user?.user?.image} size="sm" />
+                            </MenuButton>
+                          </Tooltip>
+                          <MenuList>
+                            <MenuGroup>
+                              <Link to="/accounts/profile">
+                                <MenuItem>My Profile</MenuItem>
+                              </Link>
+                              <Link to="/accounts/order-list">
+                                <MenuItem>My Order</MenuItem>
+                              </Link>
+                              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            </MenuGroup>
+                            <MenuDivider />
+                          </MenuList>
+                        </Menu>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className=" block sm:hidden ">
+                    <ul className="font-medium flex flex-col px-10 md:p-0 mt-4   md:flex-row md:space-x-8 md:mt-0 w-screen   gap-2 ">
+                      <li className="  flex flex-col  items-center gap-2">
+                        <Avatar src={user?.user?.image} size="sm" />
+                        <p className=" capitalize font-bold ">
+                          {user?.user?.name}
+                        </p>
+                      </li>
+                      <Link to="/accounts/profile">
+                        <li>
+                          <div className="flex gap-1 items-center">
+                            <Icon
+                              className=" text-2xl "
+                              icon="line-md:account-small"
+                            />
+                            <h1>My Profile</h1>
+                          </div>
+                        </li>
                       </Link>
-                    </div>
-                  </li>
-                  <li className=" flex flex-col justify-center items-center ">
-                    <Menu>
-                      <Tooltip label={user?.user?.name} fontSize="xs">
-                        <MenuButton>
-                          <Avatar src={user?.user?.image} size="sm" />
-                        </MenuButton>
-                      </Tooltip>
-                      <MenuList>
-                        <MenuGroup>
-                          <Link to="/accounts/profile">
-                            <MenuItem>My Profile</MenuItem>
-                          </Link>
-                          <Link to="/accounts/order-list">
-                            <MenuItem>My Order</MenuItem>
-                          </Link>
-                          <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                        </MenuGroup>
-                        <MenuDivider />
-                      </MenuList>
-                    </Menu>
-                  </li>
+                      <li>
+                        <Link to="/accounts/order-list">
+                          <div className=" flex gap-1  ">
+                            <Icon
+                              className=" text-2xl"
+                              icon="ant-design:form-outlined"
+                            />
+                            <div>My Order</div>
+                          </div>
+                        </Link>
+                      </li>
+
+                      <li className="flex gap-1 ">
+                        <Icon
+                          className="text-lg"
+                          icon="material-symbols:location-on-outline"
+                        />
+                        <h1>{branchStore}</h1>
+                      </li>
+
+                      <li className="flex gap-2 ">
+                        <Icon icon="cil:account-logout" />
+                        <Button variant="link" onClick={handleLogout}>
+                          Logout
+                        </Button>
+                      </li>
+                    </ul>
+                  </div>
                 </>
               ) : (
                 <>

@@ -22,7 +22,6 @@ export default function RoleBasedGuard({ children }) {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error);
       setErrorMessage(error);
       setTimeout(() => {
         Swal.fire(
@@ -31,7 +30,7 @@ export default function RoleBasedGuard({ children }) {
             title: "Oops...",
             text: "Sorry link has been expired",
           },
-          200
+          500
         );
       });
     }
@@ -39,7 +38,7 @@ export default function RoleBasedGuard({ children }) {
 
   useEffect(() => {
     validateToken();
-  });
+  }, []);
 
   if (loading === false) {
     if (errorMessage) {

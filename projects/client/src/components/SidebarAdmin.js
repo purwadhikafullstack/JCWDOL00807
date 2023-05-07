@@ -50,15 +50,17 @@ const SidebarAdmin = () => {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2">
-            <li>
-              <span className="flex-1 ml-3 justify-center whitespace-nowrap text-3xl font-bold w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
-                GoKu
-              </span>
-              {}{" "}
-              <small className=" capitalize w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
-                {role}
-              </small>
-            </li>
+            <Link to={"/"}>
+              <li>
+                <span className="flex-1 ml-3 justify-center whitespace-nowrap text-3xl font-bold w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                  GoKu
+                </span>
+                {}{" "}
+                <small className=" capitalize w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                  {role}
+                </small>
+              </li>
+            </Link>
             <li>
               <Link
                 to="/admin/home"
@@ -241,7 +243,6 @@ const SidebarAdmin = () => {
                     </span>
                   </Link>
                 </li>
-
               </>
             ) : null}
 

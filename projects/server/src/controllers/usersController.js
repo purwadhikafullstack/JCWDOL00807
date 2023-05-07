@@ -14,6 +14,7 @@ require("dotenv").config();
 const db = require("./../models/index");
 const users = db.users;
 const user_address = db.user_address;
+const voucher = db.vouchers;
 
 // // Import hashing
 const { hashPassword, hashMatch } = require("./../lib/hash");
@@ -718,6 +719,29 @@ module.exports = {
       res.status(200).send({
         isSuccess: true,
         message: "Congratulation you can reset your password",
+      });
+    } catch (error) {
+      res.status(500).send({
+        isSuccess: false,
+        message: error.message,
+      });
+    }
+  },
+  userVoucher: async (req, res) => {
+    try {
+      const id = req.dataToken.id;
+      console.log(id);
+      const userVoucher = await voucher.findAll({
+        where: { [Op.and]: [{ users_id: id }, { status: "1" }] },
+      });
+
+      console.log(userVoucher);
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "Get voucher user success",
+        data: userVoucher,
+        // data: id,
       });
     } catch (error) {
       res.status(500).send({

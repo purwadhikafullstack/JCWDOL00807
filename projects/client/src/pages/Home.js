@@ -2,7 +2,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/NavbarUser";
 import { Icon } from "@iconify/react";
 import CardProduct from "../components/CardProduct";
-import { Button, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import MainBanner from "../components/MainBanner";
@@ -10,41 +10,72 @@ import Banner from "../components/Banner";
 import Carousel from "nuka-carousel";
 import ramadhanSales from "../asset/banner/ramadhan-sales.png";
 import shipping from "../asset/banner/shipping.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { keepLogin } from "../redux/action/user";
-import { dataSeach } from "../redux/action/userProduct";
+import Voucher from "../components/Voucher";
+import axios from "axios";
 
 const Home = () => {
   let userProduct = useSelector((state) => state.userProduct);
   let dispatch = useDispatch();
   const [allProduct, setAllProduct] = useState([]);
   const [category, setCategory] = useState([]);
-  const [latest, setLatest] = useState([]);
   const [promotion, setPromotion] = useState([]);
   const [bestSeller, setBestSeller] = useState([]);
-  const navigate = useNavigate();
+  const [voucher, setVoucher] = useState([]);
 
   useEffect(() => {
     dispatch(keepLogin());
     if (userProduct?.userProduct?.data?.branch) {
       setAllProduct(userProduct?.userProduct?.data?.allProduct);
       setCategory(userProduct?.userProduct?.data?.category);
-      setLatest(userProduct?.userProduct?.data?.latest);
       setPromotion(userProduct?.userProduct?.data?.promotion);
       setBestSeller(userProduct?.userProduct?.data?.bestSeller);
     }
     // eslint-disable-next-line
   }, [userProduct]);
 
-  const handleSearch = (e) => {
-    dispatch(dataSeach(e));
-    navigate(`/product-list/${e}`);
+  const getVoucher = async () => {
+    try {
+      const token = localStorage.my_Token;
+      const userVoucher = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/users/voucher`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      setVoucher(userVoucher?.data?.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  console.log(voucher);
+
+  useEffect(() => {
+    getVoucher();
+  }, []);
 
   return (
     <section>
       <Navbar />
+
       <div className=" container mx-auto flex flex-col gap-10 mt-5 ">
+        <div className="flex  overflow-x-auto w-[full]  gap-5 mx-3 md:mx-0 -mt-2 -mb-5 ">
+          {voucher.map((val, idx) => (
+            <div key={idx.toLocaleString()}>
+              <Voucher
+                title={val.voucher_type}
+                cut_percentage={val.cut_percentage}
+                cut_nominal={val.cut_nominal}
+                expired={val.expired_at}
+              />
+            </div>
+          ))}
+        </div>
         <Carousel
           renderCenterLeftControls
           renderCenterRightControls
@@ -66,23 +97,6 @@ const Home = () => {
           <Banner images={shipping} title="shipping" />
           <Banner images={ramadhanSales} title="ramadhanSale" />
         </Carousel>
-
-        <InputGroup w={["fit-content", "300px"]}>
-          <InputLeftElement
-            pointerEvents="none"
-            children={<Icon className=" text-xl " icon="ic:round-search" />}
-          />
-          <Input
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch(e.target.value);
-              }
-            }}
-            placeholder="Search Product"
-            type="text"
-            bgColor="white"
-          />
-        </InputGroup>
 
         <div className=" mx-3 md:mx-2">
           <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">
@@ -126,45 +140,6 @@ const Home = () => {
                 <CardProduct
                   productid={val.id}
                   discountPersentage={val.cut_percentage}
-                  image={val.images}
-                  name={val.name}
-                  description={val.description}
-                  price={val.price}
-                  priceAfterDiscount={val.price_after_discount}
-                  discount_type={val.discount_type}
-                  status={val.status}
-                  weight={val.weight}
-                  stock={val.stock}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mx-3 md:mx-2">
-          <div className=" flex justify-between">
-            <h1 className=" font-bold mb-3 text-[#3C6255] text-lg ">Latest</h1>
-            <Link to={`/product-list/latest`}>
-              <Button
-                bg="#3C6255"
-                textColor="white"
-                className=" font-bold mb-3  text-lg "
-                size="xs"
-              >
-                View All{" "}
-                <Icon
-                  className="text-[25px]"
-                  icon="material-symbols:arrow-right-alt-rounded"
-                />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="flex  overflow-x-auto w-[full] gap-5  border-x-2 rounded-lg ">
-            {latest.map((val, idx) => (
-              <div key={idx.toLocaleString()}>
-                <CardProduct
-                  discountPersentage={val.cut_percentage}
-                  productid={val.id}
                   image={val.images}
                   name={val.name}
                   description={val.description}

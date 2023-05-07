@@ -42,7 +42,7 @@ module.exports = {
         {
           replacements: {
             userid,
-            branch_id
+            branch_id,
           },
           type: sequelize.QueryTypes.SELECT,
         }
@@ -61,7 +61,7 @@ module.exports = {
         {
           replacements: {
             userid,
-            branch_id
+            branch_id,
           },
           type: sequelize.QueryTypes.SELECT,
         }
@@ -96,7 +96,6 @@ module.exports = {
         };
       const userExist = await users.findOne({
         where: { id: userid },
-
       });
 
       if (userExist === null)
@@ -285,13 +284,13 @@ module.exports = {
       const userExist = await users.findOne({
         where: { id: userid },
       });
-  
+
       if (userExist === null)
         throw {
           message:
             "Unauthorization, please register or login for continue see your cart",
         };
-  
+
       const cartBy = await carts.findOne({
         where: {
           users_id: {
@@ -305,13 +304,12 @@ module.exports = {
           },
         },
       });
-  
+
       if (!cartBy)
         throw {
           message: "Product is not found in your cart",
         };
-  
-  
+
       await carts.destroy({
         where: {
           users_id: {
@@ -326,7 +324,7 @@ module.exports = {
         },
         transaction: t,
       });
-  
+
       await t.commit();
       res.status(200).send({
         isSuccess: true,

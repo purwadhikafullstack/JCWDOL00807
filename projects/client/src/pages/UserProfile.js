@@ -24,7 +24,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user.message) {
-      const newToken = user.data.token;
+      const newToken = user?.data?.token;
       setMessage(user.message);
       localStorage.setItem("my_Token", newToken);
     }

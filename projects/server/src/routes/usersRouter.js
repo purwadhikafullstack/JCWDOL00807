@@ -45,5 +45,6 @@ Router.get(
   tokenVerify,
   usersController.checkExpiredToken
 );
+Router.get("/voucher", tokenVerify, usersController.userVoucher);
 
 module.exports = Router;
