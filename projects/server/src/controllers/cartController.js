@@ -1,4 +1,4 @@
-const { sequelize } = require("../models");
+const { sequelize, Sequelize } = require("../models");
 const { Op } = require("sequelize");
 
 // import model
@@ -7,6 +7,8 @@ const users = db.users;
 const carts = db.carts;
 const branch_stores = db.branch_stores;
 const item_products = db.item_products;
+const product_categories = db.product_categories;
+const discounts = db.discounts;
 
 module.exports = {
   cart: async (req, res) => {
@@ -48,21 +50,41 @@ module.exports = {
         }
       );
 
-      let cartList = await sequelize.query(
+      const cartList = await sequelize.query(
         `
-        SELECT c.*, u.name as user_name, bs.name as branch_stores_name, ip.name as product_name, ip.images as product_image, ip.stock as product_stock, ip.price, ip.weight as product_weight
-        FROM carts c
-        LEFT JOIN users u ON c.users_id = u.id
-        LEFT JOIN branch_stores bs ON c.branch_stores_id = bs.id
-        LEFT JOIN item_products ip ON c.item_products_id = ip.id
-        WHERE c.users_id=:userid AND c.branch_stores_id=:branch_id
-        ORDER BY c.id DESC
-      `,
+    SELECT
+      carts.id,
+      carts.qty,
+      carts.item_products_id,
+      carts.branch_stores_id,
+      users.name AS user_name,
+      branch_stores.name AS branch_stores_name,
+      item_products.name AS product_name,
+      item_products.images AS product_image,
+      item_products.stock AS product_stock,
+      item_products.price AS price,
+      item_products.weight AS product_weight,
+      carts.createdAt,
+      carts.updatedAt,
+      discounts.cut_nominal AS cut_nominal,
+      CONCAT(ROUND((discounts.cut_percentage * 100),0),'%') AS cut_percentage,
+      CASE WHEN discounts.status = 1 THEN ROUND(item_products.price - (CASE WHEN discounts.cut_percentage THEN item_products.price * discounts.cut_percentage ELSE COALESCE(discounts.cut_nominal,0) END),0) ELSE NULL END AS price_after_discount,
+      discounts.status AS status,
+      discounts.discount_type AS discount_type,
+      item_products.vouchers_id,
+      item_products.createdAt AS item_product_createdAt
+    FROM carts
+    INNER JOIN users ON carts.users_id = users.id
+    INNER JOIN item_products ON carts.item_products_id = item_products.id
+    INNER JOIN branch_stores ON carts.branch_stores_id = branch_stores.id
+    LEFT JOIN discounts ON item_products.discount_id = discounts.id
+    WHERE carts.users_id = :userid AND carts.branch_stores_id = :branch_id
+    ORDER BY carts.id DESC
+  `,
         {
-          replacements: {
-            userid,
-            branch_id,
-          },
+
+          replacements: { userid, branch_id },
+
           type: sequelize.QueryTypes.SELECT,
         }
       );

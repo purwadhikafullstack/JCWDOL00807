@@ -32,4 +32,18 @@ Router.get(
   userTransactionController.OrderConfirmation
 );
 
+Router.get(
+  "/transaction-by/:id",
+  tokenVerify,
+  userTransactionController.getTransactionById
+);
+
+Router.get(
+  "/voucher-user",
+  tokenVerify,
+  userTransactionController.getVoucherById
+);
+
+
+
 module.exports = Router;

@@ -40,6 +40,7 @@ const CardProduct = ({
   };
 
   const handleBuyNow = () => {
+
     const token = localStorage.my_token;
 
     if (!token) {
@@ -76,6 +77,7 @@ const CardProduct = ({
       dispatch(saveCartToCheckout(checkout));
       navigate("/shipping");
     }
+
   };
 
   return (

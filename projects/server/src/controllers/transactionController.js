@@ -1,6 +1,6 @@
 const { sequelize, Sequelize } = require("./../models");
 const { Op } = require("sequelize");
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
 const transporter = require("../lib/nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs").promises;
@@ -20,6 +20,40 @@ const discounts = db.discounts;
 const vouchers = db.vouchers;
 const historyLog = db.stock_history_logs;
 const transaction = db.transactions;
+const stock_history_logs = db.stock_history_logs;
+const transaction_detail = db.transaction_details;
+
+const jobAutoConfirm = async (id) => {
+  const t = await sequelize.transaction();
+  try {
+    const trxid = id;
+    const getTransaction = await transaction.findOne({
+      where: { id: trxid },
+    });
+
+    if (getTransaction.status == "On Delivering") {
+      await transaction.update(
+        {
+          status: "Order Confirmed",
+        },
+        {
+          where: {
+            id: {
+              [Op.eq]: trxid,
+            },
+          },
+          transaction: t,
+        }
+      );
+      await t.commit();
+      console.log("success");
+    } else {
+      console.log("no action");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   // get order list for admin branch
@@ -1078,6 +1112,11 @@ module.exports = {
           message: "Role is not permitted",
         };
 
+      const branchStore = await branch_stores.findOne({
+        where: { id: branch_stores_id },
+      });
+      const branchName = branchStore.dataValues.name;
+
       const getTransaction = await transaction.findOne({
         where: { id: id_transaction },
       });
@@ -1169,6 +1208,41 @@ module.exports = {
             },
             { transaction: t }
           );
+
+          const getDetail = await transaction_detail.findAll({
+            where: { transactions_id: id_transaction },
+          });
+
+          for (let index = 0; index < getDetail.length; index++) {
+            await item_products.update(
+              {
+                stock: sequelize.literal(`stock + ${getDetail[index].qty}`),
+              },
+              {
+                where: {
+                  name: {
+                    [Op.eq]: getDetail[index].product_name,
+                  },
+                },
+                transaction: t,
+              }
+            );
+          }
+
+          const historyStok = getDetail.map((x) => {
+            return {
+              admin_name: admins_name,
+              branch_store: branchName,
+              product_name: x.product_name,
+              qty: `${x.qty}`,
+              description: `Cancelled order by Admin Branch`,
+            };
+          });
+
+          await stock_history_logs.bulkCreate(historyStok, {
+            transaction: t,
+          });
+
           await t.commit();
           res.status(200).send({
             isError: false,
@@ -1192,6 +1266,22 @@ module.exports = {
             },
             { transaction: t }
           );
+
+          const afterSevenDays = new Date(Date.now() + 60000 * 60 * 24 * 7);
+          console.log(afterSevenDays);
+
+          const cron = schedule.scheduleJob(afterSevenDays, function () {
+            console.log(afterSevenDays);
+
+            (async () => {
+              console.log("1");
+              await jobAutoConfirm(id_transaction);
+              console.log("2");
+            })();
+
+            clearTimeout(cron);
+          });
+
           await t.commit();
           res.status(200).send({
             isError: false,
