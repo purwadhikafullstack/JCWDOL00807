@@ -8,7 +8,6 @@ export const cartList = (branch_id) => {
   return async (dispatch) => {
     try {
       let token = localStorage.my_Token;
-      console.log(localStorage.my_Token);
       const response = await axios.get(
         `${process.env.REACT_APP_API_BASE_URL}/cart/list/${branch_id}`,
         {

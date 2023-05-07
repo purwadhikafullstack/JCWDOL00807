@@ -13,6 +13,7 @@ const carts = db.carts;
 const item_products = db.item_products;
 const stock_history_logs = db.stock_history_logs;
 const voucher = db.vouchers
+const historyLog = db.stock_history_logs;
 
 function addMinutes(date, minutes) {
   return new Date(date.getTime() + minutes * 60000);
@@ -75,15 +76,14 @@ const jobAction = async (id, branch_name) => {
         transaction: t,
       });
       await t.commit();
-      console.log('success');
+      console.log("success");
     } else {
       console.log("no action");
     }
   } catch (error) {
     console.log(error);
   }
-}
-
+};
 
 // import helper
 const differentTime = require("../helper/differentTime");
@@ -159,17 +159,19 @@ module.exports = {
       // const twoMinutes = new Date(Date.now() + 60000 * 2);
       console.log(tomorrow);
       // console.log(twoMinutes);
-      
+
       // scheduler
-      const job = schedule.scheduleJob(tomorrow, function() {
+      const job = schedule.scheduleJob(tomorrow, function () {
         console.log(tomorrow);
         // console.log(twoMinutes);
+
 
         (async() => {
           console.log('1')
           await jobAction(insert.id, branch_name); 
           console.log('2')
         })()
+
 
         clearTimeout(job);
       });
@@ -534,7 +536,7 @@ module.exports = {
             branch_store: branchStore,
             product_name: val.product_name,
             qty: val.qty,
-            description: `Cancel order by sistem `,
+            description: `Cancel order by system `,
           };
         },
         { transaction: t }
@@ -544,7 +546,7 @@ module.exports = {
       await t.commit();
       res.status(200).send({
         isSuccess: true,
-        message: "Cancel Order By Sistem Success",
+        message: "Cancel Order By System is Success",
         data: result,
         // jakartaPusat: jakartaPusat,
         // jakartaBarat: jakartaBarat,

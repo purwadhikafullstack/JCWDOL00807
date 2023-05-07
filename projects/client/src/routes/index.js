@@ -238,8 +238,8 @@ export default function Router() {
                 <HistoryStockByQuery />
               </RoleBasedGuard>
             </AuthGuard>
-          )
-        }
+          ),
+        },
       ],
     },
 
