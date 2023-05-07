@@ -31,6 +31,8 @@ const UserOrderListByQuery = () => {
   let userProduct = useSelector((state) => state.userProduct.userProduct);
   const branch_name = userProduct?.data?.branch;
 
+  console.log(branch_name);
+
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
   const [dataOrder, setDataOrder] = useState([]);
@@ -147,7 +149,7 @@ const UserOrderListByQuery = () => {
 
   useEffect(() => {
     getOrderList();
-  }, [page, keyword]);
+  }, [branch_name, page, keyword]);
 
   useEffect(() => {
     cancelOrderBySistem();
@@ -283,7 +285,7 @@ const UserOrderListByQuery = () => {
 
           <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort} onChange={() => handleAscSort()}>
-              <option value="id">Sort By Id</option>
+              <option value="id">Sort By No</option>
               <option value="price">Sort By Price</option>
               <option value="status">Sort By Status </option>
               <option value="invoice">Sort By Invoice Number</option>
@@ -293,11 +295,14 @@ const UserOrderListByQuery = () => {
             </Select>
           </div>
           <div className="mt-5 mb-5 ml-5 ">
-            <Select ref={asc} onChange={() => handleAscSort()}>
-              <option selected value="asc">
-                Ascending
-              </option>
+            <Select
+              ref={asc}
+              onChange={() => handleAscSort()}
+              defaultValue="desc"
+            >
               <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+              
             </Select>
           </div>
         </form>

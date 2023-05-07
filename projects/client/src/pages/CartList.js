@@ -33,45 +33,50 @@ const CartList = () => {
     setMessage("");
   };
 
-  const handleUpdateQty = (product_id, qty, stock) => {
+  const handleUpdateQty = async (product_id, qty, stock) => {
     const value = Math.max(min, Math.min(max, Number(qty)));
     if (value > stock) {
       setMessage("Out of stock");
     } else {
-      dispatch(updateCartQty(product_id, value, branch_id));
-      dispatch(cartList(branch_id));
+      await dispatch(updateCartQty(product_id, value, branch_id));
+      await dispatch(cartList(branch_id));
     }
   };
 
-  const handleDelete = (product_id) => {
-    dispatch(deleteCartQty(product_id, branch_id));
-    dispatch(cartList(branch_id));
+  const handleDelete = async (product_id) => {
+    await dispatch(deleteCartQty(product_id, branch_id));
+    await dispatch(cartList(branch_id));
   };
 
-  const handleQuantityChange = (event, product_id, stock) => {
-    const value = Math.max(min, Math.min(max, Number(event.target.value)));
-    if (value > stock) {
-      setMessage("Out of stock");
-    } else {
-      dispatch(updateCartQty(product_id, value, branch_id));
-      dispatch(cartList(branch_id));
-    }
-  };
-
-  const handleQuantityBlur = (event, product_id, stock) => {
+  const handleQuantityChange = async (event, product_id, stock) => {
     const value = Math.max(min, Math.min(max, Number(event.target.value)));
     if (value > stock) {
       setMessage("Out of stock");
     } else {
       if (!isNaN(value)) {
-        dispatch(updateCartQty(product_id, value, branch_id));
-        dispatch(cartList(branch_id));
+        await dispatch(updateCartQty(product_id, value, branch_id));
+        await dispatch(cartList(branch_id));
       } else {
-        dispatch(updateCartQty(product_id, 1, branch_id));
-        dispatch(cartList(branch_id));
+        await dispatch(updateCartQty(product_id, 1, branch_id));
+        await dispatch(cartList(branch_id));
       }
     }
   };
+
+  // const handleQuantityBlur = async (event, product_id, stock) => {
+  //   const value = Math.max(min, Math.min(max, Number(event.target.value)));
+  //   if (value > stock) {
+  //     setMessage("Out of stock");
+  //   } else {
+  //     if (!isNaN(value)) {
+  //       await dispatch(updateCartQty(product_id, value, branch_id));
+  //       await dispatch(cartList(branch_id));
+  //     } else {
+  //       await dispatch(updateCartQty(product_id, 1, branch_id));
+  //       await dispatch(cartList(branch_id));
+  //     }
+  //   }
+  // };
 
   const handleCheckout = () => {
     const checkout = {
@@ -79,9 +84,9 @@ const CartList = () => {
         return {
           product_name: cart.product_name,
           qty: cart.qty,
-          discount_type: null,
+          discount_type: cart.discount_type,
           voucher_type: null,
-          price_per_item: cart.price,
+          price_per_item: cart.price_after_discount,
           weight: cart.product_weight,
         };
       }),
@@ -128,7 +133,8 @@ const CartList = () => {
               const imageUrl =
                 "http://localhost:8000/" +
                 val.product_image.replace("Admin/", "");
-              const total = parseInt(val.price) * parseInt(val.qty);
+              const total =
+                parseInt(val.price_after_discount) * parseInt(val.qty);
               grandtotal = grandtotal + total;
               const weightInGram = parseInt(val.product_weight) * 1000;
               totalweight = totalweight + weightInGram;
@@ -176,13 +182,13 @@ const CartList = () => {
                           val.product_stock
                         )
                       }
-                      onBlur={(event) =>
-                        handleQuantityBlur(
-                          event,
-                          val.item_products_id,
-                          val.product_stock
-                        )
-                      }
+                      // onBlur={(event) =>
+                      //   handleQuantityBlur(
+                      //     event,
+                      //     val.item_products_id,
+                      //     val.product_stock
+                      //   )
+                      // }
                     />
                     <button
                       className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
@@ -197,16 +203,9 @@ const CartList = () => {
                       +
                     </button>
                   </div>
-                  {/* <span className="text-center w-1/5 font-semibold text-sm">
-                    Rp. {val.price}
-                  </span>
-                  <span className="text-center w-1/5 font-semibold text-sm">
-                    Rp. {total}
-                  </span> */}
-
                   <CurrencyFormat
                     className="text-center w-1/5 font-semibold text-sm"
-                    value={val.price}
+                    value={val.price_after_discount}
                     displayType={"text"}
                     thousandSeparator={true}
                     prefix={"Rp. "}
@@ -244,7 +243,6 @@ const CartList = () => {
               <span className="font-semibold text-sm uppercase">
                 Items {count}
               </span>
-              {/* <span className="font-semibold text-sm"> Rp. {grandtotal}</span> */}
               <CurrencyFormat
                 className="font-semibold text-sm"
                 value={grandtotal}
@@ -253,31 +251,6 @@ const CartList = () => {
                 prefix={"Rp. "}
               />
             </div>
-            {/* <div>
-              <label className="font-medium inline-block mb-3 text-sm uppercase">
-                Shipping
-              </label>
-              <select className="block p-2 text-gray-600 w-full text-sm">
-                <option>Standard shipping - $10.00</option>
-              </select>
-            </div> */}
-            <div className="py-10">
-              <label
-                for="promo"
-                className="font-semibold inline-block mb-3 text-sm uppercase"
-              >
-                Promo Code
-              </label>
-              <input
-                type="text"
-                id="promo"
-                placeholder="Enter your code"
-                className="p-2 text-sm w-full"
-              />
-            </div>
-            <button className="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white uppercase">
-              Apply
-            </button>
             <div className="border-t mt-8">
               <div className="flex font-semibold justify-between py-6 text-sm uppercase">
                 <span>Total cost</span>

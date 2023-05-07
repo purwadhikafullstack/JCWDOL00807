@@ -36,7 +36,7 @@ const CardProduct = ({
         {
           product_name: name,
           qty: 1,
-          discount_type: null,
+          discount_type: discount_type,
           voucher_type: null,
           price_per_item: priceAfterDiscount,
           weight,
