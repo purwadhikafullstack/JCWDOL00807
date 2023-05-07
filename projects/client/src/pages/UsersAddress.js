@@ -39,10 +39,10 @@ const UserAddress = () => {
     setMessage("");
   };
 
-  setTimeout(() => {
-    dispatch(handleStateError("cancel"));
-    setMessage("");
-  }, 50000);
+  // setTimeout(() => {
+  //   dispatch(handleStateError("cancel"));
+  //   setMessage("");
+  // }, 50000);
 
   return (
     <div>
