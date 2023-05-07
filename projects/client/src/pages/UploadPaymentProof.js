@@ -33,6 +33,7 @@ const UploadPaymentProof = () => {
   const order = useSelector((state) => state.orders.order);
   let userProduct = useSelector((state) => state.userProduct.userProduct);
   const branch_name = userProduct?.data?.branch;
+  const [expiredDate, setExpiredDate] = useState("");
 
   console.log(id);
   console.log(order);
@@ -60,6 +61,26 @@ const UploadPaymentProof = () => {
       preview.src =
         "https://dummyimage.com/600x400/d1d1d1/000000&text=No+Image";
       setMessage("Ukuran gambar lebih dari 1 Mb");
+    }
+  };
+
+  const getTransactionByid = async (idtrx) => {
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.get(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/transaction/transaction-by/${idtrx}
+      `,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      setExpiredDate(data?.expired_date);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -95,6 +116,15 @@ const UploadPaymentProof = () => {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      getTransactionByid(id);
+    } else {
+      setExpiredDate(order.expired_date);
+    }
+
+  }, [id, order]);
+
   const handleCloseDialog = () => {
     setMsgDialog("")
   }
@@ -121,6 +151,12 @@ const UploadPaymentProof = () => {
             <h5 className="text-base font-medium">
               MANDIRI: A/N ONLINE GROCERY ( 08291882990 )
             </h5>
+            <br />
+            <hr />
+            <br />
+            <h1 className="text-base font-semibold" style={{color: 'red'}}>
+              Silahkan Lakukan Pembayaran sebelum - {new Date(expiredDate || '').toLocaleString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', weekday:"long", hour: '2-digit', hour12: false, minute:'2-digit', second:'2-digit'})}
+            </h1>
           </div>
 
           {message && (
@@ -148,7 +184,7 @@ const UploadPaymentProof = () => {
               />
               <Image m="0 auto" id="imgprev" w="full" />
               <p
-                class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+                className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                 id="file_input_help"
               >
                 PNG OR JPG(MAX. 1MB)

@@ -12,12 +12,13 @@ const transaction_detail = db.transaction_details;
 const carts = db.carts;
 const item_products = db.item_products;
 const stock_history_logs = db.stock_history_logs;
+const voucher = db.vouchers
 
 function addMinutes(date, minutes) {
   return new Date(date.getTime() + minutes * 60000);
 }
 
-const jodAction = async (id, branch_name) => {
+const jobAction = async (id, branch_name) => {
   const t = await sequelize.transaction();
   try {
     const trxid = id;
@@ -166,7 +167,7 @@ module.exports = {
 
         (async() => {
           console.log('1')
-          await jodAction(insert.id, branch_name); 
+          await jobAction(insert.id, branch_name); 
           console.log('2')
         })()
 
@@ -624,4 +625,74 @@ module.exports = {
       });
     }
   },
+
+  getTransactionById: async (req, res) => {
+    try {
+      const userid = req.dataToken.id;
+      const id_transaction = req.params.id;
+      if (!userid)
+        throw {
+          message:
+            "Unauthorization, please register or login for continue transaction",
+        };
+      const userExist = await users.findOne({
+        where: { id: userid },
+      });
+
+      if (userExist === null)
+        throw {
+          message:
+            "Unauthorization, please register or login for continue  add product to cart",
+        };
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get transaction by id",
+        data: await transaction.findOne({
+          where: { id: { [Op.eq]: id_transaction } },
+        }),
+      });
+    } catch (error) {
+      res.status(404).send({
+        isSuccess: false,
+        message: error,
+      });
+    }
+  },
+
+  getVoucherById: async (req, res) => {
+    try {
+      const userid = req.dataToken.id;
+      if (!userid)
+        throw {
+          message:
+            "Unauthorization, please register or login for continue transaction",
+        };
+      const userExist = await users.findOne({
+        where: { id: userid },
+      });
+
+      if (userExist === null)
+        throw {
+          message:
+            "Unauthorization, please register or login for continue  add product to cart",
+        };
+
+      res.status(200).send({
+        isSuccess: true,
+        message: "get voucher user",
+        data: await voucher.findAll({
+          where: { 
+            users_id: { [Op.eq]: userid },
+            status: 1
+          },
+        }),
+      });
+    } catch (error) {
+      res.status(404).send({
+        isSuccess: false,
+        message: error,
+      });
+    }
+  }
 };

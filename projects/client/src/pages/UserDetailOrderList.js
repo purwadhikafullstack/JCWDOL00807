@@ -25,7 +25,6 @@ import BackdropResetPassword from "../components/BackdropResetPassword";
 import DialogConfirmation from "../components/DialogConfirmation";
 import { useSelector } from "react-redux";
 
-
 const UserDetailOrderListByQuery = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -168,9 +167,9 @@ const UserDetailOrderListByQuery = () => {
       );
       const { data } = response?.data;
       setBranch(
-        `transaction ${
-          data?.invoice_no || "-"
-        } on status ${data?.status || "-"}`
+        `transaction ${data?.invoice_no || "-"} on status ${
+          data?.status || "-"
+        }`
       );
       setIsApprove(allowedApprove.includes(data?.status));
     } catch (error) {
@@ -189,6 +188,10 @@ const UserDetailOrderListByQuery = () => {
     setDialogMsg("");
     setTrxId("");
     setBtnTitleYes("");
+  };
+
+  const backToOrderList = () => {
+    navigate("/accounts/order-list");
   };
 
   return (
@@ -263,6 +266,18 @@ const UserDetailOrderListByQuery = () => {
         </form>
 
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
+          <Button
+            className="flex font-semibold text-indigo-600 text-sm mt-10 ml-2"
+            onClick={backToOrderList}
+          >
+            <svg
+              className="fill-current mr-2 text-indigo-600 w-4"
+              viewBox="0 0 448 512"
+            >
+              <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
+            </svg>
+            Back to Order List
+          </Button>
           <TableContainer>
             <Table variant="striped">
               <TableCaption
@@ -276,10 +291,10 @@ const UserDetailOrderListByQuery = () => {
               <TableCaption placement="top" textAlign="end" mt="-3" mb="4">
                 <ButtonGroup>
                   <CancelUserOrder
-                  status={dataDetailOrder[0]?.status}
-                  handleSubmit={handleReasonCancellation}
-                  errorMessage={cancelErrorMessage}
-                />
+                    status={dataDetailOrder[0]?.status}
+                    handleSubmit={handleReasonCancellation}
+                    errorMessage={cancelErrorMessage}
+                  />
                   {dataDetailOrder[0]?.status == "Waiting For Payment" && (
                     <Button
                       colorScheme="pink"
@@ -303,7 +318,6 @@ const UserDetailOrderListByQuery = () => {
                     </Button>
                   )}
                 </ButtonGroup>
-            
               </TableCaption>
 
               <Thead className=" text-center">

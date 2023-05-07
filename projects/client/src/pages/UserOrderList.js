@@ -17,12 +17,11 @@ import {
   Stack,
   Checkbox,
   Button,
-  ButtonGroup
+  ButtonGroup,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React from "react";
 import ReactPaginate from "react-paginate";
-import { useSelector } from "react-redux";
 
 import DialogConfirmation from "../components/DialogConfirmation";
 
@@ -31,6 +30,8 @@ const UserOrderListByQuery = () => {
 
   let userProduct = useSelector((state) => state.userProduct.userProduct);
   const branch_name = userProduct?.data?.branch;
+
+  console.log(branch_name);
 
   const checkboxRefs = useRef([]);
   const [branch, setBranch] = useState("");
@@ -148,7 +149,7 @@ const UserOrderListByQuery = () => {
 
   useEffect(() => {
     getOrderList();
-  }, [page, keyword]);
+  }, [branch_name, page, keyword]);
 
   useEffect(() => {
     cancelOrderBySistem();
@@ -284,7 +285,7 @@ const UserOrderListByQuery = () => {
 
           <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort} onChange={() => handleAscSort()}>
-              <option value="id">Sort By Id</option>
+              <option value="id">Sort By No</option>
               <option value="price">Sort By Price</option>
               <option value="status">Sort By Status </option>
               <option value="invoice">Sort By Invoice Number</option>
@@ -294,11 +295,14 @@ const UserOrderListByQuery = () => {
             </Select>
           </div>
           <div className="mt-5 mb-5 ml-5 ">
-            <Select ref={asc} onChange={() => handleAscSort()}>
-              <option selected value="asc">
-                Ascending
-              </option>
+            <Select
+              ref={asc}
+              onChange={() => handleAscSort()}
+              defaultValue="desc"
+            >
               <option value="desc">Descending</option>
+              <option value="asc">Ascending</option>
+              
             </Select>
           </div>
         </form>
@@ -382,28 +386,37 @@ const UserOrderListByQuery = () => {
                               height="150"
                             ></img>
                           </a>
-                        )}  
+                        )}
                       </Td>
                       <Td>{value.expired_date}</Td>
                       <Td>{value.updatedAt}</Td>
                       <Td>
                         <ButtonGroup gap="2">
-                          <Button colorScheme="blue" onClick={() => handleDetailButton(value.id)}>
+                          <Button
+                            colorScheme="blue"
+                            onClick={() => handleDetailButton(value.id)}
+                          >
                             See Detail
                           </Button>
                           {value.status == "Waiting For Payment" && (
-                            <Button colorScheme="pink" onClick={() => handleUploadPayment(value.id)}>
+                            <Button
+                              colorScheme="pink"
+                              onClick={() => handleUploadPayment(value.id)}
+                            >
                               Upload Payment Proof
                             </Button>
                           )}
                           {value.status == "On Delivering" && (
-                            <Button colorScheme="green" onClick={() => {
-                              setDialogMsg(
-                                `Are you sure Approve this transaction ${value.invoice_no} ?`
-                              );
-                              setTrxId(value.id);
-                              setBtnTitleYes("Yes, Approve!");
-                            }}>
+                            <Button
+                              colorScheme="green"
+                              onClick={() => {
+                                setDialogMsg(
+                                  `Are you sure Approve this transaction ${value.invoice_no} ?`
+                                );
+                                setTrxId(value.id);
+                                setBtnTitleYes("Yes, Approve!");
+                              }}
+                            >
                               Approve Order
                             </Button>
                           )}

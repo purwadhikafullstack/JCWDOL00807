@@ -33,6 +33,9 @@ const Shipping = () => {
 
   const [grandtotal, setGrandtotal] = useState(checkout.grandtotal);
   const [ongkir, setOngkir] = useState(0);
+  const [voucher, setVoucher] = useState([]);
+  const [selectedVoucher, setSelectedVoucher] = useState({});
+  const [persenValue, setPersenValue] = useState(0);
 
   // console.log(cities);
 
@@ -62,22 +65,69 @@ const Shipping = () => {
   const handleCostChange = (value) => {
     if (value == "0") {
       setOngkir(0);
-      setGrandtotal(checkout.grandtotal);
+      if (selectedVoucher?.cut_nominal || false) {
+        if (selectedVoucher.cut_nominal != 0) {
+          const newGrandtotal = checkout.grandtotal - selectedVoucher.cut_nominal
+          setGrandtotal(newGrandtotal);
+        }
+      } else {
+        setGrandtotal(checkout.grandtotal);
+      }
+
+      if (selectedVoucher?.cut_percentage || false) {
+        const cutPersen = selectedVoucher.cut_percentage;
+        const oldGrantotal = checkout.grandtotal;
+        const nominalPersen = oldGrantotal * cutPersen;
+        const newGrandtotal = oldGrantotal - nominalPersen;
+        setPersenValue(nominalPersen);
+        setGrandtotal(newGrandtotal);
+      } else {
+        setGrandtotal(checkout.grandtotal);
+      }
+
     } else {
       const filteredCost = costs.filter((x) => x.service == value);
       const ongkir = filteredCost[0].cost[0].value;
-      const newGrandtotal = checkout.grandtotal + ongkir;
+      const newGrandtotalWithOngkir = checkout.grandtotal + ongkir;
       setOngkir(ongkir);
-      setGrandtotal(newGrandtotal);
+      setGrandtotal(newGrandtotalWithOngkir);
+
+      if (selectedVoucher?.cut_nominal || false) {
+        if (selectedVoucher.cut_nominal != 0) {
+          const newGrandtotal = checkout.grandtotal + ongkir - selectedVoucher.cut_nominal
+          setGrandtotal(newGrandtotal);
+        }
+      }
+
+      if (selectedVoucher?.cut_percentage || false) {
+        const cutPersen = selectedVoucher.cut_percentage;
+        const oldGrantotal = checkout.grandtotal;
+        const nominalPersen = oldGrantotal * cutPersen;
+        const newGrandtotal = oldGrantotal + ongkir - nominalPersen;
+        setPersenValue(nominalPersen);
+        setGrandtotal(newGrandtotal);
+      }
+      
     }
   };
+
+
 
   const handleClickCreateOrder = async () => {
     if (ongkir == 0) {
       return setMessage("Silahkan pilih jasa ekspedisi terlebih dahulu.");
     }
     const dataInsert = {
-      detailOrder: checkout.detailOrder,
+      detailOrder: checkout.detailOrder.map((val) => {
+        return {
+          product_name: val.product_name,
+          qty: val.qty,
+          discount_type: val.discount_type,
+          voucher_type: selectedVoucher.voucher_type || null,
+          price_per_item: val.price_per_item,
+          weight: val.weight,
+        }
+      }),
       products_id: checkout.products_id,
       isFromCart: checkout.isFromCart,
       grandtotal,
@@ -98,6 +148,59 @@ const Shipping = () => {
   checkout?.detailOrder?.forEach((val, idx) => {
     total += parseInt(val.price_per_item) * parseInt(val.qty);
   });
+
+  const getVoucherUser = async () => {
+    try {
+      const token = localStorage.getItem("my_Token");
+      let response = await axios.get(
+        `
+      ${process.env.REACT_APP_API_BASE_URL}/transaction/voucher-user
+      `,
+        {
+          headers: {
+            authorization: token,
+          },
+        }
+      );
+      const { data } = response?.data;
+      setVoucher(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSelectedVoucher = (value) => {
+    if (value == "0") {
+      setSelectedVoucher({})
+      setPersenValue(0)
+      setGrandtotal(checkout.grandtotal + ongkir);
+    } else {
+      const filteredVoucher = voucher.filter((x) => x.id == value);
+      setSelectedVoucher(filteredVoucher[0]);
+      if (filteredVoucher[0].cut_percentage != null) {
+        const cutPersen = filteredVoucher[0].cut_percentage;
+        const oldGrantotal = checkout.grandtotal;
+        const nominalPersen = oldGrantotal * cutPersen;
+        const newGrandtotal = oldGrantotal + ongkir - nominalPersen;
+        setPersenValue(nominalPersen);
+        setGrandtotal(newGrandtotal);
+      }
+
+      if (filteredVoucher[0].cut_nominal != null && filteredVoucher[0].cut_nominal != 0) {
+        const cutNominal = filteredVoucher[0].cut_nominal;
+        const oldGrantotal = checkout.grandtotal;
+        const newGrandtotal = oldGrantotal + ongkir - cutNominal;
+        setGrandtotal(newGrandtotal);
+      }
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await getVoucherUser();
+    })();
+  },[]);
 
   return (
     <>
@@ -166,8 +269,8 @@ const Shipping = () => {
               );
             })}
 
-            <a
-              href="shopping-cart"
+            <Link
+              to={"/shopping-cart"}
               className="flex font-semibold text-indigo-600 text-sm mt-10"
             >
               <svg
@@ -177,7 +280,7 @@ const Shipping = () => {
                 <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
               </svg>
               Back
-            </a>
+            </Link>
           </div>
 
           <div id="summary" className="w-2/4 px-8 py-8">
@@ -195,6 +298,26 @@ const Shipping = () => {
                 thousandSeparator={true}
                 prefix={"Rp. "}
               />
+            </div>
+            <div className="py-5">
+              <label
+                for="promo"
+                className="font-semibold inline-block mb-3 text-sm uppercase"
+              >
+                Voucher
+              </label>
+              <select className="block p-2 text-gray-600 w-full text-sm"
+              onChange={(e) => handleSelectedVoucher(e.target.value)}
+              >
+                <option value="0">-- select Voucher --</option>
+                {voucher?.map((val) => {
+                  return (
+                    <option value={val.id}>
+                      {val.voucher_type}, {val.description}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
             <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
@@ -214,15 +337,7 @@ const Shipping = () => {
                   );
                 })}
               </select>
-              {/* <select className="block p-2 text-gray-600 w-full text-sm" onChange={(e) => setSelectedCity(e.target.value)}>
-                {city.map((val) => {
-                    return (
-                        <option value={val.city_id}>{val.city_name}</option>
-                    )
-                })}
-              </select> */}
             </div>
-
             <div>
               <label className="font-medium inline-block mb-3 text-sm uppercase">
                 Select Expedition
@@ -255,7 +370,17 @@ const Shipping = () => {
               </select>
             </div>
             <div className="border-t mt-8">
-              <div className="flex font-semibold justify-between py-6 text-sm uppercase">
+              <div className="flex font-semibold justify-between py-1 text-sm uppercase">
+                <span>Voucher <span style={{ fontSize: "10px", fontStyle: "italic" }}>{`( ${selectedVoucher.description || '-'} )`}</span></span>
+                <CurrencyFormat
+                  className="text-sm"
+                  value={selectedVoucher.cut_nominal || persenValue || 0}
+                  displayType={"text"}
+                  thousandSeparator={true}
+                  prefix={'Rp. -'}
+                />
+              </div>
+              <div className="flex font-semibold justify-between py-1 text-sm uppercase">
                 <span>Ongkir</span>
                 <CurrencyFormat
                   className="text-sm"

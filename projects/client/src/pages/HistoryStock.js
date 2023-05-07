@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -145,20 +145,20 @@ const HistoryStockByQuery = () => {
 
           <div className="mt-5 mb-5 ml-5 ">
             <Select ref={sort} onChange={() => handleAscSort()}>
-              <option value="id">Sort By Id</option>
+              <option value="id">Sort By No</option>
               <option value="admin">Sort By Admin Name</option>
               <option value="product">Sort By Product Name </option>
-              <option value="branch">Sort By Branch Store</option>
+              {/* <option value="branch">Sort By Branch Store</option> */}
               <option value="date">Sort By Created Date</option>
               <option value="qty">Sort by Quantity</option>
             </Select>
           </div>
           <div className="mt-5 mb-5 ml-5 ">
-            <Select ref={asc} onChange={() => handleAscSort()}>
+            <Select ref={asc} onChange={() => handleAscSort()} defaultValue="desc">
+              <option value="desc">Descending</option>
               <option selected value="asc">
                 Ascending
               </option>
-              <option value="desc">Descending</option>
             </Select>
           </div>
         </form>
@@ -176,7 +176,7 @@ const HistoryStockByQuery = () => {
               </TableCaption>
               <Thead className=" text-center">
                 <Tr>
-                  <Th>Id</Th>
+                  <Th>No</Th>
                   <Th>Admin Name</Th>
                   <Th>Branch Store</Th>
                   <Th>Product Name</Th>
@@ -190,7 +190,7 @@ const HistoryStockByQuery = () => {
                 {dataHistory?.map((value, index) => {
                   return (
                     <Tr className=" text-center " key={value.id}>
-                      <Td>{value.id}</Td>
+                      <Td>{index + 1}</Td>
                       <Td>{value.admin_name}</Td>
                       <Td>{value.branch_store}</Td>
                       <Td>{value.product_name}</Td>

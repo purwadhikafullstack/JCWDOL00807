@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavbarAdmin";
 import Footer from "../components/Footer";
 import CurrencyFormat from "react-currency-format";
 import SidebarAdmin from "../components/SidebarAdmin";
@@ -128,17 +128,13 @@ const DetailOrderListByQuery = () => {
       );
       const { data } = response?.data;
       setBranch(
-        `transaction ${
-          data?.invoice_no || "-"
-        } on status ${data?.status || "-"}`
+        `transaction ${data?.invoice_no || "-"} on status ${
+          data?.status || "-"
+        }`
       );
       setIscancel(!notAllowedCancel.includes(data?.status));
-      setIsConfirmPayment(
-        allowedConfirmPayment.includes(data?.status)
-      );
-      setIsDelivering(
-        allowedDelivering.includes(data?.status)
-      );
+      setIsConfirmPayment(allowedConfirmPayment.includes(data?.status));
+      setIsDelivering(allowedDelivering.includes(data?.status));
     } catch (error) {
       console.log(error);
     }
@@ -159,6 +155,11 @@ const DetailOrderListByQuery = () => {
   const handleConfirmDialog = (idtrx, status) => {
     updateStatus(idtrx, status);
   };
+
+  const backToOrderList = () => {
+    navigate("/admin/order-list");
+  };
+
 
   return (
     <>
@@ -233,6 +234,18 @@ const DetailOrderListByQuery = () => {
         </form>
 
         <section className=" mt-10 mb-10 shadow shadow-slate-200 border border-slate-200 container mx-auto rounded-md ">
+          <Button
+            className="flex font-semibold text-indigo-600 text-sm mt-10 ml-2"
+            onClick={backToOrderList}
+          >
+            <svg
+              className="fill-current mr-2 text-indigo-600 w-4"
+              viewBox="0 0 448 512"
+            >
+              <path d="M134.059 296H436c6.627 0 12-5.373 12-12v-56c0-6.627-5.373-12-12-12H134.059v-46.059c0-21.382-25.851-32.09-40.971-16.971L7.029 239.029c-9.373 9.373-9.373 24.569 0 33.941l86.059 86.059c15.119 15.119 40.971 4.411 40.971-16.971V296z" />
+            </svg>
+            Back to Order List
+          </Button>
           <TableContainer>
             <SidebarAdmin />
             <Table variant="striped">
