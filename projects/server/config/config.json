@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "jcwdol0807",
+    "password": "jcwdol0807123",
+    "database": "jcwdol0807",
+    "host": "purwadhikabootcamp.com",
+    "dialect": "mysql",
+    "define": {
+      "freezeTableName": true
+    },
+    "dialectOptions": {
+      "useUTC": false
+    },
+    "timezone": "+07:00"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
