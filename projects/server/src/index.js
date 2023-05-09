@@ -7,14 +7,7 @@ const bearerToken = require("express-bearer-token");
 const PORT = process.env.PORT || 8000;
 const app = express();
 
-app.use(
-  cors({
-    // origin: [
-    //   process.env.WHITELISTED_DOMAIN &&
-    //     process.env.WHITELISTED_DOMAIN.split(","),
-    // ],
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 app.use(bearerToken());
@@ -99,8 +92,8 @@ app.use((err, req, res, next) => {
 //#region CLIENT
 const clientPath = "../../client/build";
 app.use("/static", express.static(join(__dirname, "public")));
-app.use(express.static("./public"));
-app.use(express.static("./admin"));
+app.use(express.static("./Public"));
+app.use(express.static("./Admin"));
 
 app.use(express.static(join(__dirname, clientPath)));
 
