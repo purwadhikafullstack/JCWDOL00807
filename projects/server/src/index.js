@@ -11,6 +11,10 @@ app.use(cors());
 
 app.use(express.json());
 app.use(bearerToken());
+app.use("/", express.static(__dirname+"/Admin"));
+app.use("/", express.static(__dirname+"/Public"));
+// app.use(express.static("./Public"));
+// app.use(express.static("./Admin"));
 // Synchronize models Sequelize
 // const Sequelize = require("sequelize");
 // const Models = require("./models");
@@ -91,16 +95,13 @@ app.use((err, req, res, next) => {
 
 //#region CLIENT
 const clientPath = "../../client/build";
-app.use("/static", express.static(join(__dirname, "public")));
-app.use(express.static("./Public"));
-app.use(express.static("./Admin"));
 
 app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
-// app.get("*", (req, res) => {
-//   res.sendFile(join(__dirname, clientPath, "index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(join(__dirname, clientPath, "index.html"));
+});
 
 //#endregion
 
